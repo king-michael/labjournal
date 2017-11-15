@@ -23,7 +23,6 @@ Infos:
 from __future__ import print_function
 from PyQt4 import QtCore, QtGui
 import sys
-import qdarkstyle  # style
 # END Import System Packages
 
 try:
