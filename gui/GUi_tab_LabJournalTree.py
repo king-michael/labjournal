@@ -109,6 +109,7 @@ class GUi_tab_LabJournalTree(QtGui.QWidget, Ui_TestWidget):
         #       .toString -> str(int)
         id = item.data(0,QtCore.Qt.UserRole).toInt()[0] # returns tuple(int,bool) -> int = id
         #print(item.)
+        log.debug("Clicked id : {}".format(id))
         if self.parent is not None:
             self.parent.create_tab_labjournal(id)
 

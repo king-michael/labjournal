@@ -17,12 +17,13 @@ from __future__ import print_function
 from PyQt4 import QtCore, QtGui
 import sys
 
-from UiInfoEntry_LAMMPS import Ui_Form
+from Ui_tab_InfoEntry_LAMMPS import Ui_Form
 
 # import webbrowser
 
 sys.path.append("..")
 from core.Database import *
+from core.settings import settings
 import MyQt
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
@@ -45,8 +46,13 @@ class GUi_tab_InfoEntry_LAMMPS(QtGui.QWidget, Ui_Form):
         # set defaults
         self.parent = None
         self.ID=None
-        self.MEDIAWIKI_PREFIX="http://134.34.112.156:777/mediawiki/index.php/"
-        self.MEDIAWIKI_BROWSER='browser'
+        self.settings={
+            'mediawiki' : {  # MediaWiki settings
+                'prefix'  : "http://134.34.112.156:777/mediawiki/index.php/",  # prefix
+                'browser' : 'browser',  # how to open it [browser = defaultbrowser]
+            },  # MediaWiki settings
+        }
+        self.settings['mediawiki'].update(settings['mediawiki'])
         # assign kwargs
         for k,v in kwargs.iteritems():
             setattr(self,k,v)
@@ -78,8 +84,8 @@ class GUi_tab_InfoEntry_LAMMPS(QtGui.QWidget, Ui_Form):
         self.list_generalInfo=zip(header, entry)
         adict=dict(self.list_generalInfo)
 
-        if 'MEDIAWIKI' in adict:  # get MediaWiki ID
-            self.MEDIAWIKI_ID= adict['MEDIAWIKI']
+        if 'mediawiki' in adict:  # get MediaWiki ID
+            self.MEDIAWIKI_ID= adict['mediawiki']
 
     def setup_generalInfo(self):
         """Fill generalInfo Box"""
@@ -111,7 +117,7 @@ class GUi_tab_InfoEntry_LAMMPS(QtGui.QWidget, Ui_Form):
             #    label_value = QtGui.QPushButton()
 
             label_value = QtGui.QLabel()  # create new Label
-            if key == 'MEDIAWIKI':
+            if key == 'mediawiki':
                 label_value.linkActivated.connect(self.event_open_MEDIAWIKI)
                 label_value.setText('<a href="{}" style="color:#00a9e0;">{}</a>'.format(value,value))
             else:
@@ -140,8 +146,8 @@ class GUi_tab_InfoEntry_LAMMPS(QtGui.QWidget, Ui_Form):
         """Event open MediaWiki
         Opens the MediaWiki Entry
         """
-        link=self.MEDIAWIKI_PREFIX+str(self.MEDIAWIKI_ID)
-        if self.MEDIAWIKI_BROWSER == 'app':
+        link=self.settings['mediawiki']['prefix']+str(self.MEDIAWIKI_ID)
+        if self.settings['mediawiki']['browser'] == 'app':
             pass
 
         else:

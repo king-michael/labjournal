@@ -23,4 +23,9 @@ default_settings={  # Default settings
 
     },  # Default settings for the database
 
+    'mediawiki' : {  # MediaWiki settings
+        'prefix'  : "http://134.34.112.156:777/mediawiki/index.php/",  # prefix
+        'browser' : 'browser',  # how to open it [browser = defaultbrowser]
+    },  # MediaWiki settings
+
 }  # default settings

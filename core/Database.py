@@ -50,6 +50,7 @@ class simpleAPI():
         header = self.get_header_formated()
         df = self.df.loc[:, header]
 
+        # convert data
         def transform_date(x):
             return datetime.datetime.fromtimestamp(float(x)).strftime("%Y/%m/%d")
 
@@ -58,6 +59,38 @@ class simpleAPI():
                 if key == 'moddate':
                     df[i] = df[i].apply(transform_date)
         return df.values
+
+    def get_entry(self,ID,header='formated'):
+        """
+        Function to get the entry to a ID
+        :param ID: table index of the entry
+        :param header: None,'formated',list
+                    which columns one wants to have returned
+                    None       :  return the entry to all columns
+                    'formated' :  return the entry to for all beside ignored columns (default)
+                    list       :  return the entry for all columns in the list
+        :return: header, entry
+        """
+
+        if header is None:  # case we want the entry to all data
+            header = self.get_columns()
+        elif header == 'formated':  # default case
+            header = self.get_header_formated()
+        else:
+            header = header
+
+        df = self.df.loc[ID, header]
+
+        # convert data
+        def transform_date(x):
+            return datetime.datetime.fromtimestamp(float(x)).strftime("%Y/%m/%d")
+
+        for key in self.settings['convert'].keys():
+            if key in header:
+                if key == 'moddate':
+                    df[i] = df[i].apply(transform_date)
+
+        return header, df.values
 
 class DatabaseHandler():
     def __init__(self, **kwargs):

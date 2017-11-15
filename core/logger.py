@@ -5,7 +5,7 @@ class Logger():
         self.defaults={
             "file_log" : "text.log",
             'file_debug' : 'debug.log',
-            'DEBUG' : 0,
+            'DEBUG' : 5,
             'LOGMODE' : 'screen', # ['screen', 'file', 'both']
             'DEBUGMODE' : 'log', # ['log', 'own', 'both']
         }

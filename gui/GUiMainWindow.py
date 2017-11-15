@@ -44,6 +44,7 @@ from GUi_tab_InfoEntry_LAMMPS import *
 # my modules
 sys.path.append('..')
 from core import *
+from core.logger import Logger
 
 __author__              = ["Michael King"]
 __date__                = "29.09.2017"
@@ -67,10 +68,7 @@ except AttributeError:
 
 
 # BEGIN TESTS
-class log():
-    def __init__(self,str_): print(str_)
-    def __call__(self,str_): print(str_)
-    def debug(self,str_): print("Debug:"+str_)
+log = Logger()
 
 
 
@@ -135,31 +133,9 @@ class GuiMainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.MySearch_lineEdit.returnPressed.connect(self.search_resolve)
         self.MySearch_pushButton.clicked.connect(self.search_resolve)
 
-    @QtCore.pyqtSignature('on_pushButton_clicked()')  # old
-    def spam_print(self):
-        print("bla")
-
-    @QtCore.pyqtSlot()
-    def on_pushButton_2_clicked(self):
-        #self.build_tree(parent=self.MyWidget_LabJournalIndex)
-        #self.MySearch_lineEdit.setText("TEST")
-        self.action_create_tab()
-    # @QtCore.pyqtSlot(name='on_btn_mine_clicked')
-
-    # def on_pushButton_3_clicked(self):
-    #    print("finally")
-
     @QtCore.pyqtSlot()
     def on_btn_search_clicked(self):
         print(self.lineEditSide.text())
-
-    def clear_frameTEST(self):
-        self.clear_layout(self.frameTEST.layout())
-
-    def create_editor(self, parent=None):
-        # self.clear_frameTEST()
-        textEdit = QtGui.QTextEdit()
-        self.add_widget(textEdit, self.frameTEST)
 
     def clear_layout(self, layout):
         '''Deletes layouts to clean up'''
@@ -177,7 +153,6 @@ class GuiMainWindow(QtGui.QMainWindow, Ui_MainWindow):
         filtertext = self.MySearch_lineEdit.text()
         self.MyWidget_LabJournalIndex.filter_tree(filtertext)
 
-
     def add_widget(self, widget, parent=None, uselayout=QtGui.QGridLayout):
         '''Wrapper to add a widget
         add_widget(widget,parent=None,uselayout=QtGui.QGridLayout)
@@ -194,7 +169,7 @@ class GuiMainWindow(QtGui.QMainWindow, Ui_MainWindow):
     def create_tab_labjournal(self,ID):
         """Open a new Tab for the LabJournal entry"""
 
-        name = self.DBAPI.df.loc[ID,'ID']
+        name = self.DBAPI.df.loc[ID,'simid']
         tabID = self.tabWidget_create_tab(name)
         widget = GUi_tab_InfoEntry_LAMMPS(ID=ID, parent=self)
 
@@ -238,6 +213,7 @@ class GuiMainWindow(QtGui.QMainWindow, Ui_MainWindow):
         currentQWidget = self.tabWidget.widget(currentIndex)
         currentQWidget.deleteLater()
         self.tabWidget.removeTab(currentIndex)
+
 #=============================================================================#
 # Tests
 #=============================================================================#
