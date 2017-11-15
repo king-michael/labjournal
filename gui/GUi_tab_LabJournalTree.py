@@ -56,7 +56,6 @@ class GUiWidgetLabjournalTree(QtGui.QWidget, Ui_TestWidget):
         except:
             log.info("Parents Don't have a database, use own")
             self.DBAPI = simpleAPI()
-
         self.tree_init()
 
         self.create_MyTable()
