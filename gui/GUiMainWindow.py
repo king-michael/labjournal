@@ -86,7 +86,11 @@ class main():
     def start_window(self):
         self.window = GuiMainWindow()
         # setup stylesheet
-        self.app.setStyleSheet(qdarkstyle.load_stylesheet(pyside=False))
+        try:
+            import qdarkstyle  # style
+            self.app.setStyleSheet(qdarkstyle.load_stylesheet(pyside=False))
+        except:
+            pass
         return self.window
 
     def show_gui(self):
