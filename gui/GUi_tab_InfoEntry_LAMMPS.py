@@ -51,6 +51,7 @@ class GUi_tab_InfoEntry_LAMMPS(QtGui.QWidget, Ui_Form):
                 'prefix'  : "http://134.34.112.156:777/mediawiki/index.php/",  # prefix
                 'browser' : 'browser',  # how to open it [browser = defaultbrowser]
             },  # MediaWiki settings
+            'tags_max_col' : 5
         }
         self.settings['mediawiki'].update(settings['mediawiki'])
         # assign kwargs
@@ -69,6 +70,7 @@ class GUi_tab_InfoEntry_LAMMPS(QtGui.QWidget, Ui_Form):
         if self.ID is not None:
             self.get_generalInfo()
             self.setup_generalInfo()
+            self.fill_tags()
 
     def get_generalInfo(self):
         """get the generalInfo
@@ -84,8 +86,37 @@ class GUi_tab_InfoEntry_LAMMPS(QtGui.QWidget, Ui_Form):
         self.list_generalInfo=zip(header, entry)
         adict=dict(self.list_generalInfo)
 
-        if 'mediawiki' in adict:  # get MediaWiki ID
-            self.MEDIAWIKI_ID= adict['mediawiki']
+        self.MEDIAWIKI_ID= adict['mediawiki'] # get MediaWiki ID
+        self.tags = adict['tags'].split(",")
+
+    def create_tag_symbol(self,text):
+        """add a tag symbol"""
+
+        btn = QtGui.QToolButton(self)
+        btn.setText(text)
+        font = btn.font()
+        font.setBold(True)
+        btn.setFont(font)
+        btn.setStyleSheet("""
+            background-color: #00a9e0;
+            color: rgb(255, 255, 255);
+            border: 0 px;
+            border-radius: 15;
+            """)
+
+        return btn
+
+    def fill_tags(self):
+        """fill tags"""
+        layout = self.layout_tags
+        num_tags = len(self.tags)
+
+        for i in range(num_tags):
+            row = i / self.settings['tags_max_col']
+            col = i % self.settings['tags_max_col']
+            tag = self.tags[i]
+            layout.addWidget(self.create_tag_symbol(tag), row, col)  # add Label to Widget
+
 
     def setup_generalInfo(self):
         """Fill generalInfo Box"""
@@ -101,10 +132,13 @@ class GUi_tab_InfoEntry_LAMMPS(QtGui.QWidget, Ui_Form):
 
         # setup Labels
         dict_generalInfo_labels={}
+        header=list(header)
+        header.remove('tags')
+
         for i in range(len(header)):
             key = header[i]  # get the key
             value = entry[i]  # get the value
-
+            if key == 'simid': key='ID'  # change simid to ID
             label_key = QtGui.QLabel()  # create new Label
             label_key.setText(_fromUtf8(key))  # _translate("Form", "General Informations", None)
             layout.addWidget(label_key,i,0)  # add Label to Widget
@@ -117,9 +151,11 @@ class GUi_tab_InfoEntry_LAMMPS(QtGui.QWidget, Ui_Form):
             #    label_value = QtGui.QPushButton()
 
             label_value = QtGui.QLabel()  # create new Label
-            if key == 'mediawiki':
+            if   key == 'mediawiki':
                 label_value.linkActivated.connect(self.event_open_MEDIAWIKI)
                 label_value.setText('<a href="{}" style="color:#00a9e0;">{}</a>'.format(value,value))
+            elif key == 'tags':
+                print("SHIT")
             else:
                 label_value.setText(str(value))  # _translate("Form", "General Informations", None)
             layout.addWidget(label_value, i, 2)  # add Label to Widget
@@ -130,6 +166,8 @@ class GUi_tab_InfoEntry_LAMMPS(QtGui.QWidget, Ui_Form):
             myfont = QtGui.QFont()
             myfont.setBold(True)
             label_value.setFont(myfont)
+
+
         # modife labels
         #if 'MEDIAWIKI' in dict_generalInfo_labels.keys():
             #label_key, label_value = dict_generalInfo_labels['MEDIAWIKI']
@@ -137,10 +175,8 @@ class GUi_tab_InfoEntry_LAMMPS(QtGui.QWidget, Ui_Form):
             #label_value.mousePressEvent = self.event_open_MEDIAWIKI # only works because its created here
             #self.connect(label_value,QtCore.SIGNAL('clicked()'),self.event_open_MEDIAWIKI)
 
-        btn = MyQt.ClickableLabel()
-        btn.setText("DAS IST EIN TEST")
-        self.connect(btn, QtCore.SIGNAL('clicked()'), self.event_open_MEDIAWIKI)
-        layout.addWidget(btn)
+
+
 
     def event_open_MEDIAWIKI(self,linkStr):
         """Event open MediaWiki

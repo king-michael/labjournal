@@ -90,6 +90,8 @@ class GUi_tab_LabJournalTree(QtGui.QWidget, Ui_TestWidget):
 
         # make the items clickable
         self.treeWidget.itemDoubleClicked.connect(self.event_itemDoubleClicked)
+        # ToDo: add keyPressEvent
+        # see add https://stackoverflow.com/questions/38507011/implementing-keypressevent-in-qwidget
         # adjust header size
 
         self.treeWidget.header().setResizeMode(0, QtGui.QHeaderView.ResizeToContents)
