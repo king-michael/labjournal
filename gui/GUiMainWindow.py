@@ -37,7 +37,7 @@ import MyQt
 # BEGIN Import GuiApplications
 from UiMainWindow import *
 from GUi_tab_LabJournalTree import *
-from GUi_tab_InfoEntry_LAMMPS import *
+from GUi_tab_InfoEntry import *
 # END Import GuiApplications
 
 # my modules
@@ -174,7 +174,7 @@ class GuiMainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         name = self.DBAPI.df.loc[ID,'simid']
         tabID = self.tabWidget_create_tab(name)
-        widget = GUi_tab_InfoEntry_LAMMPS(ID=ID, parent=self)
+        widget = GUi_tab_InfoEntry(ID=ID, parent=self)
 
         self.add_widget(widget, parent=self.tabs[tabID][0])
 
