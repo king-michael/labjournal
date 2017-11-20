@@ -1,0 +1,21 @@
+
+
+# Get Files
+FOLDER_UNITCELL=/home/micha/SIM-PhD-King/structuredata/crystal/CaCO3/vaterite/
+UNITCELL=at_vaterite_wang_becker_2009
+cp $FOLDER_UNITCELL/$UNITCELL.{data,pdb,psf,xml} .
+
+# Create a bigger Unitcell
+a=5; b=5; c=1
+cat <<EOF>makebig.lammps
+units real
+atom_style full
+read_data ${UNITCELL}.data
+replicate $a $b $c
+pair_style none
+write_data tmp.data
+EOF
+lmp -in makebig.lammps
+
+# rename file
+vmd -e rename.tcl

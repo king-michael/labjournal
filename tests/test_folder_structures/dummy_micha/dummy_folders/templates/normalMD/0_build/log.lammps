@@ -1,0 +1,45 @@
+LAMMPS (11 Aug 2017)
+units real
+atom_style full
+read_data at_calcite_graf_1961.data
+  triclinic box = (-1.2475 -0.720466 -0.711) to (3.7425 3.601 16.351) with tilt (-2.495 0 0)
+  1 by 1 by 1 MPI processor grid
+  reading atoms ...
+  30 atoms
+  scanning bonds ...
+  3 = max bonds/atom
+  scanning angles ...
+  3 = max angles/atom
+  scanning impropers ...
+  1 = max impropers/atom
+  reading bonds ...
+  18 bonds
+  reading angles ...
+  18 angles
+  reading impropers ...
+  6 impropers
+  3 = max # of 1-2 neighbors
+  2 = max # of 1-3 neighbors
+  2 = max # of 1-4 neighbors
+  3 = max # of special neighbors
+replicate 6 6 2
+  triclinic box = (-1.2475 -0.720466 -0.711) to (28.6925 25.2083 33.413) with tilt (-14.97 0 0)
+  1 by 1 by 1 MPI processor grid
+  2160 atoms
+  1296 bonds
+  1296 angles
+  432 impropers
+  3 = max # of 1-2 neighbors
+  2 = max # of 1-3 neighbors
+  2 = max # of 1-4 neighbors
+  3 = max # of special neighbors
+pair_style none
+write_data tmp.data
+Neighbor list info ...
+  update every 1 steps, delay 10 steps, check yes
+  max neighbors/atom: 2000, page size: 100000
+  master list distance cutoff = 0
+  ghost atom cutoff = 0
+  binsize = 44.91, bins = 1 1 1
+  0 neighbor lists, perpetual/occasional/extra = 0 0 0
+Total wall time: 0:00:00
