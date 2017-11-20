@@ -136,6 +136,10 @@ class GuiMainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.MySearch_lineEdit.returnPressed.connect(self.search_resolve)
         self.MySearch_pushButton.clicked.connect(self.search_resolve)
 
+        self.pushButton_3.setText("Save db -> SQL (tmp.db)")
+        self.pushButton_3.clicked.connect(self.DBAPI.save_sql)
+
+
     @QtCore.pyqtSlot()
     def on_btn_search_clicked(self):
         print(self.lineEditSide.text())
@@ -177,7 +181,7 @@ class GuiMainWindow(QtGui.QMainWindow, Ui_MainWindow):
         widget = GUi_tab_InfoEntry(ID=ID, parent=self)
 
         self.add_widget(widget, parent=self.tabs[tabID][0])
-
+        self.tabWidget.setCurrentIndex(tabID+1) # +1 because 0 is maintab
 
     def tabWidget_create_tab(self,name='newTab'):
         """

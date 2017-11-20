@@ -18,7 +18,7 @@ log=Logger()
 class simpleAPI():
     def __init__(self,**kwargs):
         '''Class to manage the Index Database'''
-        self.DatabaseIndex = DatabaseHandler()
+        self.DatabaseHandler = DatabaseHandler()
         self.load_sql()
 
         self.settings = {
@@ -31,7 +31,18 @@ class simpleAPI():
 
     def load_sql(self):
         """loads the data from sql database"""
-        self.df     = self.DatabaseIndex.get_df_TableMain()
+        self.df     = self.DatabaseHandler.get_df_TableMain()
+
+    def save_sql(self):
+        """Save data to sql"""
+        self.save_sql_TableMain()
+        #self.save_sql_TableKeywords()
+        # etc
+        log.info("Saved Database")
+
+    def save_sql_TableMain(self,db=None):
+        """Save table Main"""
+        self.DatabaseHandler.set_df_TableMain(self.df,db=None)
 
     def get_columns(self):
         '''get Columns of Dataframe'''
@@ -122,7 +133,7 @@ class DatabaseHandler():
     def db_sql_to_df(self,db=None, table=None):
         '''Loads in Database from SQL'''
         if db is None: db=self.db
-        if table is None: table=self.db_table_names['DataIndex']
+        if table is None: table=self.db_table_names['main']
 
         engine = create_engine('sqlite:///{}'.format(db))  # starts the sqlite engine
         #FIXME ?? read_sql or read_sql_table ??
@@ -130,9 +141,38 @@ class DatabaseHandler():
         log("Loaded Dataframe from {}".format(db))
         return df
 
+    def db_df_to_sql(self, df=None, db=None, table=None, *args, **kwargs):
+        '''Saves Dataframe as SQL data'''
+
+        if db is None: db = self.db
+        if table is None: table = self.db_table_names['main']
+        if df is None:
+            if hasattr(self, 'df'):
+                df = self.df
+            else:
+                raise StandardError("Cant save dataframe without a dataframe defined")
+        defaults = {'if_exists': 'replace'}
+        kwargs = dict(defaults, **kwargs)
+
+        # Create new file
+        if os.path.exists(db):  # check if old
+            if self.db_backup: self.db_do_backup(db)  # do backup
+            os.remove(db)  # remove
+
+        # create the engine
+        engine = create_engine('sqlite:///{}'.format(db))
+        # save dataframe
+        df.to_sql(table, engine, *args, **kwargs)
+        log("Saved Dataframe in {}".format(db))
+        return db
+
     def get_df_TableMain(self):
         """get the main table"""
         return self.db_sql_to_df(table=self.db_table_names['main'])
+
+    def set_df_TableMain(self,df, db=None):
+        """Save df to Table Main"""
+        self.db_df_to_sql(df=df, db=db, table=self.db_table_names['main'])
 
     def get_df_TableKeywords(self):
         """get the keywords table"""

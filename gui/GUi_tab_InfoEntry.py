@@ -90,7 +90,11 @@ class GUi_tab_InfoEntry(QtGui.QWidget, Ui_Form):
 
         self.MEDIAWIKI_ID= adict['mediawiki'] # get MediaWiki ID
         self.tags = adict['tags'].split(",")
-        print(self.tags)
+
+        if len(self.tags) ==1 and len(self.tags[0]) == 0:
+            self.tags = [] # remove and empty list
+
+
     def create_tag_symbol(self,text):
         """add a tag symbol"""
 
@@ -108,9 +112,52 @@ class GUi_tab_InfoEntry(QtGui.QWidget, Ui_Form):
 
         return btn
 
+    def btn_add_tag_clicked(self):
+        "Event if add_tag button is clicked"
+        dlg = DialogAddTag()
+        if dlg.exec_():
+            tag = dlg.get_tag()
+            if valid_tag(tag):
+                print("DEBUG: Try to add tag: {}".format(tag))
+                self.add_tag(tag)
+                self.fill_tags()
+
+    def add_tag(self,tag,ID=None):
+        """
+        Function to add tag
+        should be stored somewhere central
+        """
+        # ToDo: Central Function, store somewhere else!
+        if ID is None: ID = self.ID
+        self.tags.append(tag)
+        print("DEBUG: Added tag: {} to ID: {}".format(tag,ID))
+        tag_string=",".join(self.tags)
+        print("DEBUG: tag_string: {}".format(tag_string))
+        self.DBAPI.df.loc[ID, 'tags']=tag_string
+        if self.parent is not None:
+            self.parent.MyWidget_LabJournalIndex.build_tree()
+
     def fill_tags(self):
         """fill tags"""
         layout = self.layout_tags
+
+        # plus button
+        btn = QtGui.QToolButton(parent=self)
+        btn.setText("+")
+        font = btn.font()
+        font.setBold(True)
+        btn.setFont(font)
+        btn.setStyleSheet("""
+                    background-color: #808080;
+                    color: #00a9e0;
+                    border: 0 px;
+                    border-radius: 15;
+                    """)
+        self.btn_add_tag=btn # save it
+        self.btn_add_tag.clicked.connect(self.btn_add_tag_clicked) # register action
+
+        layout.addWidget(btn, 0, 0)  # add Label to Widget
+
         num_tags = len(self.tags)
         # if only one entry, check if entry is empty
         if num_tags == 1:
@@ -118,8 +165,9 @@ class GUi_tab_InfoEntry(QtGui.QWidget, Ui_Form):
                 return
         # add tag symbols
         for i in range(num_tags):
-            row = i / self.settings['tags_max_col']
-            col = i % self.settings['tags_max_col']
+            # i+1 ; because of the added + sign
+            row = (i+1) / self.settings['tags_max_col']
+            col = (i+1) % self.settings['tags_max_col']
             tag = self.tags[i]
             layout.addWidget(self.create_tag_symbol(tag), row, col)  # add Label to Widget
 
@@ -179,9 +227,6 @@ class GUi_tab_InfoEntry(QtGui.QWidget, Ui_Form):
             #label_value.mousePressEvent = self.event_open_MEDIAWIKI # only works because its created here
             #self.connect(label_value,QtCore.SIGNAL('clicked()'),self.event_open_MEDIAWIKI)
 
-
-
-
     def event_open_MEDIAWIKI(self,linkStr):
         """Event open MediaWiki
         Opens the MediaWiki Entry
@@ -193,6 +238,61 @@ class GUi_tab_InfoEntry(QtGui.QWidget, Ui_Form):
         else:
             QtGui.QDesktopServices.openUrl(QtCore.QUrl(link))
             #    webbrowser.open(link)
+
+
+class DialogAddTag(QtGui.QDialog):
+    def __init__(self,parent=None):
+        QtGui.QDialog.__init__(self,parent)
+        self.setupUi(self)
+
+    def setupUi(self,Dialog):
+        Dialog.setObjectName("Add Tag")
+        Dialog.resize(400, 60)
+
+        # Line Edit to enter tag
+        self.ed_tag = QtGui.QLineEdit(Dialog)
+        self.ed_tag.setObjectName("ed_tag")
+        self.ed_tag.setGeometry(QtCore.QRect(0, 0, 400, 30))
+
+        # Create Yes or No button
+        self.buttonBox = QtGui.QDialogButtonBox(Dialog)
+        self.buttonBox.setGeometry(QtCore.QRect(250, 31, 150, 30))
+        self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
+        self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Ok | QtGui.QDialogButtonBox.Cancel)
+        self.buttonBox.setObjectName("buttonBox")
+
+        self.retranslateUi(Dialog)
+
+        # connect button
+        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL("accepted()"), Dialog.accept)
+        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL("rejected()"), Dialog.reject)
+        QtCore.QMetaObject.connectSlotsByName(Dialog)
+
+    def retranslateUi(self, Dialog):
+        Dialog.setWindowTitle(QtGui.QApplication.translate("Dialog", "Dialog", None, QtGui.QApplication.UnicodeUTF8))
+        # self.label.setText(
+        #     QtGui.QApplication.translate("Dialog", "Set example value:", None, QtGui.QApplication.UnicodeUTF8))
+    def get_tag(self):
+        return str(self.ed_tag.text())
+
+
+def valid_tag(tag):
+    """
+    function to check if tag is valid
+     -> str(tag) is possible !
+     -> len(tag) > 0
+     -> no comma !
+    Save somewhere in a main folder
+    """
+    # ToDO: see doc string, move it to some central place
+    try:
+        tag=str(tag)
+    except:
+        return False
+    if len(tag) == 0: return False
+    if tag.find(",") != -1: return False
+    return True
+
 
 if __name__ == '__main__':
     app = QtGui.QApplication(sys.argv)
