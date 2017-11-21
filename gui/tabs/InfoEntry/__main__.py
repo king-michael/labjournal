@@ -18,7 +18,7 @@ from PyQt4 import QtCore, QtGui
 import sys
 
 # import Ui_Form
-from Ui_tab_InfoEntry import Ui_Form
+from Ui_InfoEntry import Ui_Form
 
 # import custom libs
 sys.path.append("..")
@@ -41,10 +41,10 @@ except AttributeError:
         return QtGui.QApplication.translate(context, text, disambig)
 
 
-class GUi_tab_InfoEntry(QtGui.QWidget, Ui_Form):
+class InfoEntry(QtGui.QWidget, Ui_Form):
     def __init__(self,**kwargs):
         #super(self.__class__, self).__init__() # Note: self.__class__ will get recursion depth error
-        super(GUi_tab_InfoEntry,self).__init__()
+        super(InfoEntry, self).__init__()
         # set defaults
         self.parent = None
         self.ID=None
@@ -296,7 +296,7 @@ def valid_tag(tag):
 
 if __name__ == '__main__':
     app = QtGui.QApplication(sys.argv)
-    window = GUi_tab_InfoEntry(ID=2)
+    window = InfoEntry(ID=2)
 
     try:
         import qdarkstyle  # style

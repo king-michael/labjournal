@@ -17,7 +17,7 @@ from __future__ import print_function
 from PyQt4 import QtCore, QtGui
 import sys
 
-from Ui_tab_LabJournalTree import Ui_Form as Ui_TestWidget
+from Ui_LabJournalTree import Ui_Form as Ui_TestWidget
 
 sys.path.append("..")
 from core.Database import *
@@ -44,7 +44,7 @@ int id = child->data(0, Qt::UserRole).toInt();
 double size = child->data(0, Qt::UserRole + 1).toDouble();
 """
 
-class GUi_tab_LabJournalTree(QtGui.QWidget, Ui_TestWidget):
+class LabJournalTree(QtGui.QWidget, Ui_TestWidget):
     def __init__(self,parent=None):
         super(self.__class__,self).__init__(parent)
         self.parent = parent # get parent, allows communication about self.parent.ATTRIBUTES
@@ -193,7 +193,7 @@ class GUi_tab_LabJournalTree(QtGui.QWidget, Ui_TestWidget):
 
 if __name__ == '__main__':
     app = QtGui.QApplication(sys.argv)
-    window = GUi_tab_LabJournalTree()
+    window = LabJournalTree()
 
     try:
         import qdarkstyle  # style

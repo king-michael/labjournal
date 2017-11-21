@@ -14,16 +14,17 @@
 """
 
 from __future__ import print_function
-from PyQt4 import QtCore, QtGui
-import sys
 
-from Ui_tab_InfoEntry_LAMMPS import Ui_Form
+import sys,os
+from PyQt4 import QtCore, QtGui
 
 # import webbrowser
 
-sys.path.append("..")
-from Ui_tab_InfoEntry  import Ui_Form
-from GUi_tab_InfoEntry import *
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.insert(0,"..")
+import GUi_InfoEntry
+from Ui_InfoEntry import Ui_Form
+print(GUi_InfoEntry.__file__)
 
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
@@ -40,7 +41,7 @@ except AttributeError:
         return QtGui.QApplication.translate(context, text, disambig)
 
 
-class GUi_tab_InfoEntry_LAMMPS(GUi_tab_InfoEntry):
+class GUi_LAMMPS(GUi_InfoEntry):
     def __init__(self,**kwargs):
         super(self.__class__,self).__init__(**kwargs)
         print("YEAH")
@@ -49,7 +50,7 @@ class GUi_tab_InfoEntry_LAMMPS(GUi_tab_InfoEntry):
 
 if __name__ == '__main__':
     app = QtGui.QApplication(sys.argv)
-    window = GUi_tab_InfoEntry_LAMMPS(ID=2)
+    window = GUi_LAMMPS(ID=2)
 
     try:
         import qdarkstyle  # style

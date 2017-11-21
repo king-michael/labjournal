@@ -21,8 +21,9 @@ Infos:
 """
 
 from __future__ import print_function
-from PyQt4 import QtCore, QtGui
 import sys
+from PyQt4 import QtCore
+
 # END Import System Packages
 
 try:
@@ -31,15 +32,10 @@ except AttributeError:
     def _fromUtf8(s):
         return s
 
-
-import MyQt
-
 # BEGIN Import GuiApplications
-from UiMainWindow import *
-from GUi_tab_LabJournalTree import *
-from GUi_tab_InfoEntry import *
+from Ui_MainWindow import *
+import gui.tabs
 # END Import GuiApplications
-
 # my modules
 sys.path.append('..')
 from core import *
@@ -84,7 +80,7 @@ class main():
         return self.app
 
     def start_window(self):
-        self.window = GuiMainWindow()
+        self.window = MainWindow()
         # setup stylesheet
         try:
             import qdarkstyle  # style
@@ -109,7 +105,7 @@ class main():
 # class GuiMainWindow
 #=============================================================================#
 
-class GuiMainWindow(QtGui.QMainWindow, Ui_MainWindow):
+class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
     def __init__(self, parent=None):
         QtGui.QMainWindow.__init__(self, parent)
         self.setupUi(self)  # where to display
@@ -123,7 +119,7 @@ class GuiMainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.tabWidget.tabCloseRequested.connect(self.tabWidget_close_tab)
 
         """Register the GUiWidgetLabjournalTree in MyTabLabJournalIndex"""
-        self.MyWidget_LabJournalIndex = GUi_tab_LabJournalTree(parent=self)
+        self.MyWidget_LabJournalIndex = gui.tabs.LabJournalTree(parent=self)
         self.add_widget(self.MyWidget_LabJournalIndex, parent=self.MyTabLabJournalIndex)
 
         """register_actions"""
@@ -178,7 +174,7 @@ class GuiMainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         name = self.DBAPI.df.loc[ID,'simid']
         tabID = self.tabWidget_create_tab(name)
-        widget = GUi_tab_InfoEntry(ID=ID, parent=self)
+        widget = gui.tabs.InfoEntry(ID=ID, parent=self)
 
         self.add_widget(widget, parent=self.tabs[tabID][0])
         self.tabWidget.setCurrentIndex(tabID+1) # +1 because 0 is maintab

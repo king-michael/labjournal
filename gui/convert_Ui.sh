@@ -1,11 +1,17 @@
 #!/bin/bash
 
-# convert UiMain
-pyuic4 UiMainWindow.ui -o UiMainWindow.py
+# convert Ui_MainWindow
+pyuic4 Ui_MainWindow.ui -o GUi_MainWindow.py
 
-# convert Ui_tab_LabJournalTree
-pyuic4 Ui_tab_LabJournalTree.ui -o Ui_tab_LabJournalTree.py
 
-# convert Ui_tab_InfoEntry_LAMMPS
-pyuic4 Ui_tab_InfoEntry.ui -o Ui_tab_InfoEntry.py
+pushd tabs
+    # convert Ui_LabJournalTree
+    pyuic4 Ui_LabJournalTree.ui -o GUi_LabJournalTree.py
 
+    pushd InfoEntry
+        # convert Ui_InfoEntry
+        pyuic4 Ui_InfoEntry.ui -o GUi_InfoEntry.py
+
+    popd # InfoEntry
+
+popd # tabs
