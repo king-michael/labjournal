@@ -45,7 +45,6 @@ __author__              = ["Michael King"]
 __date__                = "29.09.2017"
 
 
-
 # Text Handling
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
@@ -65,7 +64,9 @@ except AttributeError:
 # BEGIN TESTS
 log = Logger()
 
-
+dic_modes = {
+    'LAMMPS' : "LAMMPS"
+}
 
 class main():
     def __init__(self, state=True):
@@ -174,7 +175,8 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         name = self.DBAPI.df.loc[ID,'simid']
         tabID = self.tabWidget_create_tab(name)
-        widget = gui.tabs.InfoEntry(ID=ID, parent=self)
+        widget = gui.tabs.InfoEntry.LAMMPS(ID=ID)
+            #widget = gui.tabs.InfoEntry(ID=ID, parent=self)
 
         self.add_widget(widget, parent=self.tabs[tabID][0])
         self.tabWidget.setCurrentIndex(tabID+1) # +1 because 0 is maintab
@@ -229,4 +231,5 @@ if __name__ == '__main__':
         GUI.show_gui()
     else:
         GUI.restart_gui()
-
+    # FIXME: we need sys.exit(app.exec_()) or the plot from matplotlib will not be displayed
+    sys.exit(app.exec_())
