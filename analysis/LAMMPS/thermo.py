@@ -39,7 +39,6 @@ Module to run analysis of logfiles
 
         # use input
         self.CWD = path if path is not None else os.path.realpath(os.path.curdir)
-        print(path)
         self.logfile = logfile if logfile is not None else self.get_logfile(self.CWD)
         # set kwargs
         self.kwargs = kwargs
@@ -53,8 +52,6 @@ Module to run analysis of logfiles
     def get_logfile(self, path):
         """find logfile in folder (only used if not provided before)"""
         logfile = sorted(reglob(path, self.pattern_logfile))
-        print(logfile)
-        print(len(logfile))
         if len(logfile) == 0:
             raise RuntimeError("Logfile not found")
         elif len(logfile) > 1:

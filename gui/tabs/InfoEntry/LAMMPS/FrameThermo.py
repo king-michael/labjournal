@@ -177,18 +177,6 @@ class FrameThermo(QtGui.QWidget):
         spacerItem1 = QtGui.QSpacerItem(0, 300, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Maximum)
         self.layout_list.addItem(spacerItem1)
 
-    def get_logfile(self, path):
-        """find logfile in folder (only used if not provided before)"""
-        logfile = sorted(reglob(path, self.pattern_logfile))
-        print(logfile)
-        print(len(logfile))
-        if len(logfile) == 0:
-            raise RuntimeError("Logfile not found")
-        elif len(logfile) > 1:
-            raise NotImplementedError(
-                "Not implemented to use class thermo on multiple files\nFiles: {}".format(logfile))
-        return logfile[0]
-
 if __name__ == '__main__':
     app = QtGui.QApplication(sys.argv)
     window = FrameThermo(parent=None)
