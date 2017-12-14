@@ -27,7 +27,7 @@ except: # so we can use it as module and right as script...
     sys.path.insert(0, "../..")
     from InfoEntry import InfoEntry
 
-from WidgetThermo import WidgetThermo
+from FrameThermo import FrameThermo
 
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
@@ -55,10 +55,15 @@ class InfoEntry_LAMMPS(InfoEntry):
     def disguise(self):
         """apply LAMMPS disguise"""
 
-        btn = QtGui.QPushButton("Open Thermo Data")
-        btn.clicked.connect(self.PopUp_WidgetThermo)
-        self.layout_body.addWidget(btn)
+        #btn = QtGui.QPushButton("Open Thermo Data")
+        #btn.clicked.connect(self.PopUp_WidgetThermo)
+        self.FrameThermo = FrameThermo(parent=self)
+        self.layout_body.addWidget(self.FrameThermo)
 
+        spacerItem1 = QtGui.QSpacerItem(10, 10,
+                                   QtGui.QSizePolicy.MinimumExpanding,
+                                   QtGui.QSizePolicy.MinimumExpanding)
+        self.layout_body.addItem(spacerItem1)
     def PopUp_WidgetThermo(self):
         widgetthermo = WidgetThermo(path=self.path)
         widgetthermo.show()

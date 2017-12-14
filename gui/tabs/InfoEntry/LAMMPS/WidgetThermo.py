@@ -23,7 +23,7 @@ sys.path.insert(0,root)  # append root dir
 from core.settings import settings
 
 from PyQt4 import QtGui, QtCore
-
+from gui.MyQt import CheckableComboBox
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt4agg import NavigationToolbar2QT as NavigationToolbar
 from matplotlib.figure import Figure
@@ -37,6 +37,12 @@ class WidgetThermo(QtGui.QWidget):
         """A Widget to plot Thermo Data"""
         self.kwargs = kwargs
         super(WidgetThermo, self).__init__()
+        self.SIZE=[400,400]
+        self.OPTION_TOOLBAR=True
+        self.OPTION_LEGEND=True
+        for k,v in kwargs.iteritems(): # apply kwargs
+             setattr(self,k,v)
+        self.resize(*self.SIZE)
         self.setupUi()
 
         self.CWD = self.kwargs['path'] if "path" in self.kwargs.keys() else os.path.realpath(os.path.curdir)
@@ -47,7 +53,10 @@ class WidgetThermo(QtGui.QWidget):
     def initialisation(self):
         """Initialisation protocol"""
         # create the thermo object / data
-        self.thermo = Thermo(path=self.CWD)
+        if hasattr(self,'logfile'):
+            self.thermo = Thermo(logfile=self.logfile)
+        else:
+            self.thermo = Thermo(path=self.CWD)
 
         self.list_keywords=deepcopy(self.thermo.possible_keywords)
 
@@ -67,21 +76,28 @@ class WidgetThermo(QtGui.QWidget):
             if key in self.list_keywords:
                 self.list_keywords.remove(key)
 
-        # Add the checkboxes
+        self.toolbutton = QtGui.QToolButton(self)
+        self.toolbutton.setText('Select Keywords ')
+        self.toolmenu = QtGui.QMenu(self)
         for keyword in self.list_keywords:
-            checkbox=QtGui.QCheckBox()
-            checkbox.setText(keyword)
+            action = self.toolmenu.addAction(keyword)
+            action.setCheckable(True)
+            action.triggered[()].connect(lambda item=action: self.toolmenu_triggered(item))
             if keyword in self.list_active_keywords:
-                checkbox.setCheckState(QtCore.Qt.Checked)
-            checkbox.stateChanged.connect(partial(self.checkbox_stateChanged, checkbox))
-            self.layout_checkboxes.addWidget(checkbox)
+                action.setChecked(QtCore.Qt.Checked)
+        self.toolbutton.setMenu(self.toolmenu)
+        self.toolbutton.setPopupMode(QtGui.QToolButton.InstantPopup)
+        self.layout_checkboxes.addWidget(self.toolbutton)
+
+        DPI = self.figure.get_dpi()
+        self.figure.set_size_inches((self.SIZE[0]-self.toolbutton.sizeHint().height()) / float(DPI),
+                                     self.SIZE[1] / float(DPI))
         self.refresh_plot()
 
-    def checkbox_stateChanged(self,checkbox):
+    def toolmenu_triggered(self,item):
         """Function call when checkbox state is changed"""
-        keyword=str(checkbox.text())
-        print(self.list_active_keywords)
-        if checkbox.isChecked():
+        keyword=str(item.text())
+        if item.isChecked():
             if not keyword in self.list_active_keywords:
                 self.list_active_keywords.append(keyword)
         else:
@@ -94,33 +110,40 @@ class WidgetThermo(QtGui.QWidget):
         if hasattr(self, 'ax'):
             self.ax.clear()
         for keyword in self.list_active_keywords:
-            print(keyword)
             self.plot_thermo(keyword)
+
+        if self.OPTION_LEGEND:
+            lines, labels = self.ax.get_legend_handles_labels()
+            self.ax.legend(lines, labels, loc=0)
+            self.canvas.draw()
+        self.figure.tight_layout()
 
     def plot_thermo(self,keyword):
         """plot thermo data"""
-        self.plot(self.thermo[self.xlabel],self.thermo[keyword])
+        self.plot(self.thermo[self.xlabel],self.thermo[keyword],label=keyword)
 
 
     def setupUi(self):
         """Create the Ui"""
         # a figure instance to plot on
+
         self.figure = Figure()
 
         # this is the Canvas Widget that displays the `figure`
         # it takes the `figure` instance as a parameter to __init__
         self.canvas = FigureCanvas(self.figure)
-
         # this is the Navigation widget
         # it takes the Canvas widget and a parent
-        self.toolbar = NavigationToolbar(self.canvas, self)
+        if self.OPTION_TOOLBAR:
+            self.toolbar = NavigationToolbar(self.canvas, self)
 
         # This is the layout for checkboxes (to be filled later)
-        self.layout_checkboxes=QtGui.QHBoxLayout()
+        self.layout_checkboxes=QtGui.QGridLayout()
 
         # set the layout
         layout = QtGui.QVBoxLayout()
-        layout.addWidget(self.toolbar)
+        if self.OPTION_TOOLBAR:
+            layout.addWidget(self.toolbar)
         layout.addWidget(self.canvas)
         layout.addLayout(self.layout_checkboxes)
         self.setLayout(layout)
@@ -130,6 +153,11 @@ class WidgetThermo(QtGui.QWidget):
         self.ax = self.figure.add_subplot(111)
         # discards the old graph
         self.ax.clear()
+
+    def set_size(self,size):
+        """function to change the size"""
+        #self.
+        self.figure.set_size_inches(*size)
 
     def plot(self,*args,**kwargs):
         ''' plot some random stuff '''
