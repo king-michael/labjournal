@@ -104,17 +104,21 @@ if __name__ == '__main__':
 
 
     key1 = Keywords(
-        main_id = sim.id,
+        main_id = 1,
         name = "forcefield",
         value = "CHARMM"
     )
     key2 = Keywords(
-        main_id=sim.id,
+        main_id=2,
         name="forcefield",
         value=None
     )
-
-    session.bulk_save_objects([key1,key2]) # add several items in one action
+    key3 = Keywords(
+        main_id=2,
+        name="forcefield",
+        value="GROMACS"
+    )
+    session.bulk_save_objects([key1,key2, key3]) # add several items in one action
     session.commit()  # commit the session
 
     print "\nShow keys\n"+80*"="
@@ -126,8 +130,7 @@ if __name__ == '__main__':
     sims = session.query(Simulation).all()
 
     for sim in sims:
-        print sim.keywords
-        keywords = session.query(sim.keywords).all()
-        print "TEST"
+        print sim
+        keywords = sim.keywords.all()
         for key in keywords:
             print(key)
