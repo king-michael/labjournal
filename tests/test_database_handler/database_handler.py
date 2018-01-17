@@ -126,6 +126,7 @@ if __name__ == '__main__':
     sims = session.query(Simulation).all()
 
     for sim in sims:
+        print sim.keywords
         keywords = session.query(sim.keywords).all()
         print "TEST"
         for key in keywords:
