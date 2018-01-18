@@ -28,15 +28,13 @@ class Simulation(Base):
     path = Column(String(255))
     updated_on = Column(DateTime(), default=datetime.now, onupdate=datetime.now)
 
-    keywords = relationship('Keywords', backref='simid', lazy='dynamic')
-
+    keywords = relationship('Keywords', backref='simid' , lazy='dynamic')  # lazy='dynamic' -> returns query so we can filter
     def __repr__(self):
         return """{}(simid='{}', mediawiki='{}', path='{}')""".format(
             self.__class__.__name__,
             self.simid,
             self.mediawiki,
             self.path)
-
 
 class Keywords(Base):
     __tablename__ = 'keywords'
@@ -110,7 +108,7 @@ if __name__ == '__main__':
     )
     key2 = Keywords(
         main_id=2,
-        name="forcefield",
+        name="headache",
         value=None
     )
     key3 = Keywords(
@@ -126,11 +124,41 @@ if __name__ == '__main__':
     for key in keys:
         print key
 
-    print "\nShow sims.keywords\n" + 80 * "="
+    print "\nShow sims.keywords (One -> Many)\n" + 80 * "="
     sims = session.query(Simulation).all()
-
     for sim in sims:
         print sim
         keywords = sim.keywords.all()
         for key in keywords:
             print(key)
+
+    print "\nSelective queries\n" + 80 * "="
+    rv = session.query(Simulation).filter_by(simid="MK0002").one()
+    print '\nsession.query(Simulation).filter_by(simid="MK0002").one()'
+    print "=>", rv
+    print "rv.keywords.all()\n=>", rv.keywords.all()
+    print "rv.keywords.filter_by(name='headache').one()\n=>", rv.keywords.filter_by(name='headache').one()
+
+    rv = session.query(Simulation).filter(Simulation.simid=="MK0002").all()
+    print '\nsession.query(Simulation).filter(Simulation.simid=="MK0002").all()'
+    print "=>", rv
+
+    rv = session.query(Simulation).filter(Simulation.simid == "MK0002").one()
+    print '\nsession.query(Simulation).filter(Simulation.simid=="MK0002").one()'
+    print "=>", rv
+    print "rv.keywords.filter(Keywords.value.is_(None)).all()"
+    print "=>", rv.keywords.filter(Keywords.value.is_(None)).all()
+    print "from sqlalchemy import not_"
+    from sqlalchemy import not_
+    print "rv.keywords.filter( not_( Keywords.value.is_(None) ) ).all()"
+    print "=>", rv.keywords.filter( not_( Keywords.value.is_(None) ) ).all()
+
+    from sqlalchemy.orm import load_only
+    rv = session.query(Keywords.name,Keywords.value).select_from(Keywords)
+    print '\nrv = session.query(Keywords.name,Keywords.value).select_from(Keywords)'
+    print "rv.join(Simulation).filter(Simulation.simid == 'MK0002').all()"
+    print "=>", rv.join(Simulation).filter(Simulation.simid == 'MK0002').all()
+
+    # SELECT keywords.name FROM keywords
+    # JOIN main ON keywords.main_id = main.id
+    # WHERE main.simid = 'MK0002'
