@@ -22,8 +22,8 @@ Base = declarative_base()
 class Simulation(Base):
     __tablename__ = 'main'
 
-    id = Column(Integer(), primary_key=True)
-    simid =  Column(String(50), unique=True) # should be discussed
+    id = Column(Integer(), primary_key=True, index=True)
+    simid =  Column(String(50), unique=True, index=True) # should be discussed
     mediawiki = Column(String(255))
     path = Column(String(255))
     updated_on = Column(DateTime(), default=datetime.now, onupdate=datetime.now)
@@ -39,9 +39,9 @@ class Simulation(Base):
 class Keywords(Base):
     __tablename__ = 'keywords'
 
-    id = Column(Integer(), primary_key=True)
-    main_id =  Column(Integer(), ForeignKey('main.id')) # , index=True
-    name  =  Column(String(255))
+    id = Column(Integer(), primary_key=True, index=True)
+    main_id =  Column(Integer(), ForeignKey('main.id') , index=True)
+    name  =  Column(String(255), index=True)
     value =  Column(String(255), nullable=True)
 
     #simid = relationship("Simulation", backref('keywords'))
@@ -159,6 +159,6 @@ if __name__ == '__main__':
     print "rv.join(Simulation).filter(Simulation.simid == 'MK0002').all()"
     print "=>", rv.join(Simulation).filter(Simulation.simid == 'MK0002').all()
 
-    # SELECT keywords.name FROM keywords
+    # SELECT keywords.name,keywords.value FROM keywords
     # JOIN main ON keywords.main_id = main.id
     # WHERE main.simid = 'MK0002'
