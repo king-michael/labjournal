@@ -21,7 +21,8 @@ import sys
 from Ui_InfoEntry import Ui_Form
 
 # import custom libs
-sys.path.append("..")
+root = "../../.."
+sys.path.insert(0,root)
 from core.Database import *
 from core.settings import settings
 
@@ -89,6 +90,7 @@ class InfoEntry(QtGui.QWidget, Ui_Form):
         adict=dict(self.list_generalInfo)
 
         self.MEDIAWIKI_ID= adict['mediawiki'] # get MediaWiki ID
+        self.path = adict['path']
         self.tags = adict['tags'].split(",")
 
         if len(self.tags) ==1 and len(self.tags[0]) == 0:
