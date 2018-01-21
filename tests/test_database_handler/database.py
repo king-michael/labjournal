@@ -4,7 +4,8 @@ from sqlalchemy import DateTime, ForeignKey, Boolean
 from sqlalchemy.orm import relationship, backref
 
 from datetime import datetime
-
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 # Base class
 Base = declarative_base()
 

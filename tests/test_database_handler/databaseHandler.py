@@ -3,21 +3,47 @@ from database import *
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-class Database:
-    def __init__(self,
-                 engine='sqlite:///:memory:',
-                 verbose=False):
-        """
-        Class that Handles the Database
-        :param engine: database to connect with e.g.: ['sqlite:///./test.db', 'sqlite:///:memory:' (default)]
-        :param verbose: [False (default)]
-        """
+#engine = create_engine('sqlite:///:memory:', echo=False)
+engine = create_engine('sqlite:///./test.db', echo=False) #  if we want spam
 
-        engine_echo=True if verbose else False
-        self.engine = create_engine(engine, echo=engine_echo)
-        self.Session = sessionmaker(bind=engine)
-        self.session = self.Session()
+# Establishing a session
+Session = sessionmaker(bind=engine)
+session = Session()
 
-    def setup_database(self):
-        # create Tables
-        Base.metadata.create_all(self.engine)
+
+def setup_database():
+    """function to create the database"""
+    # create Tables
+    Base.metadata.create_all(engine)
+
+def create_SimulationEntry(simid, mediawiki=None, path=None, keywords=None):
+    # type: (str, str, str, dict) -> None
+    '''Wrapper around to create a SimulationEntry
+    :param simid: Simulation / Labjournal ID [required]
+    :param mediawiki: MediaWiki Site (\wo URL)
+    :param path: Path to the files
+    :param keywords: keywords / tags can be added as dict (tag: value=None)
+    '''
+    if keywords is None:
+        sim = Simulation(
+            simid=simid,
+            mediawiki=mediawiki,
+            path=path,
+        )
+    else:
+        sim = Simulation(
+            simid=simid,
+            mediawiki=mediawiki,
+            path=path,
+            keywords=[Keywords(name=k,value=v) for k,v in keywords.iteritems()]
+        )
+    session.add(sim)
+
+
+def debug_print_sims():
+    """DEBUG: print simulations"""
+    print 'Simulations:'
+    for sim in session.query(Simulation).all():
+        print ' SIM: {} - {}'.format(sim.id, sim.simid)
+        for key in sim.keywords.all():
+            print '  - key: {} : {}'.format(key.name, key.value)

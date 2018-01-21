@@ -133,3 +133,96 @@ for key in sim.keywords.all(): print key
 session.commit()
 
 print 80 * "="
+print "#Add Simulation with new keywords in one"+"\n"+40*"-"
+
+sim = Simulation(
+    simid='MK0003',
+    mediawiki='MK0003',
+    path='/home/micha/somewhereelse',
+    keywords=[
+        Keywords(name='test'),
+        Keywords(name='forcefield', value='AMBER')
+    ]
+)
+
+session.add(sim)  # add the entry to the session
+session.commit() # commit the session
+
+print 'Simulations:'
+for sim in session.query(Simulation).all():
+    print ' SIM: {} - {}'.format(sim.id,sim.simid)
+    for key in sim.keywords.all():
+        print '  - key: {} : {}'.format(key.name,key.value)
+
+print 'Keywords:'
+rv = session.query(Simulation.simid,Keywords.name,Keywords.value).select_from(Keywords,Simulation)
+rv = rv.filter(Simulation.id == Keywords.main_id)
+for key in rv.all():
+    print(key)
+
+
+############################################################################################
+# Pandas
+############################################################################################
+print '\n\n\n'
+print '#' * 80
+print '# PANDAS STUFF'
+print '#' * 80
+
+print 'Use pandas to load the entrys:'
+import pandas as pd
+#################################################################
+print '='*80
+print 'get Simulation.__tablename__ : {}'.format(Simulation.__tablename__)
+print '='*80
+df = pd.read_sql_table(Simulation.__tablename__,engine,index_col='id')  # get the dataframe
+print 'df:\n', df
+
+#################################################################
+print '='*80
+print "get columns=['simid', 'mediawiki', 'path']"
+print '='*80
+df = pd.read_sql_table(Simulation.__tablename__,
+                        engine,
+                        columns=['simid', 'mediawiki', 'path'] ,
+                        index_col='id')  # get the dataframe
+print 'df:\n', df
+
+#################################################################
+print '='*80
+print 'get Keywords.__tablename__ : {}'.format(Keywords.__tablename__)
+print '='*80
+df = pd.read_sql_table(Keywords.__tablename__,engine,index_col='id')  # get the dataframe
+print 'df:\n', df
+
+#################################################################
+print '='*80
+print 'get dataframe with keywords + value'.format(Keywords.__tablename__)
+print '='*80
+
+query = session.query(Keywords).filter(not_(Keywords.value.is_(None)))
+df = pd.read_sql_query(str(query),engine, 'keywords_id')
+print df
+print 'SQLAlchemy results:'
+for i in query.all(): print ' ',i
+
+############################################################################################
+# Usefull stuff
+############################################################################################
+print '#'*80 + '\n# Usefull stuff\n' , '#'*80
+
+#################################################################
+print '='*80 , '\nget unqiue keywords\n' + '='*80
+
+from sqlalchemy import distinct
+query = session.query(distinct(Keywords.name)).select_from(Keywords)\
+    .filter(not_(Keywords.value.is_(None)))
+print query.all()
+
+#################################################################
+print '='*80 , '\nget unqiue tags\n' , '='*80
+
+from sqlalchemy import distinct
+query = session.query(distinct(Keywords.name)).select_from(Keywords)\
+    .filter(Keywords.value.is_(None))
+print query.all()
