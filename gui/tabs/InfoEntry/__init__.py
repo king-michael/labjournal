@@ -17,7 +17,7 @@
 __author__              = ["Michael King", 'Andrej Berg']
 __date__                = "21.11.2017"
 
-from .__main__ import *
-# from LAMMPS import *
+from .InfoEntry import *
+from LAMMPS.InfoEntry_LAMMPS import InfoEntry_LAMMPS as LAMMPS
 
 

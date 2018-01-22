@@ -25,3 +25,4 @@ from logger import *                 # writes logfiles
 # from read_info import *              # reads __info__ files
 # from filefinder import *             # find files in folders
 from Database import *          # creates DatabaseIndex
+import databaseModel
