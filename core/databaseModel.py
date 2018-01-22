@@ -28,29 +28,7 @@ Base = declarative_base()
 #    lazy = 'joined'   # joins them at the query of the entry (one query in total)
 #    lazy = 'subquery' #  same as joined, otherway, different performance
 
-
-#class Association(Base):
-#    __tablename__ = 'association'
-#    parent_id = Column(Integer, ForeignKey('main.id'), primary_key=True)
-#    child_id = Column(Integer, ForeignKey('main.id'), primary_key=True)
-#    extra_data = Column(String(50))
-#    parent = relationship("Simulation",foreign_keys='Association.parent_id',  back_populates="parents")
-#    child = relationship("Simulation", foreign_keys='Association.child_id', back_populates="children")#
-#
-#    def __repr__(self):
-#        return """{}(parent='{}', child='{}', extra_data='{}')""".format(self.__class__.__name__,
-#                                                                         self.parent_id,
-#                                                                         self.child_id,
-#                                                                        self.extra_data)
-#
-#add to Simulation:
-# children = relationship('Association',
-#                            foreign_keys='Association.parent_id')
-# parents = relationship('Association',
-#                            foreign_keys='Association.child_id')
-
-
-
+# TODO Add mapping Association-->Simulation; e.g. Simulation.parents shold return list of Simulation obj
 
 class Simulation(Base):
     __tablename__ = 'main'
@@ -61,7 +39,20 @@ class Simulation(Base):
     path = Column(String(255))
     sim_type = Column(String(20))
     updated_on = Column(DateTime(), default=datetime.now, onupdate=datetime.now)
-
+    children = relationship('Association',
+                            back_populates="parent",
+                            foreign_keys='Association.parent_id',
+                            cascade="all, delete-orphan",  # apply delete also for entries in assosiation
+                            passive_deletes=True,  # apply delete also for entries in assosiation
+                            lazy='dynamic'
+                            )
+    parents = relationship('Association',
+                           back_populates="child",
+                           foreign_keys='Association.child_id',
+                           cascade="all, delete-orphan",  # apply delete also for entries in assosiation
+                           passive_deletes=True,  # apply delete also for entries in assosiation
+                           lazy='dynamic'
+                           )
     keywords = relationship('Keywords',
                             backref='simid' , # check cascade_backrefs
                             lazy='dynamic', # lazy='dynamic' -> returns query so we can filter
@@ -77,6 +68,26 @@ class Simulation(Base):
             self.simid,
             self.mediawiki,
             self.path)
+
+class Association(Base):
+   __tablename__ = 'association'
+   parent_id = Column(Integer, ForeignKey('main.id'), primary_key=True)
+   child_id = Column(Integer, ForeignKey('main.id'), primary_key=True)
+   extra_data = Column(String(50))
+   parent = relationship("Simulation",
+                         foreign_keys='Association.parent_id',
+                         back_populates="children"
+                         )
+   child = relationship("Simulation",
+                        foreign_keys='Association.child_id',
+                        back_populates="parents"
+                        )
+
+   def __repr__(self):
+       return """{}(parent='{}', child='{}', extra_data='{}')""".format(self.__class__.__name__,
+                                                                        self.parent.sim_id,
+                                                                        self.child.sim_id,
+                                                                        self.extra_data)
 
 class Keywords(Base):
     __tablename__ = 'keywords'

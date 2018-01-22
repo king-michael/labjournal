@@ -56,6 +56,20 @@ class Simulation(Base):
     mediawiki = Column(String(255))
     path = Column(String(255))
     updated_on = Column(DateTime(), default=datetime.now, onupdate=datetime.now)
+    children = relationship('Association',
+                            back_populates="parent",
+                            foreign_keys='Association.parent_id',
+                            cascade="all, delete-orphan",  # apply delete also for childs
+                            passive_deletes=True,  # apply delete also for childs
+                            lazy='dynamic'
+                            )
+    parents = relationship('Association',
+                           back_populates="child",
+                           foreign_keys='Association.child_id',
+                           cascade="all, delete-orphan",  # apply delete also for childs
+                           passive_deletes=True,  # apply delete also for childs
+                           lazy='dynamic'
+                           )
 
     keywords = relationship('Keywords',
                             backref='simid' , # check cascade_backrefs
@@ -72,6 +86,26 @@ class Simulation(Base):
             self.simid,
             self.mediawiki,
             self.path)
+
+class Association(Base):
+   __tablename__ = 'association'
+   parent_id = Column(Integer, ForeignKey('main.id'), primary_key=True)
+   child_id = Column(Integer, ForeignKey('main.id'), primary_key=True)
+   extra_data = Column(String(50))
+   parent = relationship("Simulation",
+                         foreign_keys='Association.parent_id',
+                         back_populates="children"
+                         )
+   child = relationship("Simulation",
+                        foreign_keys='Association.child_id',
+                        back_populates="parents"
+                        )
+
+   def __repr__(self):
+       return """{}(parent='{}', child='{}', extra_data='{}')""".format(self.__class__.__name__,
+                                                                        self.parent_id,
+                                                                        self.child_id,
+                                                                       self.extra_data)
 
 class Keywords(Base):
     __tablename__ = 'keywords'

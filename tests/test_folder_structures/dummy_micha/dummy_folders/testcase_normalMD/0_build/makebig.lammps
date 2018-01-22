@@ -1,0 +1,6 @@
+units real
+atom_style full
+read_data at_calcite_graf_1961.data
+replicate 6 6 2
+pair_style none
+write_data tmp.data

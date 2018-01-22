@@ -43,7 +43,19 @@ def create_SimulationEntry(simid, mediawiki=None, path=None, keywords=None):
 def debug_print_sims():
     """DEBUG: print simulations"""
     print 'Simulations:'
-    for sim in session.query(Simulation).all():
+    for sim in session.query(Simulation).order_by(Simulation.simid).all():
+        print "-"*50
         print ' SIM: {} - {}'.format(sim.id, sim.simid)
         for key in sim.keywords.all():
             print '  - key: {} : {}'.format(key.name, key.value)
+        print '  Parents:'
+        for p in sim.parents: # Association object
+            psim = p.parent  # Sim object
+            print '   SIM: {} - {}'.format(psim.id, psim.simid)
+        print '  Children:'
+        for c in sim.children:
+            csim = c.child
+            print '   SIM: {} - {}'.format(csim.id, csim.simid)
+        print "-" * 50
+        # print sim.parents
+        # print sim.children
