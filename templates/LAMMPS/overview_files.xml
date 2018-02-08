@@ -1,0 +1,8 @@
+<?xml version="1.0" ?>
+<files>
+  <input_scripts folder="input_scripts">
+    <script file="input.ar_ubiquitin.lammps" flag="X">Inputscript for Ubiquitin [real units]</script>
+    <script file="input.ae_caco3.lammps" flag="X">Inputscript for atomisitc CaCO3 [metal units]</script>
+    <script file="input.cg_caco3.lammps" flag="X">Inputscript for coarse-grained CaCO3 [real units]</script>
+  </input_scripts>
+</files>

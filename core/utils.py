@@ -22,9 +22,14 @@ class XmlConverter(object):
         
     @classmethod
     def plain_to_dict(self,plain):
-        '''fomrats plain to dict'''
+        '''convert plain str to dict'''
         return self.etree_to_dict(xml.etree.ElementTree.XML(plain))
-      
+
+    @classmethod
+    def file_to_dict(self,filename):
+        '''converts file content to dict'''
+        return self.etree_to_dict(xml.etree.ElementTree.parse(filename).getroot())
+
     @classmethod  
     def etree_to_dict(self,t):
         '''formats etree -> dict'''
