@@ -155,7 +155,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
     def search_resolve(self):
         '''Activate when Press enter in Search bar or hit button Search'''
         filtertext = self.MySearch_lineEdit.text()
-        self.MyWidget_LabJournalIndex.filter_tree(filtertext)
+        self.MyWidget_LabJournalIndex.lineEditFilter.setText(filtertext)
 
     def add_widget(self, widget, parent=None, uselayout=QtGui.QGridLayout):
         '''Wrapper to add a widget

@@ -11,7 +11,7 @@ from datetime import datetime
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-
+from sqlalchemy import not_
 from sqlalchemy import Table
 # Base class
 Base = declarative_base()
@@ -65,7 +65,7 @@ class Simulation(Base):
     def __repr__(self):
         return """{}(simid='{}', mediawiki='{}', path='{}')""".format(
             self.__class__.__name__,
-            self.simid,
+            self.sim_id,
             self.mediawiki,
             self.path)
 

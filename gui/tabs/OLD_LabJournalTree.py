@@ -20,7 +20,7 @@ import sys
 from Ui_LabJournalTree import Ui_Form as Ui_TestWidget
 
 sys.path.append("..")
-from core.databaseModel import *
+from core.Database import *
 from core.logger import *
 # BEGIN TESTS
 log=Logger()
@@ -50,9 +50,15 @@ class LabJournalTree(QtGui.QWidget, Ui_TestWidget):
         self.parent = parent # get parent, allows communication about self.parent.ATTRIBUTES
         # Set up the user interface from Designer.
         self.setupUi(self)
+
+        try:
+            self.DBAPI = self.parent.DBAPI
+        except:
+            log.info("Parents Don't have a database, use own")
+            self.DBAPI = simpleAPI()
         self.tree_init()
 
-        #self.create_MyTable()
+        self.create_MyTable()
         self.lineEditFilter.textChanged.connect(self.filter_tree)
 
     def tree_init(self, parent=None):
@@ -63,18 +69,13 @@ class LabJournalTree(QtGui.QWidget, Ui_TestWidget):
         self.treeWidget.customContextMenuRequested.connect(
             self.openMenu)  # connect the ContextMenuRequest
 
-    def build_tree(self):
-        # Create TableHeader
-        columnheader = ['SimID', 'MediaWiki', 'tags', 'keywords', 'type']
-        for i,header in enumerate(columnheader):
-            self.treeWidget.headerItem().setText(i, header)
-            self.treeWidget.clear()
-
-        db = 'test_new.db'
-        session = establish_session('sqlite:///./test.db')
-
-    def build_tree2(self, table=None):  # << NEW
+    def build_tree(self, table=None):  # << NEW
         """UpdateTree with file informations"""
+        col = self.DBAPI.get_header_formated()
+        if table is None: table = self.DBAPI.get_table_convert()
+        for c in range(len(col)):
+            self.treeWidget.headerItem().setText(c, col[c])
+            self.treeWidget.clear()
 
         for item in range(len(table)):
             QtGui.QTreeWidgetItem(self.treeWidget)

@@ -52,6 +52,7 @@ class Ui_Form(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.lineEditFilter.sizePolicy().hasHeightForWidth())
         self.lineEditFilter.setSizePolicy(sizePolicy)
+        self.lineEditFilter.setText(_fromUtf8(""))
         self.lineEditFilter.setObjectName(_fromUtf8("lineEditFilter"))
         self.horizontalLayout.addWidget(self.lineEditFilter)
         self.MainBtnRefreshFilter = QtGui.QCommandLinkButton(Form)
@@ -92,5 +93,5 @@ class Ui_Form(object):
         self.treeWidget.topLevelItem(1).setText(2, _translate("Form", "2", None))
         self.treeWidget.topLevelItem(1).setText(3, _translate("Form", "2", None))
         self.treeWidget.setSortingEnabled(__sortingEnabled)
-        self.lineEditFilter.setText(_translate("Form", "Filter", None))
+        self.lineEditFilter.setPlaceholderText(_translate("Form", "Filter", None))
 

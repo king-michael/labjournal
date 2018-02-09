@@ -20,8 +20,9 @@ import sys
 from Ui_LabJournalTree import Ui_Form as Ui_TestWidget
 
 sys.path.append("..")
-from core.Database import *
+from core.databaseModel import *
 from core.logger import *
+from functools import partial
 # BEGIN TESTS
 log=Logger()
 
@@ -51,52 +52,61 @@ class LabJournalTree(QtGui.QWidget, Ui_TestWidget):
         # Set up the user interface from Designer.
         self.setupUi(self)
 
-        try:
-            self.DBAPI = self.parent.DBAPI
-        except:
-            log.info("Parents Don't have a database, use own")
-            self.DBAPI = simpleAPI()
-        self.tree_init()
-
-        self.create_MyTable()
-        self.lineEditFilter.textChanged.connect(self.filter_tree)
-
-    def tree_init(self, parent=None):
-        if parent is None: parent = self
+        # Build the tree
         self.build_tree()
         # create ContextMenu
         self.treeWidget.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)  # set policity
-        self.treeWidget.customContextMenuRequested.connect(
-            self.openMenu)  # connect the ContextMenuRequest
+        self.treeWidget.customContextMenuRequested.connect(self.openMenu)  # connect the ContextMenuRequest
 
-    def build_tree(self, table=None):  # << NEW
-        """UpdateTree with file informations"""
-        col = self.DBAPI.get_header_formated()
-        if table is None: table = self.DBAPI.get_table_convert()
-        for c in range(len(col)):
-            self.treeWidget.headerItem().setText(c, col[c])
+        # connect signal of lineEdit
+        self.lineEditFilter.textChanged.connect(self.filter_tree)
+
+    def build_tree(self):
+        """Function to create the tree"""
+        # Create TableHeader
+        columnheader = ['SimID', 'MediaWiki', 'tags', 'keywords', 'type']
+        for i,header in enumerate(columnheader):
+            self.treeWidget.headerItem().setText(i, header)
             self.treeWidget.clear()
 
-        for item in range(len(table)):
+        db = 'test_new.db'
+        print("WARNING: HARD CODED DATABASE in LabJournalTree.py")
+        session = establish_session('sqlite:///{}'.format(db))
+        print("connect to database: {}".format(db))
+        rv = session.query(Simulation).all()
+
+        # Fill the table #FIXME: do it with a database handler
+        for row_number, sim in enumerate(rv):
+            # Create an item and add it to the table
             QtGui.QTreeWidgetItem(self.treeWidget)
-            child = self.treeWidget.topLevelItem(item)
-            for value in range(len(table[item])):
-                # add displayed Value
-                child.setText(value, str(table[item][value]))
-                # add ToolTip
-                child.setToolTip(value, str(table[item][value]))
-            # set Data in the item (ID of the table)
-            child.setData(0,QtCore.Qt.UserRole, item)
+            child = self.treeWidget.topLevelItem(row_number)
+            # SIM ID
+            child.setText(0, str(sim.sim_id))
+            # mediawiki
+            child.setText(1, str(sim.mediawiki))
+            child.setToolTip(1, str(sim.mediawiki))
+            # tags
+            tags = [key.name for key in sim.keywords.filter(Keywords.value.is_(None)).all()]
+            child.setText(2, str("; ".join(tags)))
+            child.setToolTip(2, str("\n".join(tags)))
+            # keywords
+            keywords = ["{}={}".format(key.name,key.value) for key in sim.keywords.filter(not_(Keywords.value.is_(None))).all()]
+            child.setText(3, str("; ".join(keywords)))
+            child.setToolTip(3, str("\n".join(keywords)))
+            # SIM TYPE
+            child.setText(4, str(sim.sim_type))
+            # store hidden data
+            child.setData(0, QtCore.Qt.UserRole, sim.id) # set Data in the item (ID of the table)
 
         # make the items clickable
         self.treeWidget.itemDoubleClicked.connect(self.event_itemDoubleClicked)
         # ToDo: add keyPressEvent
         # see add https://stackoverflow.com/questions/38507011/implementing-keypressevent-in-qwidget
         # adjust header size
-
+        # Change size policty
         self.treeWidget.header().setResizeMode(0, QtGui.QHeaderView.ResizeToContents)
         self.treeWidget.header().setResizeMode(1, QtGui.QHeaderView.ResizeToContents)
-        self.treeWidget.header().setResizeMode(2, QtGui.QHeaderView.Stretch )
+        self.treeWidget.header().setResizeMode(2, QtGui.QHeaderView.Stretch)
         self.treeWidget.header().setResizeMode(3, QtGui.QHeaderView.ResizeToContents)
         self.treeWidget.header().setStretchLastSection(True)
 
@@ -131,64 +141,63 @@ class LabJournalTree(QtGui.QWidget, Ui_TestWidget):
             item = root.child(i)
             item.setHidden(False)
 
-    def filter_tree(self, filtertext=None):
+    def filter_tree(self, filtertext):
         """Filter treeWidget"""
-        if filtertext is None:
-            filtertext = self.lineEditFilter.text()
         if len(filtertext) != 0:
-            self.hide_tree_items()
-            # ADDME: iterate over all columns add matches together, use them
-            # list-of-QTreeWidgetItem QTreeWidget.findItems (self, QString, Qt.MatchFlags, int column = 0)
-            # Returns a list of items that match the given text, using the given flags, in the given column.
-            for item in self.treeWidget.findItems(filtertext,QtCore.Qt.MatchContains | QtCore.Qt.MatchRecursive):
-                item.setHidden(False)
+            self.hide_tree_items() # hide all times
+            for i in range(5): # number of columns
+                for item in self.treeWidget.findItems(filtertext,QtCore.Qt.MatchContains | QtCore.Qt.MatchRecursive, column=i):
+                    item.setHidden(False) # turn items on again if they match
         else:
             self.show_tree_items()
 
-    def create_MyTable(self, table=None):
-        """Function to create the Table"""
-        if not hasattr(self, 'MyTable_LabJournalIndex'):
-            log('Initialize MyTable_LabJournalIndex')
-            self.MyTable = QtGui.QTableWidget()
-            # get columns
-            col = self.DBAPI.get_header_formated()
-            if table is None: table = self.DBAPI.get_table_convert()
-
-            numcol = len(col)
-            self.MyTable.setColumnCount(numcol)
-            self.MyTable.setHorizontalHeaderLabels(col)  # set header
-        else:
-            numcol = self.MyTable.columnCount()
-
-        numrow = len(table)
-        self.MyTable.setRowCount(numrow)
-        self.MyTable.clear()
-
-        for r in range(numrow):
-            for c in range(numcol):
-                self.MyTable.setItem(r, c, QtGui.QTableWidgetItem(table[r][c]))
-
     def openMenu(self, position):
         """Function for rightclick on table entries"""
-        indexes = self.treeWidget.selectedIndexes()
-        level = -1
-        if len(indexes) > 0:
 
-            level = 0
-            index = indexes[0]
-            while index.parent().isValid():
-                index = index.parent()
-                level += 1
+        item = self.treeWidget.currentItem()
+        column = self.treeWidget.currentColumn()
+        if column in [2, 3, 4]:
+            menu = QtGui.QMenu()
+            # column dependent action
+            if column == 2:
+                action = menu.addAction(self.tr("edit tags"))
 
-        menu = QtGui.QMenu()
-        if level == 0:
-            menu.addAction(self.tr("Edit person"))
-        elif level == 1:
-            menu.addAction(self.tr("Edit object/container"))
-        elif level == 2:
-            menu.addAction(self.tr("Edit object"))
+            elif column == 3:
+                action = menu.addAction(self.tr("edit keywords"))
+            elif column == 4:
+                action = menu.addAction(self.tr("edit type"))
+                action.triggered.connect(partial(self.menu_change_type,
+                                                 item=item,
+                                                 column=column))
 
-        menu.exec_(self.treeWidget.viewport().mapToGlobal(position))
+            menu.exec_(self.treeWidget.viewport().mapToGlobal(position))
+        # HANDLE PARENTS AND CHILDS
+        # indexes = self.treeWidget.selectedIndexes()
+        # level = -1
+        # if len(indexes) > 0:
+        #
+        #     level = 0
+        #     index = indexes[0]
+        #     while index.parent().isValid():
+        #         index = index.parent()
+        #         level += 1
+        #
+        # menu = QtGui.QMenu()
+        # if level == 0:
+        #     menu.addAction(self.tr("Edit person"))
+        # elif level == 1:
+        #     menu.addAction(self.tr("Edit object/container"))
+        # elif level == 2:
+        #     menu.addAction(self.tr("Edit object"))
+        # menu.exec_(self.treeWidget.viewport().mapToGlobal(position))
+
+    def menu_change_type(self, item, column):
+        """pop up menu to change the type"""
+        text, ok = QtGui.QInputDialog.getText(self, 'set SIM type',
+                                              'enter the sim type:',
+                                              text=item.text(column))
+        if ok:
+            item.setText(column,text)
 
 
 if __name__ == '__main__':
