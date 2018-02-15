@@ -1,7 +1,3 @@
-"""
-Settings
-"""
-
 from PyQt4.QtCore import QSettings
 
 # ToDo: find a good organization / application name
@@ -9,7 +5,7 @@ from PyQt4.QtCore import QSettings
 settings = QSettings('foo', 'foo')
 
 settings.beginGroup('Database')
-settings.setValue('file', '')
+settings.setValue('file', '/home/micha/SIM-PhD-King/micha.db')
 settings.endGroup()
 
 settings.beginGroup('FileFinder')

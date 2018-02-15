@@ -118,7 +118,7 @@ def establish_session(db_address='sqlite:///:memory:'):
     # Establishing a session
     Session = sessionmaker(bind=engine)
     session = Session()
-    return engine, session
+    return session
 
 
 def setup_database(engine):

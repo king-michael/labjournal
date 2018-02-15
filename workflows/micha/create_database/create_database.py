@@ -71,8 +71,10 @@ try:
     logger.info('create_database:create_database: removed old file: %s', db)
 except:
     pass
-engine, session = establish_session('sqlite:///{}'.format(db))
-#engine, session = establish_session()
+engine = create_engine(db_address, echo=False) #  if we want spam
+# Establishing a session
+Session = sessionmaker(bind=engine)
+session = Session()
 setup_database(engine)
 for data in DATAS:
     sim = Simulation(
