@@ -175,7 +175,9 @@ class LabJournalTree(QtGui.QWidget, Ui_TestWidget):
         #       .toString -> str(int)
         id = item.data(0,QtCore.Qt.UserRole).toInt()[0] # returns tuple(int,bool) -> int = id
         if self.parent is not None:
-            self.parent.create_tab_labjournal(id)
+            self.parent.create_tab_labjournal(id,
+                                              sim_id=item.text(0),
+                                              sim_type=item.text(5))
 
     def hide_tree_items(self):
         """Hide all items in treeWidget"""

@@ -12,6 +12,15 @@ settings.beginGroup('Database')
 settings.setValue('file', '')
 settings.endGroup()
 
+settings.beginGroup('MediaWiki')
+settings.setValue('prefix', 'http://134.34.112.156:777/mediawiki/index.php/')
+settings.setValue('browser', 'browser') # how to open it [browser = defaultbrowser]
+settings.endGroup()
+
+settings.beginGroup('InfoEntry')
+settings.setValue('tags_max_col', 5) # number of tabs per column
+settings.endGroup()
+
 settings.beginGroup('FileFinder')
 settings.setValue('pattern', '_info_')
 settings.endGroup()

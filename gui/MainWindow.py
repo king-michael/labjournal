@@ -170,13 +170,15 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             layout = uselayout(parent)
         layout.addWidget(widget)
 
-    def create_tab_labjournal(self,ID):
+    def create_tab_labjournal(self,ID,sim_id=None, sim_type=None):
         """Open a new Tab for the LabJournal entry"""
 
-        name = self.DBAPI.df.loc[ID,'simid']
+        name = sim_id if sim_id is not None else "New Tab"
         tabID = self.tabWidget_create_tab(name)
-        widget = gui.tabs.InfoEntry.LAMMPS(ID=ID)
-            #widget = gui.tabs.InfoEntry(ID=ID, parent=self)
+        if sim_type == 'LAMMPS':
+            widget = gui.tabs.InfoEntry.LAMMPS(ID=ID,parent=self)
+        else:
+            widget = gui.tabs.InfoEntry.LAMMPS(ID=ID,parent=self)
 
         self.add_widget(widget, parent=self.tabs[tabID][0])
         self.tabWidget.setCurrentIndex(tabID+1) # +1 because 0 is maintab

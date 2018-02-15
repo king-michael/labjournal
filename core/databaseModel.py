@@ -65,7 +65,7 @@ class Simulation(Base):
 
 
     def __repr__(self):
-        return """{}(simid='{}', mediawiki='{}', path='{}')""".format(
+        return """{}(sim_id='{}', mediawiki='{}', path='{}')""".format(
             self.__class__.__name__,
             self.sim_id,
             self.mediawiki,
@@ -102,7 +102,7 @@ class Keywords(Base):
     #simid = relationship("Simulation", backref('keywords'))
 
     def __repr__(self):
-        return "{}(simid='{}', name='{}', value='{}')".format(
+        return "{}(main_id='{}', name='{}', value='{}')".format(
             self.__class__.__name__,
             self.main_id,
             self.name,

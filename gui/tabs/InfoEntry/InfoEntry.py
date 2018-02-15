@@ -24,7 +24,16 @@ from Ui_InfoEntry import Ui_Form
 root = "../../.."
 sys.path.insert(0,root)
 from core.Database import *
-from core.settings import settings
+from core.databaseModel import *
+
+import logging
+logger = logging.getLogger('LabJournal')
+logging.basicConfig(level=logging.DEBUG)
+from PyQt4.QtCore import QSettings
+
+# ToDo: find a good organization / application name
+# Todo: if added we can set the file path by ourself : https://stackoverflow.com/questions/4031838/qsettings-where-is-the-location-of-the-ini-file
+settings = QSettings('foo', 'foo')
 
 
 try:
@@ -49,14 +58,12 @@ class InfoEntry(QtGui.QWidget, Ui_Form):
         # set defaults
         self.parent = None
         self.ID=None
-        self.settings={
-            'mediawiki' : {  # MediaWiki settings
-                'prefix'  : "http://134.34.112.156:777/mediawiki/index.php/",  # prefix
-                'browser' : 'browser',  # how to open it [browser = defaultbrowser]
-            },  # MediaWiki settings
-            'tags_max_col' : 5
-        }
-        self.settings['mediawiki'].update(settings['mediawiki'])
+
+        self.mediawiki_prefix = settings.value("MediaWiki/prefix",
+                                                'http://134.34.112.156:777/mediawiki/index.php/').toString()
+        self.browser = settings.value("MediaWiki/browser", 'browser')   # how to open it [browser = defaultbrowser]
+        self.tags_max_col = settings.value("InfoEntry/tags_max_col", 5).toInt()[0]
+
         # assign kwargs
         for k,v in kwargs.iteritems():
             setattr(self,k,v)
@@ -64,11 +71,8 @@ class InfoEntry(QtGui.QWidget, Ui_Form):
         # Set up the user interface from Designer.
         self.setupUi(self)
 
-        try:
-            self.DBAPI = self.parent.DBAPI
-        except:
-            log.info("Parents Don't have a database, use own")
-            self.DBAPI = simpleAPI()
+        logger.warn("WARNING: HARD CODED  default DATABASE in InfoEntry.py")
+        self.db = settings.value('Database/file', '/home/micha/SIM-PhD-King/micha.db').toString()
 
         if self.ID is not None:
             self.get_generalInfo()
@@ -77,25 +81,25 @@ class InfoEntry(QtGui.QWidget, Ui_Form):
 
     def get_generalInfo(self):
         """get the generalInfo
-        and setup a few variables:
-        self.list_generalInfo : stores the informations
-            self.list_generalInfo=zip(header, entry)
-            header, entry = zip(*self.list_generalInfo)
-
-        self.MEDIAWIKI_ID : MEDIAWIKI_ID
-
         """
-        header, entry = self.DBAPI.get_entry(self.ID, header='formated')
-        self.list_generalInfo=zip(header, entry)
-        adict=dict(self.list_generalInfo)
 
-        self.MEDIAWIKI_ID= adict['mediawiki'] # get MediaWiki ID
-        self.path = adict['path']
-        self.tags = adict['tags'].split(",")
 
-        if len(self.tags) ==1 and len(self.tags[0]) == 0:
-            self.tags = [] # remove and empty list
+        session = establish_session('sqlite:///{}'.format(self.db))
 
+        self.sim = session.query(Simulation).filter(Simulation.id == self.ID).one()
+        self.list_generalInfo = [
+            ['SimID', self.sim.sim_id],
+            ['MediaWiki', self.sim.mediawiki],
+            ['Path', self.sim.path],
+            ['Description', self.sim.description],
+        ]
+
+        self.MEDIAWIKI_ID= self.sim.mediawiki # get MediaWiki ID
+        self.path = self.sim.path
+        self.sim_tags = self.sim.keywords.filter( Keywords.value.is_(None) ).all()
+        self.sim_keywords = self.sim.keywords.filter( not_( Keywords.value.is_(None) ) ).all()
+        self.tags = [ key.name for key in self.sim_tags ]
+        session.close()
 
     def create_tag_symbol(self,text):
         """add a tag symbol"""
@@ -131,11 +135,22 @@ class InfoEntry(QtGui.QWidget, Ui_Form):
         """
         # ToDo: Central Function, store somewhere else!
         if ID is None: ID = self.ID
-        self.tags.append(tag)
-        print("DEBUG: Added tag: {} to ID: {}".format(tag,ID))
-        tag_string=",".join(self.tags)
-        print("DEBUG: tag_string: {}".format(tag_string))
-        self.DBAPI.df.loc[ID, 'tags']=tag_string
+        # PUSH
+        logger.warn("PUSH change to DB")
+        session = establish_session('sqlite:///{}'.format(self.db))
+        sim = session.query(Simulation).filter(Simulation.id == self.ID).one()
+        print(sim)
+        sim.keywords.append(
+            Keywords(
+                main_id=sim.sim_id,
+                name=tag,
+                value=None,
+            )
+        )
+        session.commit()
+        self.sim_tags = sim.keywords.filter(Keywords.value.is_(None)).all()
+        self.tags = [key.name for key in self.sim_tags]
+        session.close()
         if self.parent is not None:
             self.parent.MyWidget_LabJournalIndex.build_tree()
 
@@ -168,8 +183,8 @@ class InfoEntry(QtGui.QWidget, Ui_Form):
         # add tag symbols
         for i in range(num_tags):
             # i+1 ; because of the added + sign
-            row = (i+1) / self.settings['tags_max_col']
-            col = (i+1) % self.settings['tags_max_col']
+            row = (i+1) / self.tags_max_col
+            col = (i+1) % self.tags_max_col
             tag = self.tags[i]
             layout.addWidget(self.create_tag_symbol(tag), row, col)  # add Label to Widget
 
@@ -188,8 +203,7 @@ class InfoEntry(QtGui.QWidget, Ui_Form):
 
         # setup Labels
         dict_generalInfo_labels={}
-        header=list(header)
-        header.remove('tags')
+
 
         for i in range(len(header)):
             key = header[i]  # get the key
@@ -233,8 +247,8 @@ class InfoEntry(QtGui.QWidget, Ui_Form):
         """Event open MediaWiki
         Opens the MediaWiki Entry
         """
-        link=self.settings['mediawiki']['prefix']+str(self.MEDIAWIKI_ID)
-        if self.settings['mediawiki']['browser'] == 'app':
+        link=self.mediawiki_prefix+str(self.MEDIAWIKI_ID)
+        if self.browser == 'app':
             pass
 
         else:
