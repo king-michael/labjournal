@@ -11,8 +11,9 @@ from datetime import datetime
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy import not_
+from sqlalchemy import not_, and_
 from sqlalchemy import Table
+from sqlalchemy import exists
 # Base class
 Base = declarative_base()
 
@@ -35,9 +36,10 @@ class Simulation(Base):
 
     id = Column(Integer(), primary_key=True, index=True)
     sim_id =  Column(String(50), unique=True, index=True) # should be discussed
-    mediawiki = Column(String(255))
+    mediawiki = Column(String(255), nullable=True)
     path = Column(String(255))
-    sim_type = Column(String(20))
+    sim_type = Column(String(20), nullable=True)
+    description = Column(String(1023), nullable=True) # maybe longer in the future
     updated_on = Column(DateTime(), default=datetime.now, onupdate=datetime.now)
     children = relationship('Association',
                             back_populates="parent",
@@ -116,10 +118,10 @@ def establish_session(db_address='sqlite:///:memory:'):
     # Establishing a session
     Session = sessionmaker(bind=engine)
     session = Session()
-    return session
+    return engine, session
 
 
-def setup_database():
+def setup_database(engine):
     """function to create the database"""
     # create Tables
     Base.metadata.create_all(engine)

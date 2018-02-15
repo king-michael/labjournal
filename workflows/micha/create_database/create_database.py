@@ -21,21 +21,36 @@ fileFinder = FileFinder(
 SIM_IDS=[]
 PATHS=[]
 DATAS=[]
-print "FIND FILES"
+
+logger.info('create_database:create_database: FIND FILES')
+ERRORS=False
+WARNINGS=False
 for fname in fileFinder.find_files():
     data = fileHandler.get_data_from_file(fname)
     data['path']=os.path.dirname(fname)
+
     try:
-        SIM_IDS.append(data['ID'])
-        data['MEDIAWIKI']
-        DATAS.append(data)
-        PATHS.append(fname)
+        SIM_IDS.append(data['ID']) # throws an ERROR if ID not in data
     except:
-        print fname
-        print data
+        print "ERROR: ID:\n ", fname # shows the FILE if an error is thrown
+        ERRORS = True
 
+    try:
+        data['MEDIAWIKI']  # throws an ERROR if MEDIAWIKI not in data
+    except:
+        print "WARNING: NO MEDIAWIKI ENTRY:\n ", fname
+        WARNINGS = True
 
-print "CHECK FOR DUPLICATES IN sim_id"
+    DATAS.append(data)  # only append if the first two cases are passed
+    PATHS.append(fname)  # only append if the first two cases are passed
+
+if ERRORS:
+    exit()
+if WARNINGS:
+    exit()
+
+logger.info('create_database:create_database: CHECK FOR DUPLICATES IN sim_id')
+
 from collections import Counter
 sim_count=Counter(SIM_IDS)
 DUPLICATES=False
@@ -48,10 +63,12 @@ for k,v in sim_count.iteritems():
                 print sim,path
 if DUPLICATES:
     exit()
-print "Create the Database"
-db = 'test_micha.db'
+
+logger.info('create_database:create_database: Create the Database')
+db = 'micha_raw.db'
 try:
     os.remove(db)
+    logger.info('create_database:create_database: removed old file: %s', db)
 except:
     pass
 engine, session = establish_session('sqlite:///{}'.format(db))
@@ -67,3 +84,4 @@ for data in DATAS:
     session.add(sim)
 session.commit()
 session.close()
+logger.info('create_database:create_database: Created the database: %s', db)

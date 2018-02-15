@@ -28,6 +28,7 @@ class FileFinder():
     def __init__(self,
                  pattern = None, # pattern to be found
                  path='.', # root path
+                 dir_ignore=[]
                  ):
         """
         finds all files matching the pattern from root
@@ -36,14 +37,15 @@ class FileFinder():
         """
 
         if pattern is None:
-
             pattern=str(settings.value("FileFinder/pattern", '_info_').toString())
         self.pattern=pattern
         self.path = path
+        self.dir_ignore=dir_ignore
         logger.info('FileFinder: pattern: %s', self.pattern)
         logger.info('FileFinder: path: %s', os.path.realpath(self.path))
+        logger.info('FileFinder: dir_ignore: %s', dir_ignore)
 
-    def find_files(self,pattern=None,path=None):
+    def find_files(self,pattern=None,path=None,dir_ignore=None):
         """
         Find files matching pattern in the folder and subfolders of root
         :param pattern:
@@ -54,9 +56,19 @@ class FileFinder():
             pattern=self.pattern
         if path is None:
             path = self.path
+        if dir_ignore is None:
+            dir_ignore = self.dir_ignore
+        exclude = set(dir_ignore)
         # Get files
-        files = []
-        for dir,_,_ in os.walk(path):
-            files.extend(glob(os.path.join(dir,pattern)))
-        return files
+        output = []
+        for root, dirs, files in os.walk(path, topdown=True):
+            #dirs[:] = [d for d in dirs if d not in exclude]
+            [dirs.remove(d) for d in list(dirs) for ex in exclude if d.startswith(ex)]
+            # flag_ignore=False
+            # for ignore in dir_ignore:
+            #     if os.path.basename(dir).startswith(ignore):
+            #         flag_ignore=True
+            # if not flag_ignore:
+            output.extend(glob(os.path.join(root,pattern)))
+        return output
 
