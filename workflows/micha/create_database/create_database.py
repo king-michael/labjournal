@@ -71,7 +71,7 @@ try:
     logger.info('create_database:create_database: removed old file: %s', db)
 except:
     pass
-engine = create_engine(db_address, echo=False) #  if we want spam
+engine = create_engine('sqlite:///{}'.format(db) , echo=False) #  if we want spam
 # Establishing a session
 Session = sessionmaker(bind=engine)
 session = Session()
@@ -81,7 +81,7 @@ for data in DATAS:
        sim_id=data['ID'],
        mediawiki=data['MEDIAWIKI'],
        path=data['path'],
-       description=data['INFO'] if 'INFO' in data.keys() else None
+       description=data['INFO'] if 'INFO' in data.keys() else ""
     )
     session.add(sim)
 session.commit()

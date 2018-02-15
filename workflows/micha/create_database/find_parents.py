@@ -19,7 +19,7 @@ from shutil import copy2
 logger.info('create_database:find_parents: copy %s --> %s', db_raw, db)
 copy2(db_raw,db)
 
-engine, session = establish_session('sqlite:///{}'.format(db))
+session = establish_session('sqlite:///{}'.format(db))
 
 rv = session.query(Simulation.sim_id).all()
 

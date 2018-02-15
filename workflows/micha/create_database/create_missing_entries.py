@@ -17,7 +17,7 @@ from shutil import copy2
 logger.info('create_database:create_missing_entries: copy %s --> %s', db_raw, db)
 copy2(db_raw,db)
 
-engine, session = establish_session('sqlite:///{}'.format(db))
+session = establish_session('sqlite:///{}'.format(db))
 
 rv = session.query(Simulation.sim_id).all()
 
@@ -37,7 +37,8 @@ for sim_id in SIM_ID_MAIN_ALL:
            sim_id=sim_id,
            mediawiki=sim_id,
            path='',
-           description="MISSING ENTRY",
+           description='',
+           sim_type="MISSING ENTRY",
         )
         session.add(sim)
 session.commit()
