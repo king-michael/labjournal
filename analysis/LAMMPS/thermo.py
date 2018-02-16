@@ -8,7 +8,7 @@ import numpy as np
 
 # Begin import my libs
 sys.path.insert(0,'../..')
-from core.settings import settings
+from core.settings_OLD import settings
 from core.logger import Logger
 log=Logger()
 from utils.regexHandler import reglob

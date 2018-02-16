@@ -10,7 +10,7 @@ from sqlalchemy import create_engine
 
 #BEGIN IMPORT MINE
 from logger import * # get all utils
-from settings import settings
+from settings_OLD import settings
 #END IMPORT MINE
 
 log=Logger()

@@ -59,6 +59,14 @@ class LabJournalTree(QtGui.QWidget, Ui_TestWidget):
         # Set up the user interface from Designer.
         self.setupUi(self)
 
+        if parent is not None:
+            self.db = self.parent.db
+        else:
+            self.db = settings.value('Database/file', '/home/micha/SIM-PhD-King/micha.db').toString()
+
+        # childmode: True if entries should have children, False if everything should be plain
+        self.childmode=True
+
         # Build the tree
         self.build_tree()
         # create ContextMenu
@@ -117,7 +125,7 @@ class LabJournalTree(QtGui.QWidget, Ui_TestWidget):
                 self.add_children2parent(sim_child.child, child)
         return child
 
-    def build_tree(self,childmode=True):
+    def build_tree(self):
         """Function to create the tree"""
         # Create TableHeader
         columnheader = ['SimID', 'MediaWiki','description', 'tags', 'keywords', 'type']
@@ -125,11 +133,10 @@ class LabJournalTree(QtGui.QWidget, Ui_TestWidget):
             self.treeWidget.headerItem().setText(i, header)
             self.treeWidget.clear()
 
-        db = settings.value('Database/file', '/home/micha/SIM-PhD-King/micha.db').toString()
-        logger.warn("WARNING: HARD CODED  default DATABASE in LabJournalTree.py")
-        session = establish_session('sqlite:///{}'.format(db))
-        logger.info("connect to database: {}".format(db))
-        if childmode:
+        session = establish_session('sqlite:///{}'.format(self.db))
+        logger.info("connect to database: {}".format(self.db))
+
+        if self.childmode: # if my simulation can have childs
             parents  = session.query(Simulation).filter(not_(Simulation.parents.any())).all()
             #children = session.query(Simulation).filter(Simulation.parents.any()).all()
             # Fill the table #FIXME: do it with a database handler
@@ -139,7 +146,7 @@ class LabJournalTree(QtGui.QWidget, Ui_TestWidget):
                 self.add_children2parent(sim,parent)
             self.treeWidget.expandAll() # expand by default
 
-        else:
+        else: # if everything should be plane
             rv = session.query(Simulation).all()
             # Fill the table #FIXME: do it with a database handler
             for row_number, sim in enumerate(rv):

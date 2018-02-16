@@ -15,7 +15,7 @@ except: # so we can use it as module and right as script...
 
 from WidgetThermo import WidgetThermo
 from utils.regexHandler import reglob
-from core.settings import settings
+from core.settings_OLD import settings
 
 try:
     _fromUtf8 = QtCore.QString.fromUtf8

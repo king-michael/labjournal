@@ -20,7 +20,7 @@ from functools import partial
 from copy import deepcopy
 root = '../../../../'  # path to root dir
 sys.path.insert(0,root)  # append root dir
-from core.settings import settings
+from core.settings_OLD import settings
 
 from PyQt4 import QtGui, QtCore
 from gui.MyQt import CheckableComboBox

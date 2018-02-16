@@ -18,19 +18,30 @@ Infos:
         self.tabWidget.setCurrentWidget(tab)  # sets index of a current Tab
     Variables:
         self.tabWidget.indexOf(tab)  # index of a tab
+
+Todo:
+    - implement closeEvent(self, event):
+        with writeSettings()
+        http://www.qtcentre.org/threads/20895-PyQt4-Want-to-connect-a-window-s-close-button
+        https://doc.qt.io/archives/qt-4.8/qwidget.html#closeEvent
 """
 
-from __future__ import print_function
+__author__ = ["Michael King"]
+__date__ = "29.09.2017"
+
+# BEGIN Import System Packages
 import sys
-from PyQt4 import QtCore
+import logging
+from PyQt4 import QtGui
+from PyQt4.QtCore import QSettings
+
+logger = logging.getLogger('LabJournal')
+logging.basicConfig(level=logging.DEBUG)
+
+settings = QSettings('foo', 'foo')
 
 # END Import System Packages
 
-try:
-    _fromUtf8 = QtCore.QString.fromUtf8
-except AttributeError:
-    def _fromUtf8(s):
-        return s
 
 # BEGIN Import GuiApplications
 from Ui_MainWindow import *
@@ -39,38 +50,11 @@ import gui.tabs
 # my modules
 sys.path.append('..')
 from core import *
-from core.logger import Logger
+settings = QSettings('foo', 'foo')
 
-__author__              = ["Michael King"]
-__date__                = "29.09.2017"
-
-
-# Text Handling
-try:
-    _fromUtf8 = QtCore.QString.fromUtf8
-except AttributeError:
-    def _fromUtf8(s):
-        return s
-
-try:
-    _encoding = QtGui.QApplication.UnicodeUTF8
-    def _translate(context, text, disambig):
-        return QtGui.QApplication.translate(context, text, disambig, _encoding)
-except AttributeError:
-    def _translate(context, text, disambig):
-        return QtGui.QApplication.translate(context, text, disambig)
-
-
-# BEGIN TESTS
-log = Logger()
-
-dic_modes = {
-    'LAMMPS' : "LAMMPS"
-}
-
-class main():
+class Main:
     def __init__(self, state=True):
-        '''MainClass'''
+        """MainClass"""
         if state:
             self.start_app()
             self.start_window()
@@ -106,43 +90,75 @@ class main():
 # class GuiMainWindow
 #=============================================================================#
 
+
 class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
     def __init__(self, parent=None):
         QtGui.QMainWindow.__init__(self, parent)
-        self.setupUi(self)  # where to display
-
-        self.DBAPI = simpleAPI()
-
+        self.setupUi(self)    # where to display
+        self._init_menubar()  # create the Menubar
+        self.readSettings()   # Loads the settings
         """TabWidget"""
+
         # make the first bar uncloseable
         self.tabWidget.tabBar().setTabButton(0, QtGui.QTabBar.RightSide, None)
         # register close action
         self.tabWidget.tabCloseRequested.connect(self.tabWidget_close_tab)
 
-        """Register the GUiWidgetLabjournalTree in MyTabLabJournalIndex"""
-        self.MyWidget_LabJournalIndex = gui.tabs.LabJournalTree(parent=self)
-        self.add_widget(self.MyWidget_LabJournalIndex, parent=self.MyTabLabJournalIndex)
 
-        """register_actions"""
-        # Buttons
-        #self.btn_cal.clicked.connect(self.create_editor)
-        #self.btn_clear.clicked.connect(self.clear_frameTEST)
-        #self.btn_mine.clicked.connect(self.on_btn_search_clicked)
+        self.connect_database()  # Connect to a database, if there is one
 
-        # MySearch
-        self.MySearch_lineEdit.returnPressed.connect(self.search_resolve)
-        self.MySearch_pushButton.clicked.connect(self.search_resolve)
 
-        self.pushButton_3.setText("Save db -> SQL (tmp.db)")
-        self.pushButton_3.clicked.connect(self.DBAPI.save_sql)
 
+    def _init_menubar(self):
+        """Init function to create the Mainmenu"""
+        # get the menuBar
+        mainMenu = self.menuBar()
+        # create a entry
+        databaseMenu = mainMenu.addMenu('&Database')
+        # create an action
+        extractAction = QtGui.QAction("&Set Datbase", self)
+        extractAction.setShortcut('Ctrl+O')
+        extractAction.setStatusTip('Set database')
+        extractAction.triggered.connect(self.open_database)
+        # add the action to fileMenu
+        databaseMenu.addAction(extractAction)
+
+    def open_database(self):
+        """Dialog to select a database"""
+        self.db = QtGui.QFileDialog.getOpenFileName(self, 'Select a Database')
+        settings.setValue('Database/file', self.db)
+        self.connect_database()
+
+    def connect_database(self):
+        """Function to connect to the Database and create LabJournalIndex"""
+        if os.path.exists(self.db):  # if the database exists
+            if hasattr(self,'MyWidget_LabJournalIndex'): # if we are allready connected
+                self.MyWidget_LabJournalIndex.deleteLater()  # send close command
+            self.MyWidget_LabJournalIndex = gui.tabs.LabJournalTree(parent=self)
+            self.add_widget(self.MyWidget_LabJournalIndex, parent=self.MyTabLabJournalIndex)
+            # Connect my Search
+            self.MySearch_lineEdit.returnPressed.connect(self.search_resolve)
+            self.MySearch_pushButton.clicked.connect(self.search_resolve)
+        elif not hasattr(self, 'MyWidget_LabJournalIndex'):  # if we are allready connected
+            self.MyWidget_LabJournalIndex = QtGui.QPushButton('Select a Database')     # create a pushButton
+            self.MyWidget_LabJournalIndex.clicked.connect(self.open_database)          # connect the pushButton to event                   # add
+            self.add_widget(self.MyWidget_LabJournalIndex, parent=self.MyTabLabJournalIndex)
+
+    def readSettings(self):
+        """Read the Settings"""
+        self.db = settings.value('Database/file').toString()
+
+
+    def writeSettings(self):
+        """Tobe Implemented"""
+        pass
 
     @QtCore.pyqtSlot()
     def on_btn_search_clicked(self):
         print(self.lineEditSide.text())
 
     def clear_layout(self, layout):
-        '''Deletes layouts to clean up'''
+        """Deletes layouts to clean up"""
         if layout is not None:
             while layout.count():
                 item = layout.takeAt(0)
@@ -153,17 +169,17 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                     self.clear_layout(item.layout())
 
     def search_resolve(self):
-        '''Activate when Press enter in Search bar or hit button Search'''
+        """Activate when Press enter in Search bar or hit button Search"""
         filtertext = self.MySearch_lineEdit.text()
         self.MyWidget_LabJournalIndex.lineEditFilter.setText(filtertext)
 
     def add_widget(self, widget, parent=None, uselayout=QtGui.QGridLayout):
-        '''Wrapper to add a widget
+        """Wrapper to add a widget
         add_widget(widget,parent=None,uselayout=QtGui.QGridLayout)
         widget : widget i want to add
         parent : in which parent i want to add it
         uselayout : if the parent doesnt have a layout apply the following
-        '''
+        """
         if parent is None: parent = self
         layout = parent.layout()
         if layout is None:
@@ -227,7 +243,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
 if __name__ == '__main__':
     if not 'GUI' in locals():
-        GUI = main(False)  # fix to use in notebook
+        GUI = Main(False)  # fix to use in notebook
         app = GUI.start_app()
         window = GUI.start_window()
         GUI.show_gui()
