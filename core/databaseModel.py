@@ -99,7 +99,7 @@ class Keywords(Base):
     name  =  Column(String(255), index=True)
     value =  Column(String(255), nullable=True)
 
-    #simid = relationship("Simulation", backref('keywords'))
+    #sim = relationship("Simulation", backref('keywords'))
 
     def __repr__(self):
         return "{}(main_id='{}', name='{}', value='{}')".format(

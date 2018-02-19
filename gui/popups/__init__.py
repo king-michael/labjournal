@@ -1,0 +1,1 @@
+from DialogNewEntry import *

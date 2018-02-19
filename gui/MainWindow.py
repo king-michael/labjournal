@@ -46,6 +46,7 @@ settings = QSettings('foo', 'foo')
 # BEGIN Import GuiApplications
 from Ui_MainWindow import *
 import gui.tabs
+import popups
 # END Import GuiApplications
 # my modules
 sys.path.append('..')
@@ -115,18 +116,31 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         mainMenu = self.menuBar()
         # create a entry
         databaseMenu = mainMenu.addMenu('&Database')
-        # create an action
-        extractAction = QtGui.QAction("&Set Datbase", self)
-        extractAction.setShortcut('Ctrl+O')
-        extractAction.setStatusTip('Set database')
-        extractAction.triggered.connect(self.open_database)
-        # add the action to fileMenu
-        databaseMenu.addAction(extractAction)
+        # create an action (set Database)
+        extractAction = QtGui.QAction("&Set Database", self)  # Create a new Action
+        extractAction.setShortcut('Ctrl+O')                  # set Shortcut
+        extractAction.setStatusTip('Set database')           # set the StatusTip
+        extractAction.triggered.connect(self.open_database)  # connect it to an function
+        databaseMenu.addAction(extractAction)                # add the action to fileMenu
+        # create an action (create new Database)
+        extractAction = QtGui.QAction("&Create New Datbase", self)  # Create a new Action
+        extractAction.setShortcut('Ctrl+Shift+N')  # set Shortcut
+        extractAction.setStatusTip('Create a new database')  # set the StatusTip
+        extractAction.triggered.connect(self.create_new_database)  # connect it to an function
+        databaseMenu.addAction(extractAction)  # add the action to fileMenu
 
     def open_database(self):
         """Dialog to select a database"""
         self.db = QtGui.QFileDialog.getOpenFileName(self, 'Select a Database')
         settings.setValue('Database/file', self.db)
+        self.connect_database()
+
+    def create_new_database(self):
+        """Create an empty database"""
+        self.db = QtGui.QFileDialog.getSaveFileName(self, 'Select a Database')
+        settings.setValue('Database/file', self.db)
+        engine = databaseModel.create_engine('sqlite:///{}'.format(self.db))  # if we want spam
+        databaseModel.Base.metadata.create_all(engine)
         self.connect_database()
 
     def connect_database(self):
@@ -139,10 +153,21 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             # Connect my Search
             self.MySearch_lineEdit.returnPressed.connect(self.search_resolve)
             self.MySearch_pushButton.clicked.connect(self.search_resolve)
+            self.pushButton_createNew.clicked.connect(self.create_new_entry)
         elif not hasattr(self, 'MyWidget_LabJournalIndex'):  # if we are allready connected
             self.MyWidget_LabJournalIndex = QtGui.QPushButton('Select a Database')     # create a pushButton
             self.MyWidget_LabJournalIndex.clicked.connect(self.open_database)          # connect the pushButton to event                   # add
             self.add_widget(self.MyWidget_LabJournalIndex, parent=self.MyTabLabJournalIndex)
+
+    def create_new_entry(self):
+        """Create a new Database entry"""
+        sim, result = popups.DialogNewEntry.getEntry()
+        if result:
+            session = databaseModel.establish_session('sqlite:///{}'.format(self.db))
+            session.add(sim)
+            session.commit()
+            session.close()
+            self.MyWidget_LabJournalIndex.build_tree()
 
     def readSettings(self):
         """Read the Settings"""
