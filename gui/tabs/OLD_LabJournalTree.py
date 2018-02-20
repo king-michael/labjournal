@@ -21,7 +21,7 @@ from Ui_LabJournalTree import Ui_Form as Ui_TestWidget
 
 sys.path.append("..")
 from core.Database import *
-from core.logger import *
+from core.OLD_logger import *
 # BEGIN TESTS
 log=Logger()
 
@@ -113,7 +113,7 @@ class LabJournalTree(QtGui.QWidget, Ui_TestWidget):
         #print(item.)
         log.debug("Clicked id : {}".format(id))
         if self.parent is not None:
-            self.parent.create_tab_labjournal(id)
+            self.parent.labjournal_createTab(id)
 
     def hide_tree_items(self):
         """Hide all items in treeWidget"""

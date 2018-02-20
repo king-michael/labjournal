@@ -9,8 +9,6 @@ import numpy as np
 # Begin import my libs
 sys.path.insert(0,'../..')
 from core.settings_OLD import settings
-from core.logger import Logger
-log=Logger()
 from utils.regexHandler import reglob
 from external_libs.pizza.log import log as PizzaLog
 # End import my libs
@@ -121,7 +119,7 @@ Module to run analysis of logfiles
                 self.extract_single(keyword)
         else:  # POSSIBLE BUG HERE IN FUTURE IF THERE COMES A QString or sth like this
             if keywords in self.possible_keywords:
-                log.debug("Extract: {} {} from {}".format(self.xlabel, keywords, self.logfile), lvl=1)
+                #log.debug("Extract: {} {} from {}".format(self.xlabel, keywords, self.logfile), lvl=1)
                 data = np.array(self.lg.get(self.xlabel, keywords)).T
                 # Save location
                 SAVETO = os.path.join(self.path_to_save, "{}_{}".format(self.xlabel, keywords))
@@ -135,9 +133,9 @@ Module to run analysis of logfiles
                 else:  # saves as datafile
                     np.savetxt(SAVETO + ".dat", data,
                                header=self.xlabel + " " + keywords)
-                log.debug("Saved to: {}.{}".format(SAVETO, mode))
+                #log.debug("Saved to: {}.{}".format(SAVETO, mode))
             else:
-                log("Keyword [ {} ] not in file: {}\n use: {}".format(keywords, self.logfile, self.possible_keywords))
+                print("Keyword [ {} ] not in file: {}\n use: {}".format(keywords, self.logfile, self.possible_keywords))
 
     def extract_all(self, keywords=None, mode='dat'):
         """Extract all keywords in one file
@@ -151,7 +149,7 @@ Module to run analysis of logfiles
             keywords = self.list_keywords
 
         data = np.array(self.lg.get(self.xlabel, *keywords)).T  # get data
-        log.debug("Extract: {} from {}".format([self.xlabel] + keywords, self.logfile), lvl=1)
+        #log.debug("Extract: {} from {}".format([self.xlabel] + keywords, self.logfile), lvl=1)
         # Save location
         SAVETO = os.path.join(self.path_to_save, "{}_all".format(self.xlabel))
         if not os.path.exists(self.path_to_save):
@@ -165,4 +163,4 @@ Module to run analysis of logfiles
         else:  # saves as datafile
             np.savetxt(SAVETO + ".dat".format(self.xlabel), data,
                        header=self.xlabel.join([" " + i for i in keywords]))
-        log.debug("Saved to: {}.{}".format(SAVETO, mode))
+        #log.debug("Saved to: {}.{}".format(SAVETO, mode))

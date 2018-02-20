@@ -9,11 +9,9 @@ from sqlalchemy import create_engine
 
 
 #BEGIN IMPORT MINE
-from logger import * # get all utils
 from settings_OLD import settings
 #END IMPORT MINE
 
-log=Logger()
 
 class simpleAPI():
     def __init__(self,**kwargs):
@@ -38,7 +36,7 @@ class simpleAPI():
         self.save_sql_TableMain()
         #self.save_sql_TableKeywords()
         # etc
-        log.info("Saved Database")
+
 
     def save_sql_TableMain(self,db=None):
         """Save table Main"""

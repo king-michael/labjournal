@@ -13,7 +13,6 @@
 #   -
 """
 
-from __future__ import print_function
 from PyQt4 import QtCore, QtGui
 import sys
 
@@ -182,9 +181,9 @@ class LabJournalTree(QtGui.QWidget, Ui_TestWidget):
         #       .toString -> str(int)
         id = item.data(0,QtCore.Qt.UserRole).toInt()[0] # returns tuple(int,bool) -> int = id
         if self.parent is not None:
-            self.parent.create_tab_labjournal(id,
-                                              sim_id=item.text(0),
-                                              sim_type=item.text(5))
+            self.parent.labjournal_createTab(id,
+                                             sim_id=item.text(0),
+                                             sim_type=item.text(5))
 
     def hide_tree_items(self):
         """Hide all items in treeWidget"""
@@ -260,6 +259,11 @@ class LabJournalTree(QtGui.QWidget, Ui_TestWidget):
         if ok:
             item.setText(column,text)
 
+    def sideMenu_addContent(self,parent):
+        """Creates Content in the sideMenu"""
+        btn = QtGui.QPushButton("Create New Entry")  # create a pushButton for a new database Entry
+        btn.clicked.connect(parent.database_createNewEntry)  # connect it to the event
+        parent.layout_sideMenu.addWidget(btn)  # add the pushButton to the sideMenu
 
 if __name__ == '__main__':
     app = QtGui.QApplication(sys.argv)

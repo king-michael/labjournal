@@ -8,7 +8,7 @@ sys.path.append("..")
 from utils import pushd
 # Import Test library
 import analysis.LAMMPS
-from core.logger import log
+from core.OLD_logger import log
 from analysis.LAMMPS.lmp_utils import estimate_pattern_startstructure
 
 #=========================================================#

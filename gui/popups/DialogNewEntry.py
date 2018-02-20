@@ -1,5 +1,8 @@
 """
 Dialog Window to create a new Database Entry
+
+Todo:
+  - add entries to QStringList dynamically
 """
 
 import sys
@@ -17,6 +20,13 @@ class DialogNewEntry(QtGui.QDialog,Ui_Dialog):
     def __init__(self, parent = None):
         super(DialogNewEntry, self).__init__(parent)
         self.setupUi(self)
+
+        # add a word completer to lineEdit_simtype
+        sim_type_list=QtCore.QStringList(['LAMMPS', 'PYTHON'])
+        sim_type_completer = QtGui.QCompleter(sim_type_list)
+        sim_type_completer.setCaseSensitivity(QtCore.Qt.CaseInsensitive)
+        self.lineEdit_simtype.setCompleter(sim_type_completer)
+
         self.buttonBox.accepted.connect(self.accept)
         self.buttonBox.rejected.connect(self.reject)
         self.show()

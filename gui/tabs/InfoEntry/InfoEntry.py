@@ -35,22 +35,6 @@ from PyQt4.QtCore import QSettings
 # Todo: if added we can set the file path by ourself : https://stackoverflow.com/questions/4031838/qsettings-where-is-the-location-of-the-ini-file
 settings = QSettings('foo', 'foo')
 
-
-try:
-    _fromUtf8 = QtCore.QString.fromUtf8
-except AttributeError:
-    def _fromUtf8(s):
-        return s
-
-try:
-    _encoding = QtGui.QApplication.UnicodeUTF8
-    def _translate(context, text, disambig):
-        return QtGui.QApplication.translate(context, text, disambig, _encoding)
-except AttributeError:
-    def _translate(context, text, disambig):
-        return QtGui.QApplication.translate(context, text, disambig)
-
-
 class InfoEntry(QtGui.QWidget, Ui_Form):
     def __init__(self,**kwargs):
         #super(self.__class__, self).__init__() # Note: self.__class__ will get recursion depth error
@@ -68,11 +52,9 @@ class InfoEntry(QtGui.QWidget, Ui_Form):
         for k,v in kwargs.iteritems():
             setattr(self,k,v)
 
+        self.db = self.parent.db if self.parent is not None else settings.value('Database/file').toString()
         # Set up the user interface from Designer.
         self.setupUi(self)
-
-        logger.warn("WARNING: HARD CODED  default DATABASE in InfoEntry.py")
-        self.db = settings.value('Database/file', '/home/micha/SIM-PhD-King/micha.db').toString()
 
         if self.ID is not None:
             self.get_generalInfo()
@@ -210,7 +192,7 @@ class InfoEntry(QtGui.QWidget, Ui_Form):
             value = entry[i]  # get the value
             if key == 'simid': key='ID'  # change simid to ID
             label_key = QtGui.QLabel()  # create new Label
-            label_key.setText(_fromUtf8(key))  # _translate("Form", "General Informations", None)
+            label_key.setText(key)  # _translate("Form", "General Informations", None)
             layout.addWidget(label_key,i,0)  # add Label to Widget
 
             spacer = QtGui.QLabel()  # create new Label
@@ -312,7 +294,8 @@ def valid_tag(tag):
 
 if __name__ == '__main__':
     app = QtGui.QApplication(sys.argv)
-    window = InfoEntry(ID=2)
+    window = InfoEntry(ID=2,
+                       db="/home/micha/SIM-PhD-King/micha.db")
 
     try:
         import qdarkstyle  # style

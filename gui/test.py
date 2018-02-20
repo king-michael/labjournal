@@ -17,7 +17,7 @@ from gui.tabs.InfoEntry.LAMMPS.WidgetThermo import WidgetThermo
 # my modules
 sys.path.append('..')
 from core import *
-from core.logger import Logger
+from core.OLD_logger import Logger
 
 __author__              = ["Michael King"]
 __date__                = "29.09.2017"
