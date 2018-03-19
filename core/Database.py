@@ -106,9 +106,9 @@ class DatabaseHandler():
         '''Class to manage the Database'''
 
         self.defaults = {
-            'db': 'tmp.db',  # Database to use
-            'db_backup': True,  # should i backup the database.db
-            'keys': ['id_db'],  # ID field
+            'db': 'tmp.db',      # Database to use
+            'db_backup': True,   # should i backup the database.db
+            'keys': ['id_db'],   # ID field
             'db_table_names': {  # names for tables
                 'main': 'main',  # main table
                 'keywords': 'keywords',  # keywords table

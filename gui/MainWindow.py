@@ -124,6 +124,12 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         extractAction.setStatusTip('Create a new database')  # set the StatusTip
         extractAction.triggered.connect(self.database_createNew)  # connect it to an function
         databaseMenu.addAction(extractAction)  # add the action to fileMenu
+        # create an action (disconnect from Database)
+        extractAction = QtGui.QAction("&Disconnect from Datbase", self)  # Create a new Action
+        extractAction.setShortcut('Ctrl+Shift+D')                        # set Shortcut
+        extractAction.setStatusTip('Disconnect from current database')   # set the StatusTip
+        extractAction.triggered.connect(self.database_disconnect)        # connect it to an function
+        databaseMenu.addAction(extractAction)                            # add the action to fileMenu
 
 
     def database_open(self):
@@ -155,6 +161,9 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             self.MyWidget_LabJournalIndex = QtGui.QPushButton('Select a Database')     # create a pushButton
             self.MyWidget_LabJournalIndex.clicked.connect(self.database_open)          # connect the pushButton to event                   # add
             self.add_widget(self.MyWidget_LabJournalIndex, parent=self.MyTabLabJournalIndex)
+
+    def database_disconnect(self):
+        print "BLA"
 
     def database_createNewEntry(self):
         """Create a new Database entry"""
