@@ -26,7 +26,7 @@ from utils import pushd
 STR_build_folders=open(
     os.path.join(
         path_root,
-        'templates', 'LAMMPS', 'analysis', 'template_analysis.sh'
+        'templates', 'LAMMPS', 'analysis', 'analysis.sh'
     ), 'r'
 ).read()
 """The template for analysis.sh"""
@@ -66,12 +66,15 @@ class AnalysisHandler:
             with open(self.pathtofile, 'w') as fp:
                 fp.write(STR_build_folders)
 
-    def action_setup_folder(self):
+    def action_setup_folder(self,**kwargs):
         """
         Create the Analysis folder
 
         :return: 0 / 1 for success / error
         """
+        for k,v in kwargs.iteritems(): # set kwargs
+            setattr(self,k,v)
+
         self.write_analysisfile_init() # write analysis file
         with pushd(self.path): # go in analysis folder
             # run analysis

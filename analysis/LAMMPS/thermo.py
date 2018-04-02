@@ -16,7 +16,8 @@ settings = QSettings('foo', 'foo')
 import logging
 logger = logging.getLogger('Thermo')
 #logging.basicConfig(level=logging.DEBUG)
-
+#Todo: Rewrite: lg.names -> self.list_possible_keywords
+#Todo: Simplify the whole class
 
 class Thermo():
     def __init__(self, logfile=None, path=None, **kwargs):
@@ -49,17 +50,20 @@ Module to run analysis of logfiles
 
         if not hasattr(self, 'path_to_save'): self.path_to_save = os.path.join(self.CWD, self.save_subfolder)
         self.possible_keywords = self.get_keywords(self.logfile)  # get the possible keywords in the file
-        self.lg = PizzaLog(self.logfile)
+        if type(self.logfile) == type(""):
+            self.lg = PizzaLog(self.logfile)
+        else:
+            self.lg = PizzaLog(*self.logfile)
 
     def get_logfile(self, path):
         """find logfile in folder (only used if not provided before)"""
         logfile = sorted(reglob(path, self.pattern_logfile))
         if len(logfile) == 0:
             raise RuntimeError("Logfile not found")
-        elif len(logfile) > 1:
-            raise NotImplementedError(
-                "Not implemented to use class thermo on multiple files\nFiles: {}".format(logfile))
-        return logfile[0]
+        # elif len(logfile) > 1:
+        #     raise NotImplementedError(
+        #         "Not implemented to use class thermo on multiple files\nFiles: {}".format(logfile))
+        return logfile
 
     def get_keywords(self, logfile):
         """get all possible keywords from the logfile"""
