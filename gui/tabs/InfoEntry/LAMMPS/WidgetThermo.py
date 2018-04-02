@@ -20,15 +20,16 @@ from functools import partial
 from copy import deepcopy
 root = '../../../../'  # path to root dir
 sys.path.insert(0,root)  # append root dir
-from core.settings_OLD import settings
 
 from PyQt4 import QtGui, QtCore
+from PyQt4.QtCore import QSettings
+settings = QSettings('foo', 'foo')
+
 from gui.MyQt import CheckableComboBox
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt4agg import NavigationToolbar2QT as NavigationToolbar
 from matplotlib.figure import Figure
 
-import random
 
 from analysis.LAMMPS.thermo import Thermo
 
@@ -46,7 +47,6 @@ class WidgetThermo(QtGui.QWidget):
         self.setupUi()
 
         self.CWD = self.kwargs['path'] if "path" in self.kwargs.keys() else os.path.realpath(os.path.curdir)
-        # Default settings:
 
         self.initialisation()
 
@@ -60,17 +60,14 @@ class WidgetThermo(QtGui.QWidget):
 
         self.list_keywords=deepcopy(self.thermo.possible_keywords)
 
-        try:
-            self.list_active_keywords =settings['LAMMPS']['thermo']['list_keywords']
-        except:
-            self.list_active_keywords = []  # list of active keywords
+
+        self.list_active_keywords= [str(i.toString()) for i in settings.value('LAMMPS/thermo/list_keywords',
+                                    ['PotEng', 'Temp', 'Press', 'Volume']).toList()]
 
         # ToDo: Add exception handling if keyword is not here
         # ToDo: add handling for time OR Step
-        try:
-            self.xlabel = self.settings['LAMMPS']['thermo']['xlabel']
-        except:
-            self.xlabel = "Step"  # self.settings['LAMMPS']['thermo']['xlabel']
+
+        self.xlabel = str(settings.value('LAMMPS/thermo/xlabel', 'Step').toString())
 
         for key in ['Step','Time']:
             if key in self.list_keywords:

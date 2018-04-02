@@ -15,7 +15,9 @@ except: # so we can use it as module and right as script...
 
 from WidgetThermo import WidgetThermo
 from utils.regexHandler import reglob
-from core.settings_OLD import settings
+
+from PyQt4.QtCore import QSettings
+settings = QSettings('foo', 'foo')
 
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
@@ -38,10 +40,7 @@ class FrameThermo(QtGui.QWidget):
         self.list_logfiles = [] # empty list of logfiles
         self.SIZE_widgetthermo = [300, 300]
 
-        try:
-            self.pattern_logfile = settings['LAMMPS']['pattern']['logfile']
-        except:
-            self.pattern_logfile = 'log..*.lammps'
+        self.pattern_logfile = str(settings.value('LAMMPS/pattern/logfile','log..*.lammps').toString())
 
         for k,v in kwargs.iteritems():
             setattr(self,k,v)
@@ -164,13 +163,13 @@ class FrameThermo(QtGui.QWidget):
         # EM_and_Equilibration
         self.list_logfiles.extend(
             self.display_logfiles_per_location(
-                settings['LAMMPS']['folders']['EM_and_Equilibration']
+                str(settings.value('LAMMPS/folders/EM_and_Equilibration', 'EM_and_Equilibration').toString())
             )
         )
         # production
         self.list_logfiles.extend(
             self.display_logfiles_per_location(
-                settings['LAMMPS']['folders']['production']
+                str(settings.value('LAMMPS/folders/production', 'production').toString())
             )
         )
         # add spacer at the end

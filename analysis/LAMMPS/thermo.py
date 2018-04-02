@@ -8,11 +8,11 @@ import numpy as np
 
 # Begin import my libs
 sys.path.insert(0,'../..')
-from core.settings_OLD import settings
 from utils.regexHandler import reglob
 from external_libs.pizza.log import log as PizzaLog
 # End import my libs
-
+from PyQt4.QtCore import QSettings
+settings = QSettings('foo', 'foo')
 
 class Thermo():
     def __init__(self, logfile=None, path=None, **kwargs):
@@ -25,15 +25,15 @@ Module to run analysis of logfiles
         # patterns
         self.pattern_logfile = 'log..*.lammps'
         # other
-        self.list_keywords = ['PotEng', 'Temp', 'Press', 'Volume']
-        self.xlabel = 'Step'
-        self.BUFFER_READ = 200  # read buffer for LOGFILES
-        self.save_subfolder = "plot_log"
+        self.list_keywords = [str(i.toString()) for i in settings.value('LAMMPS/thermo/list_keywords',
+                                            ['PotEng', 'Temp', 'Press', 'Volume']).toList()]
+        self.xlabel = str(settings.value('LAMMPS/thermo/xlabel',
+                                     'Step').toString())  # xlabel for thermo data
+        self.BUFFER_READ = settings.value('LAMMPS/thermo/BUFFER_READ',
+                                          200).toInt()[0] # read buffer for LOGFILES
+        self.save_subfolder = str(settings.value('LAMMPS/thermo/save_subfolder',
+                                             'plot_log').toString())
         # =============================================================================#
-
-        # get values from settings
-        for k in settings['LAMMPS']['thermo'].keys():
-            setattr(self, k, settings['LAMMPS']['thermo'][k])
 
         # use input
         self.CWD = path if path is not None else os.path.realpath(os.path.curdir)

@@ -23,7 +23,7 @@ from Ui_InfoEntry import Ui_Form
 # import custom libs
 root = "../../.."
 sys.path.insert(0,root)
-from core.Database import *
+# from core.Database import *
 from core.databaseModel import *
 
 import logging

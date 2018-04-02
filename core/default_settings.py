@@ -1,57 +1,62 @@
-#/usr/bin/env python
 """
-The default settings
+Settings
 """
 
-default_settings={  # Default settings
+from PyQt4.QtCore import QSettings
 
-    'Database' : {  # Default settings for the database
+# ToDo: find a good organization / application name
+# Todo: if added we can set the file path by ourself : https://stackoverflow.com/questions/4031838/qsettings-where-is-the-location-of-the-ini-file
+settings = QSettings('foo', 'foo')
 
-        'db': 'tmp.db',  # Database to use
-        'db_backup': True,  # should i backup the database.db
-        'db_table_names': {  # names for tables
-            'main'      : 'main',      # main table
-            'keywords'  : 'keywords',  # keywords table
-        }, # names for tables
+settings.beginGroup('Database')
+settings.setValue('file', '')
+settings.endGroup()
 
-        'formated_data' : {  # settings for formated data
-            'ignore_headers': ['moddate'],  # headers to be ignored when loaded as formated data
-            'convert': {  # columns to be converted
-                'moddate': ['unix', 'date']  # input output
-            },  # columns to be converted
-        },  # settings for formated data
+settings.beginGroup('MediaWiki')
+settings.setValue('prefix', 'http://134.34.112.156:777/mediawiki/index.php/')
+settings.setValue('browser', 'browser') # how to open it [browser = defaultbrowser]
+settings.endGroup()
 
-    },  # Default settings for the database
+settings.beginGroup('InfoEntry')
+settings.setValue('tags_max_col', 5) # number of tabs per column
+settings.endGroup()
 
-    'mediawiki' : {  # MediaWiki settings
-        'prefix'  : "http://134.34.112.156:777/mediawiki/index.php/",  # prefix
-        'browser' : 'browser',  # how to open it [browser = defaultbrowser]
-    },  # MediaWiki settings
+settings.beginGroup('FileFinder')
+settings.setValue('pattern', '_info_')
+settings.endGroup()
 
-    'LAMMPS' : {  # Settings for LAMMPS
+#==============================================================================#
+# LAMMPS
+#==============================================================================#
+settings.beginGroup('LAMMPS')
 
-        'folders' : {  # Folders
-            'production'            : 'production',            # folder where the production run is
-            'EM_and_Equilibration'  : 'EM_and_Equilibration',  # folder where the EM and Equilibration is
-            'analysis'              : 'analysis',              # folder where the normal analysis will be saved
-            'older_analysis_MetaD'  : 'analysis_MetaD',        # folder where MetaDynamic analysis will be saved
-        },  # folders
+settings.beginGroup('folders')  # LAMMPS/folders
+settings.setValue('production',             'production')  # folder where the production run is
+settings.setValue('EM_and_Equilibration',   'EM_and_Equilibration')  # folder where the EM and Equilibration is
+settings.setValue('analysis',               'analysis')  # folder where the normal analysis will be saved
+settings.setValue('analysis_MetaD',         'analysis_MetaD') # folder where MetaDynamic analysis will be saved
+settings.endGroup()  # LAMMPS/folders
 
-        'pattern' : {
-            'trajectory'    : 'trajectory..*.dcd',  # trajectory file with .* = run_no
-            'logfile'       : 'log..*.lammps',      # log file with .* = run_no
-            'final_data'    : 'final_data..*',      # final data file with .* = run_no
-            'final_restart' : 'final_restart..*',   # final restart file with .* = run_no
-        },  # pattern
+settings.beginGroup('pattern')  # LAMMPS/pattern
+settings.setValue('trajectory',     'trajectory..*.dcd') # trajectory file with .* = run_no
+settings.setValue('logfile',        'log..*.lammps') # log file with .* = run_no
+settings.setValue('final_data',     'final_data..*') # final data file with .* = run_no
+settings.setValue('final_restart',  'final_restart..*') # final data file with .* = run_no
+settings.endGroup()  #  LAMMPS/pattern
 
-        'thermo' : {
-            'xlabel'            : 'Step',  # xlabel for thermo data (possible also 'Time' but risky not work for everything)
-            'list_keywords'     : ['PotEng', 'Temp', 'Press', 'Volume'],  # list of keywords to use for analysis
-            'BUFFER_READ'       : 200,  # readin buffer to check for keywords (number of chars in the Step KEYWORDS line)
-            'save_subfolder'    : 'plot_log' # subfolder to save extracted data in
-        },
-        'plot' : {
-            'xlabel' : 'Step'
-        },
-    },  # LAMMPS
-}  # default settings
+settings.beginGroup('thermo')  # LAMMPS/thermo
+settings.setValue('xlabel', 'Step') # xlabel for thermo data (possible also 'Time' but risky not work for everything)
+settings.setValue('list_keywords', ['PotEng', 'Temp', 'Press', 'Volume']) # list of keywords to use for analysis
+settings.setValue('BUFFER_READ', 200) # readin buffer to check for keywords (number of chars in the Step KEYWORDS line)
+settings.setValue('save_subfolder','plot_log') # subfolder to save extracted data in
+settings.endGroup()  #  LAMMPS/thermo
+
+settings.endGroup()  # LAMMPS
+
+
+
+if __name__ == '__main__':
+    print "Create Settings"
+    print "Orgainization:", settings.organizationName()
+    print "Application:", settings.applicationName()
+    print "Created settings in:", settings.fileName()

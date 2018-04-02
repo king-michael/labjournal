@@ -21,5 +21,4 @@ __date__                = "15.11.2017"
 
 
 import utils                         # different utils
-from Database import *          # creates DatabaseIndex
 import databaseModel
