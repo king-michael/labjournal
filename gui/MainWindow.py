@@ -38,6 +38,8 @@ from PyQt4.QtCore import QSettings
 logger = logging.getLogger('LabJournal')
 logging.basicConfig(level=logging.DEBUG)
 
+from sqlalchemy.exc import OperationalError
+
 settings = QSettings('foo', 'foo')
 
 # END Import System Packages
@@ -132,6 +134,14 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         databaseMenu.addAction(extractAction)                            # add the action to fileMenu
 
 
+    def _setup_LabJournalIndex_empty(self):
+        """Creates the Empty LabJournalIndex"""
+        if hasattr(self, 'MyWidget_LabJournalIndex'):  # if we are allready connected
+            self.MyWidget_LabJournalIndex.deleteLater()  # send close command
+        self.MyWidget_LabJournalIndex = QtGui.QPushButton('Select a Database')  # create a pushButton
+        self.MyWidget_LabJournalIndex.clicked.connect(self.database_open)  # connect the pushButton to event
+        self.add_widget(self.MyWidget_LabJournalIndex, parent=self.MyTabLabJournalIndex)
+
     def database_open(self):
         """Dialog to select a database"""
         self.db = QtGui.QFileDialog.getOpenFileName(self, 'Select a Database')
@@ -148,22 +158,32 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
     def database_connect(self):
         """Function to connect to the Database and create LabJournalIndex"""
+        check=False
         if os.path.exists(self.db):  # if the database exists
-            if hasattr(self,'MyWidget_LabJournalIndex'): # if we are allready connected
-                self.MyWidget_LabJournalIndex.deleteLater()  # send close command
-            self.MyWidget_LabJournalIndex = gui.tabs.LabJournalTree(parent=self)
-            self.add_widget(self.MyWidget_LabJournalIndex, parent=self.MyTabLabJournalIndex)
-            # Connect my Search
-            self.MySearch_lineEdit.returnPressed.connect(self.search_resolve)
-            self.MySearch_pushButton.clicked.connect(self.search_resolve)
-            self.MyWidget_LabJournalIndex.sideMenu_addContent(self)
-        elif not hasattr(self, 'MyWidget_LabJournalIndex'):  # if we are allready connected
-            self.MyWidget_LabJournalIndex = QtGui.QPushButton('Select a Database')     # create a pushButton
-            self.MyWidget_LabJournalIndex.clicked.connect(self.database_open)          # connect the pushButton to event                   # add
-            self.add_widget(self.MyWidget_LabJournalIndex, parent=self.MyTabLabJournalIndex)
+            try:
+                if hasattr(self, 'MyWidget_LabJournalIndex'):  # if we are allready connected
+                    self.MyWidget_LabJournalIndex.deleteLater()  # send close command
+                self.MyWidget_LabJournalIndex = gui.tabs.LabJournalTree(parent=self)
+                self.add_widget(self.MyWidget_LabJournalIndex, parent=self.MyTabLabJournalIndex)
+                # Connect my Search
+                self.MySearch_lineEdit.returnPressed.connect(self.search_resolve)
+                self.MySearch_pushButton.clicked.connect(self.search_resolve)
+                self.MyWidget_LabJournalIndex.sideMenu_addContent(self)
+            except OperationalError as Err:
+                settings.remove('Database/file')
+                QtGui.QMessageBox.warning(self,
+                                          'Warning',
+                                           'Could not open:\n\n {}\n\nWrong database format.'.format(self.db))
+                del self.db
+                self._setup_LabJournalIndex_empty()  # in case we cant access a database create a start screen
+            finally:
+                return
+
+        self._setup_LabJournalIndex_empty() # in case we cant access a database create a start screen
 
     def database_disconnect(self):
-        print "BLA"
+        settings.remove('Database/file')
+        self._setup_LabJournalIndex_empty()
 
     def database_createNewEntry(self):
         """Create a new Database entry"""
