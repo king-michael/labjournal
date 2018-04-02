@@ -13,6 +13,10 @@ from external_libs.pizza.log import log as PizzaLog
 # End import my libs
 from PyQt4.QtCore import QSettings
 settings = QSettings('foo', 'foo')
+import logging
+logger = logging.getLogger('Thermo')
+#logging.basicConfig(level=logging.DEBUG)
+
 
 class Thermo():
     def __init__(self, logfile=None, path=None, **kwargs):
@@ -90,7 +94,7 @@ Module to run analysis of logfiles
         if ('x' in x and x['x'] in self.possible_keywords):  # get the parameter x
             x = x['x']
         else:
-            log("Cant use this keyword '{}' for x (not in logfile), fall back to default ('{}')".format(x['x'],
+            logger.warning("Cant use this keyword '{}' for x (not in logfile), fall back to default ('{}')".format(x['x'],
                                                                                                         self.xlabel))
             x = self.xlabel
 
