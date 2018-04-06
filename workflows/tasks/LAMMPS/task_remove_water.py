@@ -9,26 +9,37 @@ Author:
 """
 
 import sys
+import os
 
-def _write_lammpsrerun(
+def write_lammpsrerun_remove_water(
         output="input.analysis.remove_water.lammps", # type: str
+        path = ".", # type: str
         inputfile="../production/final_data.${run_no}", # type: str
+        forcefield=None, # type: str or None
+        trajectory="trajectory.${run_no}.dcd", # type: str
         sel_water="${OT} ${HT}", # type: str
         path_to_molfile="/home/micha/progs/lib/vmd_1.9.3/plugins/LINUXAMD64/molfile", # type: str
         traj_type_out="dcd", # type: str
         atomstyle="full", # type: str
         units="real", # type: str
-        cmap=None,  # type: str | None
+        cmap=None,  # type: str or None
         stdout=False # type: bool
-        ):
-    """function to write LAMMPS rerun file to remove water
+    ):
+    """
+    function to write LAMMPS rerun file to remove water
 
     Parameters
     ----------
     output : str, optional
         name of LAMMPS inputfile (default is "input.analysis.remove_water.lammps")
+    path : str, optional
+        path where to save the file
     inputfile : str, optional
         LAMMPS data file for the topology (default is "../production/final_data.${run_no}")
+    forcefield : str or None, optional
+        LAMMPS force field file to use for the group selection (default is None)
+    trajectory : str, optional
+        name of the trajectory file (default is "trajectory.${run_no}.dcd")
     sel_water : str, optional
         LAMMPS atom types for group water (default is "${OT} ${HT}")
     path_to_molfile : str, optional
@@ -50,10 +61,15 @@ def _write_lammpsrerun(
 
     Examples
     --------
-    >>> _write_lammpsrerun(stdout=True)
+    print the file content in stdout
+
+    >>> write_lammpsrerun_remove_water(stdout=True)
     """
 
     thermo=100 # frequence for the thermodynamic output
+
+    if path != '.':
+        output = os.path.join(path,output)
 
     if stdout:
         fp = sys.stdout
@@ -62,6 +78,8 @@ def _write_lammpsrerun(
     # Input sections
     fp.write("variable run_no index 0\n")
     fp.write("variable stride index 1\n")
+    if forcefield is not None:
+        fp.write("variable forcefield index {}\n".format(forcefield))
     # SETTINGS
     fp.write("\natom_style {}\n".format(atomstyle))
     fp.write("units {}\n\n".format(units))
@@ -70,21 +88,20 @@ def _write_lammpsrerun(
         fp.write("fix cmap all cmap {}\n".format(cmap))
         fp.write("fix_modify cmap energy yes\n")
         # read data
-        fp.write("read_data %s.${run_no} fix cmap crossterm CMAP nocoeff\n" % inputfile)
+        fp.write("read_data %s fix cmap crossterm CMAP nocoeff\n" % inputfile)
     else:
         # read data
         fp.write("read_data %s nocoeff\n" % inputfile)
     # readin force field
-    fp.write("\ninclude ${forcefield}\n") # Todo: can we work around this by getting the group via MDAnalysis?
+    if forcefield is not None:
+        fp.write("\ninclude ${forcefield}\n") # Todo: can we work around this by getting the group via MDAnalysis?
 
     fp.write("\ngroup water type {}\n".format(sel_water))
     fp.write("group solute subtract all water\n")
 
     # Deactivate force field
-    fp.write("\npair_style zero 5 nocoeff\n")
-    fp.write("pair_coeff * *\n")
-    fp.write("bond_style zero nocoeff\n")
-    fp.write("bond_coeff * *\n")
+    fp.write("\npair_style none\n")
+    fp.write("bond_style none\n")
     fp.write("angle_style none\n")
     fp.write("dihedral_style none\n")
     fp.write("improper_style none\n")
@@ -101,9 +118,9 @@ def _write_lammpsrerun(
     fp.write("thermo_style custom step cpu\n")
 
     # rerun command
-    fp.write("\nrerun trajectory.${run_no}.dcd every ${stride} dump x y z wrapped no box yes format molfile dcd %s\n" %
-             path_to_molfile)
+    fp.write("\nrerun %s every ${stride} dump x y z wrapped no box yes format molfile dcd %s\n" %
+             (trajectory, path_to_molfile))
 
 
 if __name__ == '__main__':
-    _write_lammpsrerun(stdout=True)
+    write_lammpsrerun_remove_water(stdout=True)
