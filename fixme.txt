@@ -1,2 +1,0 @@
-# Wed 15 Nov 15:35:00 CET 2017
-./core/Database.py : #FIXME ?? read_sql or read_sql_table ??

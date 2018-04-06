@@ -4,9 +4,9 @@
 
 import sys
 sys.path.append("../../")
-import core.databaseModel as db
+import labjournal.core.databaseModel as db
 
-from PyQt4 import QtGui,QtCore
+from PyQt4 import QtGui
 
 from Uitest import Ui_MainWindow
 

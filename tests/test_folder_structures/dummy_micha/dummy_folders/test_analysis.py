@@ -1,8 +1,8 @@
-import os,sys
+import sys
 sys.path.append("../../../..")
 
-from analysis.LAMMPS.analysisHandler import *
-from analysis.LAMMPS.thermo import *
+from labjournal.analysis.LAMMPS.analysisHandler import *
+from labjournal.analysis.LAMMPS.thermo import *
 
 logger = logging.getLogger('Thermo')
 logging.basicConfig(level=logging.DEBUG)

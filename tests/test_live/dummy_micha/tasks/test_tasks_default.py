@@ -2,13 +2,14 @@
 Default tests for tasks
 """
 
-import sys
 import os
-from utils.regexHandler import reglob
-from shutil import copy2
+import sys
+
 from analysis.LAMMPS.analysisHandler import AnalysisHandler
+
+from labjournal.utils import reglob
+
 sys.path.append("../../../../")
-import workflows.tasks as tasks
 
 ROOT=os.path.realpath("../../../../")
 
@@ -36,11 +37,11 @@ datafile = datafile[0]
 print "Datafile : ", datafile
 forcefield = [os.path.basename(i) for i in reglob(path, 'ff.*.lammps')+reglob(path, 'ff.*.lmp')][0]
 print "ForceField : ", forcefield
-tasks.LAMMPS.write_lammpsrerun_remove_water(inputfile=datafile,
-                                            forcefield=os.path.join(os.path.relpath(path,path_analysis),
+labjournal.workflows.tasks.LAMMPS.write_lammpsrerun_remove_water(inputfile=datafile,
+                                                                 forcefield=os.path.join(os.path.relpath(path,path_analysis),
                                                                     forcefield),
-                                            cmap='../charmmc36.cmap',
-                                            path=path_analysis)
+                                                                 cmap='../charmmc36.cmap',
+                                                                 path=path_analysis)
 
 print "lmp -in input.analysis.remove_water.lammps -v run_no 1"
 

@@ -2,12 +2,11 @@
 '''
 Testcase for a normalMD
 '''
-import os,sys
+import sys
 sys.path.append("../../../..")
 
-from utils import pushd
+from labjournal.utils import pushd
 # Import Test library
-import analysis.LAMMPS
 
 #=========================================================#
 # Testcase LAMMPS setup_folders
@@ -18,7 +17,7 @@ with pushd("testcase_normalMD"): # go in folder
     #Obj_setup.get_file_lists()
 
 
-    Obj_thermo=analysis.LAMMPS .Thermo(path="./analysis/analysis_1")
+    Obj_thermo= labjournal.analysis.LAMMPS.Thermo(path="./analysis/analysis_1")
     #Obj_thermo.extract_single()
     #Obj_thermo.extract_all(mode='npz')
 

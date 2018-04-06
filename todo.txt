@@ -1,7 +1,0 @@
-# Wed 15 Nov 15:35:00 CET 2017
-./__init__.py : # ToDo:
-./core/__init__.py : # ToDo:
-./gui/__init__.py : # ToDo:
-./gui/GUi_tab_LabJournalTree.py : # ToDo:
-./gui/GUi_tab_LabJournalTree.py : double size = child->data(0, Qt::UserRole + 1).toDouble();
-./gui/GUi_tab_LabJournalTree.py : #       .toDouble -> tuple(float,bool)
