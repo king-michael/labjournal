@@ -1,0 +1,30 @@
+gui\.popups package
+===================
+
+Submodules
+----------
+
+gui\.popups\.DialogNewEntry module
+----------------------------------
+
+.. automodule:: gui.popups.DialogNewEntry
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+gui\.popups\.Ui\_DialogNewEntry module
+--------------------------------------
+
+.. automodule:: gui.popups.Ui_DialogNewEntry
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: gui.popups
+    :members:
+    :undoc-members:
+    :show-inheritance:

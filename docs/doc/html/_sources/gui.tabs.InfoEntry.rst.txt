@@ -1,0 +1,45 @@
+gui\.tabs\.InfoEntry package
+============================
+
+Subpackages
+-----------
+
+.. toctree::
+
+    gui.tabs.InfoEntry.LAMMPS
+
+Submodules
+----------
+
+gui\.tabs\.InfoEntry\.InfoEntry module
+--------------------------------------
+
+.. automodule:: gui.tabs.InfoEntry.InfoEntry
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+gui\.tabs\.InfoEntry\.InfoEntry\_template module
+------------------------------------------------
+
+.. automodule:: gui.tabs.InfoEntry.InfoEntry_template
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+gui\.tabs\.InfoEntry\.Ui\_InfoEntry module
+------------------------------------------
+
+.. automodule:: gui.tabs.InfoEntry.Ui_InfoEntry
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: gui.tabs.InfoEntry
+    :members:
+    :undoc-members:
+    :show-inheritance:

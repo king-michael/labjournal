@@ -1,0 +1,37 @@
+gui\.tabs package
+=================
+
+Subpackages
+-----------
+
+.. toctree::
+
+    gui.tabs.InfoEntry
+
+Submodules
+----------
+
+gui\.tabs\.LabJournalTree module
+--------------------------------
+
+.. automodule:: gui.tabs.LabJournalTree
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+gui\.tabs\.Ui\_LabJournalTree module
+------------------------------------
+
+.. automodule:: gui.tabs.Ui_LabJournalTree
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: gui.tabs
+    :members:
+    :undoc-members:
+    :show-inheritance:

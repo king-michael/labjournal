@@ -1,0 +1,282 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>labjournal.utils package &mdash; labjournal 0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="labjournal 0.1 documentation" href="index.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> labjournal
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">labjournal.utils package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#labjournal-utils-filefinder-module">labjournal.utils.fileFinder module</a></li>
+<li><a class="reference internal" href="#module-labjournal.utils.regexHandler">labjournal.utils.regexHandler module</a></li>
+<li><a class="reference internal" href="#labjournal-utils-units-converter-module">labjournal.utils.units_converter module</a></li>
+<li><a class="reference internal" href="#module-labjournal.utils">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">labjournal</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>labjournal.utils package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/labjournal.utils.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="labjournal-utils-package">
+<h1>labjournal.utils package<a class="headerlink" href="#labjournal-utils-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="labjournal-utils-filefinder-module">
+<h2>labjournal.utils.fileFinder module<a class="headerlink" href="#labjournal-utils-filefinder-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-labjournal.utils.regexHandler">
+<span id="labjournal-utils-regexhandler-module"></span><h2>labjournal.utils.regexHandler module<a class="headerlink" href="#module-labjournal.utils.regexHandler" title="Permalink to this headline">¶</a></h2>
+<p>functions around regex Expression which are used in multiple files</p>
+<dl class="function">
+<dt id="labjournal.utils.regexHandler.reglob">
+<code class="descclassname">labjournal.utils.regexHandler.</code><code class="descname">reglob</code><span class="sig-paren">(</span><em>path</em>, <em>exp</em>, <em>invert=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/labjournal/utils/regexHandler.html#reglob"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#labjournal.utils.regexHandler.reglob" title="Permalink to this definition">¶</a></dt>
+<dd><p>glob.glob() style searching which uses regex</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>exp</strong> – Regex expression for filename</li>
+<li><strong>invert</strong> – Invert match to non matching files</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="labjournal-utils-units-converter-module">
+<h2>labjournal.utils.units_converter module<a class="headerlink" href="#labjournal-utils-units-converter-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-labjournal.utils">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-labjournal.utils" title="Permalink to this headline">¶</a></h2>
+<p>usefull functions</p>
+<dl class="function">
+<dt id="labjournal.utils.pushd">
+<code class="descclassname">labjournal.utils.</code><code class="descname">pushd</code><span class="sig-paren">(</span><em>newDir</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/labjournal/utils.html#pushd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#labjournal.utils.pushd" title="Permalink to this definition">¶</a></dt>
+<dd><p>implementation of pushd in python</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="labjournal.utils.relsymlink">
+<code class="descclassname">labjournal.utils.</code><code class="descname">relsymlink</code><span class="sig-paren">(</span><em>src</em>, <em>dst</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/labjournal/utils.html#relsymlink"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#labjournal.utils.relsymlink" title="Permalink to this definition">¶</a></dt>
+<dd><p>create a relative symlink from src to dst
+src  - dst
+str  - str   : normal symlink
+list - str   : links all src to folder dst
+list - list  : links all src to the corresponding dst entry</p>
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Michael King, Andrej Berg.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

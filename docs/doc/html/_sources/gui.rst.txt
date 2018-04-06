@@ -1,0 +1,46 @@
+gui package
+===========
+
+Subpackages
+-----------
+
+.. toctree::
+
+    gui.popups
+    gui.tabs
+
+Submodules
+----------
+
+gui\.MainWindow module
+----------------------
+
+.. automodule:: gui.MainWindow
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+gui\.QTExtensions module
+------------------------
+
+.. automodule:: gui.QTExtensions
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+gui\.Ui\_MainWindow module
+--------------------------
+
+.. automodule:: gui.Ui_MainWindow
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: gui
+    :members:
+    :undoc-members:
+    :show-inheritance:
