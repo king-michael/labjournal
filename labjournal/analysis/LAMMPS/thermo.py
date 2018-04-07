@@ -16,7 +16,7 @@ from labjournal.utils.regexHandler import reglob
 
 from labjournal.external_libs.pizza.log import log as PizzaLog
 # End import my libs
-from PyQt4.QtCore import QSettings
+from PyQt5.QtCore import QSettings
 settings = QSettings('foo', 'foo')
 import logging
 logger = logging.getLogger('Thermo')
@@ -35,14 +35,14 @@ Module to run analysis of logfiles
         # patterns
         self.pattern_logfile = 'log..*.lammps'
         # other
-        self.list_keywords = [str(i.toString()) for i in settings.value('LAMMPS/thermo/list_keywords',
-                                            ['PotEng', 'Temp', 'Press', 'Volume']).toList()]
+        self.list_keywords = [str(i) for i in settings.value('LAMMPS/thermo/list_keywords',
+                                            ['PotEng', 'Temp', 'Press', 'Volume'])]
         self.xlabel = str(settings.value('LAMMPS/thermo/xlabel',
-                                     'Step').toString())  # xlabel for thermo data
+                                     'Step'))  # xlabel for thermo data
         self.BUFFER_READ = settings.value('LAMMPS/thermo/BUFFER_READ',
-                                          200).toInt()[0] # read buffer for LOGFILES
+                                          200) # read buffer for LOGFILES
         self.save_subfolder = str(settings.value('LAMMPS/thermo/save_subfolder',
-                                             'plot_log').toString())
+                                             'plot_log'))
         # =============================================================================#
 
         # use input

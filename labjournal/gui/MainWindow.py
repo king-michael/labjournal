@@ -22,7 +22,7 @@ Infos:
 Todo:
     - implement closeEvent(self, event):
         with writeSettings()
-        http://www.qtcentre.org/threads/20895-PyQt4-Want-to-connect-a-window-s-close-button
+        http://www.qtcentre.org/threads/20895-PyQt5-Want-to-connect-a-window-s-close-button
         https://doc.qt.io/archives/qt-4.8/qwidget.html#closeEvent
 """
 
@@ -34,7 +34,7 @@ import logging
 import os
 import sys
 
-from PyQt4.QtCore import QSettings
+from PyQt5.QtCore import QSettings
 
 logger = logging.getLogger('LabJournal')
 logging.basicConfig(level=logging.DEBUG)
@@ -45,16 +45,19 @@ settings = QSettings('foo', 'foo')
 
 # END Import System Packages
 
-#sys.path.append('../..')
+# sys.path.append('../..')
 # BEGIN Import GuiApplications
 from Ui_MainWindow import *
 import labjournal.gui.tabs
 import popups
+
 # END Import GuiApplications
 # my modules
 sys.path.append('..')
 from labjournal.core import *
+
 settings = QSettings('foo', 'foo')
+
 
 class Main:
     def __init__(self, state=True):
@@ -65,7 +68,7 @@ class Main:
             self.show_gui()
 
     def start_app(self):
-        self.app = QtGui.QApplication(sys.argv)
+        self.app = QtWidgets.QApplication(sys.argv)
         return self.app
 
     def start_window(self):
@@ -73,7 +76,7 @@ class Main:
         # setup stylesheet
         try:
             import qdarkstyle  # style
-            self.app.setStyleSheet(qdarkstyle.load_stylesheet(pyside=False))
+            self.app.setStyleSheet(qdarkstyle.load_stylesheet_pyqt5())
         except:
             pass
         return self.window
@@ -88,23 +91,25 @@ class Main:
     def __del__(self):
         '''Destruction of class'''
         sys.exit(app.exec_())
+
+
 # END TESTS
 
-#=============================================================================#
+# =============================================================================#
 # class GuiMainWindow
-#=============================================================================#
+# =============================================================================#
 
 
-class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
+class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def __init__(self, parent=None):
-        QtGui.QMainWindow.__init__(self, parent)
-        self.setupUi(self)    # where to display
+        QtWidgets.QMainWindow.__init__(self, parent)
+        self.setupUi(self)  # where to display
         self._init_menubar()  # create the Menubar
-        self.readSettings()   # Loads the settings
+        self.readSettings()  # Loads the settings
 
         # Tabwidget
-        self.tabWidget.tabBar().setTabButton(0, QtGui.QTabBar.RightSide, None)  # make the first bar uncloseable
-        self.tabWidget.tabCloseRequested.connect(self.tabWidget_TabCloseRequested)      # register close action
+        self.tabWidget.tabBar().setTabButton(0, QtWidgets.QTabBar.RightSide, None)  # make the first bar uncloseable
+        self.tabWidget.tabCloseRequested.connect(self.tabWidget_TabCloseRequested)  # register close action
         self.tabWidget.currentChanged.connect(self.tabWidget_CurrentChanged)
 
         self.database_connect()  # Connect to a database, if there is one
@@ -116,55 +121,63 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         # create a entry
         databaseMenu = mainMenu.addMenu('&Database')
         # create an action (set Database)
-        extractAction = QtGui.QAction("&Set Database", self)  # Create a new Action
-        extractAction.setShortcut('Ctrl+O')                  # set Shortcut
-        extractAction.setStatusTip('Set database')           # set the StatusTip
+        extractAction = QtWidgets.QAction("&Set Database", self)  # Create a new Action
+        extractAction.setShortcut('Ctrl+O')  # set Shortcut
+        extractAction.setStatusTip('Set database')  # set the StatusTip
         extractAction.triggered.connect(self.database_open)  # connect it to an function
-        databaseMenu.addAction(extractAction)                # add the action to fileMenu
+        databaseMenu.addAction(extractAction)  # add the action to fileMenu
         # create an action (create new Database)
-        extractAction = QtGui.QAction("&Create New Datbase", self)  # Create a new Action
+        extractAction = QtWidgets.QAction("&Create New Datbase", self)  # Create a new Action
         extractAction.setShortcut('Ctrl+Shift+N')  # set Shortcut
         extractAction.setStatusTip('Create a new database')  # set the StatusTip
         extractAction.triggered.connect(self.database_createNew)  # connect it to an function
         databaseMenu.addAction(extractAction)  # add the action to fileMenu
         # create an action (disconnect from Database)
-        extractAction = QtGui.QAction("&Disconnect from Datbase", self)  # Create a new Action
-        extractAction.setShortcut('Ctrl+Shift+D')                        # set Shortcut
-        extractAction.setStatusTip('Disconnect from current database')   # set the StatusTip
-        extractAction.triggered.connect(self.database_disconnect)        # connect it to an function
-        databaseMenu.addAction(extractAction)                            # add the action to fileMenu
-
+        extractAction = QtWidgets.QAction("&Disconnect from Datbase", self)  # Create a new Action
+        extractAction.setShortcut('Ctrl+Shift+D')  # set Shortcut
+        extractAction.setStatusTip('Disconnect from current database')  # set the StatusTip
+        extractAction.triggered.connect(self.database_disconnect)  # connect it to an function
+        databaseMenu.addAction(extractAction)  # add the action to fileMenu
 
     def _setup_LabJournalIndex_empty(self):
         """Creates the Empty LabJournalIndex"""
         if hasattr(self, 'MyWidget_LabJournalIndex'):  # if we are allready connected
             self.MyWidget_LabJournalIndex.deleteLater()  # send close command
-        self.MyWidget_LabJournalIndex = QtGui.QPushButton('Select a Database')  # create a pushButton
+        self.MyWidget_LabJournalIndex = QtWidgets.QPushButton('Select a Database')  # create a pushButton
         self.MyWidget_LabJournalIndex.clicked.connect(self.database_open)  # connect the pushButton to event
         self.add_widget(self.MyWidget_LabJournalIndex, parent=self.MyTabLabJournalIndex)
 
     def database_open(self):
-        """Dialog to select a database"""
-        self.db = QtGui.QFileDialog.getOpenFileName(self, 'Select a Database')
+        """
+        Popup dialog to select a new Database
+        """
+        filename, _filter = QtWidgets.QFileDialog.getOpenFileName(self, 'Select a Database')
+        self.db = str(filename)  # fix because we get 'unicode' from PyQT5 and os.path cant handle it
         settings.setValue('Database/file', self.db)
         self.database_connect()
-        # fixme: add database disconnect
 
     def database_createNew(self):
-        """Create an empty database"""
-        self.db = QtGui.QFileDialog.getSaveFileName(self, 'Select a Database')
+        """
+        Function to create an empty database
+        """
+        filename, _filter = QtWidgets.QFileDialog.getSaveFileName(self, 'Select a Database')
+        self.db = str(filename)  # fix because we get 'unicode' from PyQT5 and os.path cant handle it
         settings.setValue('Database/file', self.db)
         engine = databaseModel.create_engine('sqlite:///{}'.format(self.db))  # if we want spam
         databaseModel.Base.metadata.create_all(engine)
         self.database_connect()
 
     def database_connect(self):
-        """Function to connect to the Database and create LabJournalIndex"""
-        check=False
+        """
+        Function to connect to the Database and create LabJournalIndex
+        """
+        # ToDo: Rewrite the try/except to check if the database is in the right format (atm we cant detect errors in LabJournalIndex)
         if os.path.exists(self.db):  # if the database exists
             try:
-                if hasattr(self, 'MyWidget_LabJournalIndex'):  # if we are allready connected
+                if hasattr(self, 'MyWidget_LabJournalIndex'):  # if we are already connected
                     self.MyWidget_LabJournalIndex.deleteLater()  # send close command
+                if hasattr(self, 'tabs'):                      # if we still have tabs open
+                    self.tabWidget_closeAllTabs()              # close them
                 self.MyWidget_LabJournalIndex = labjournal.gui.tabs.LabJournalTree(parent=self)
                 self.add_widget(self.MyWidget_LabJournalIndex, parent=self.MyTabLabJournalIndex)
                 # Connect my Search
@@ -173,23 +186,28 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 self.MyWidget_LabJournalIndex.sideMenu_addContent(self)
             except OperationalError as Err:
                 settings.remove('Database/file')
-                QtGui.QMessageBox.warning(self,
-                                          'Warning',
-                                           'Could not open:\n\n {}\n\nWrong database format.'.format(self.db))
+                QtWidgets.QMessageBox.warning(self,
+                                              'Warning',
+                                              'Could not open:\n\n {}\n\nWrong database format.'.format(self.db))
                 del self.db
                 self._setup_LabJournalIndex_empty()  # in case we cant access a database create a start screen
             finally:
                 return
 
-        self._setup_LabJournalIndex_empty() # in case we cant access a database create a start screen
+        self._setup_LabJournalIndex_empty()  # in case we cant access a database create a start screen
 
     def database_disconnect(self):
+        """
+        Function called when the database is closed
+        """
+        self.tabWidget_closeAllTabs()
         settings.remove('Database/file')
         self._setup_LabJournalIndex_empty()
-        # fixme: close old tabs
 
     def database_createNewEntry(self):
-        """Create a new Database entry"""
+        """
+        Function called to create a new database entry
+        """
         sim, result = popups.DialogNewEntry.getEntry()
         if result:
             session = databaseModel.establish_session('sqlite:///{}'.format(self.db))
@@ -199,10 +217,10 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             self.MyWidget_LabJournalIndex.build_tree()
 
     def readSettings(self):
-        """Read the Settings"""
-        self.db = settings.value('Database/file').toString()
-
-
+        """
+        Reads the Local Settings
+        """
+        self.db = str(settings.value('Database/file'))
 
     def writeSettings(self):
         """Tobe Implemented"""
@@ -224,19 +242,25 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         filtertext = self.MySearch_lineEdit.text()
         self.MyWidget_LabJournalIndex.lineEditFilter.setText(filtertext)
 
-    def add_widget(self, widget, parent=None, uselayout=QtGui.QGridLayout):
-        """Wrapper to add a widget
-        add_widget(widget,parent=None,uselayout=QtGui.QGridLayout)
-        widget : widget i want to add
-        parent : in which parent i want to add it
-        uselayout : if the parent doesnt have a layout apply the following
+    def add_widget(self, widget, parent=None, uselayout=QtWidgets.QGridLayout):
         """
-        if parent is None:
+        Wrapper to add a widget
+        Parameters
+        ----------
+        widget : QWidget
+            widget i want to add
+        parent : QWidget or QFrame or QMainWindow, None, optional
+            in which parent i want to add it
+        uselayout : QtWidget.QGridLayout, optional
+            if the parent doesnt have a layout apply the following
+        """
+
+        if parent is None:             # if we don't get a parent use self
             parent = self
-        layout = parent.layout()
-        if layout is None:
+        layout = parent.layout()       # try to get the layout
+        if layout is None:             # is we don't have a layout already use the defined one
             layout = uselayout(parent)
-        layout.addWidget(widget)
+        layout.addWidget(widget)       # add the widget to the layout
 
     def labjournal_createTab(self, ID, sim_id=None, sim_type=None):
         """Open a new Tab for the LabJournal entry"""
@@ -249,9 +273,9 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             widget = labjournal.gui.tabs.InfoEntry.InfoEntry(ID=ID, parent=self)
 
         self.add_widget(widget, parent=self.tabs[tabID][0])
-        self.tabWidget.setCurrentIndex(tabID+1) # +1 because 0 is maintab
+        self.tabWidget.setCurrentIndex(tabID + 1)  # +1 because 0 is maintab
 
-    def tabWidget_createTab(self,name='newTab'):
+    def tabWidget_createTab(self, name='newTab'):
         """
         Action to create a new Tab
         stores the tab object and layout in
@@ -263,25 +287,33 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         if not hasattr(self, "tabs"):  # init self.tabs if not there
             self.tabs = []
 
-        tab = QtGui.QWidget()  # create a new tab
-        tab.setObjectName(QtCore.QString.fromUtf8(name))  # set the displayed name
-        layout = QtGui.QGridLayout(tab)  # set the layout
+        tab = QtWidgets.QWidget()  # create a new tab
+        tab.setObjectName(name)  # set the displayed name
+        layout = QtWidgets.QGridLayout(tab)  # set the layout
 
-        self.tabWidget.addTab(tab, QtCore.QString.fromUtf8(name))  # add tab to tabwidget
+        self.tabWidget.addTab(tab, name)  # add tab to tabwidget
         self.tabs.append([tab, layout])  # store the tab and layout
         tab_ID = len(self.tabs) - 1  # tab id (-1 for Overview tab)
 
         return tab_ID
 
+    def tabWidget_closeAllTabs(self):
+        """
+        Action to close all tabs
+        """
+        for (tab, layout) in self.tabs:  # iterate over all tabs
+            tab.deleteLater()            # call destructor
+        self.tabs = []                   # set tab list to empty
+
     def tabWidget_TabCloseRequested(self, currentIndex):
         """Action to close a tab"""
 
         currentQWidget = self.tabWidget.widget(currentIndex)  # get the current widget of the tab
-        currentQWidget.deleteLater()   # register the widget for deletion
-        self.tabs.pop(currentIndex-1)  # remove the tab from the list
+        currentQWidget.deleteLater()  # register the widget for deletion
+        self.tabs.pop(currentIndex - 1)  # remove the tab from the list
         self.tabWidget.removeTab(currentIndex)  # remove the tab
 
-    def tabWidget_CurrentChanged(self,currentIndex):
+    def tabWidget_CurrentChanged(self, currentIndex):
         """Event when the Current Tab changes"""
 
         # Delete Old content
@@ -291,14 +323,15 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         # add new content
         currentQWidget = self.tabWidget.widget(currentIndex)  # get the current tab widget
-        widget_in_tab=currentQWidget.layout().itemAt(0).widget()  # get the widget in the tab
+        widget_in_tab = currentQWidget.layout().itemAt(0).widget()  # get the widget in the tab
         if hasattr(widget_in_tab, 'sideMenu_addContent'):  # check if it has the sideMenu_addContent method
             logger.debug("Create SideMenu: Entry")
             widget_in_tab.sideMenu_addContent(self)  # run the method
 
-#=============================================================================#
+
+# =============================================================================#
 # Tests
-#=============================================================================#
+# =============================================================================#
 
 if __name__ == '__main__':
     if not 'GUI' in locals():

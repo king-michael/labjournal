@@ -16,7 +16,7 @@
 from __future__ import print_function
 
 import sys
-from PyQt4 import QtCore, QtGui
+from PyQt5 import QtCore, QtWidgets
 
 # import Ui_Form
 from Ui_InfoEntry import Ui_Form
@@ -30,13 +30,13 @@ from labjournal.core.databaseModel import *
 import logging
 logger = logging.getLogger('LabJournal')
 logging.basicConfig(level=logging.DEBUG)
-from PyQt4.QtCore import QSettings
+from PyQt5.QtCore import QSettings
 
 # ToDo: find a good organization / application name
 # Todo: if added we can set the file path by ourself : https://stackoverflow.com/questions/4031838/qsettings-where-is-the-location-of-the-ini-file
 settings = QSettings('foo', 'foo')
 
-class InfoEntry(QtGui.QWidget, Ui_Form):
+class InfoEntry(QtWidgets.QWidget, Ui_Form):
     def __init__(self,**kwargs):
         #super(self.__class__, self).__init__() # Note: self.__class__ will get recursion depth error
         super(InfoEntry, self).__init__()
@@ -45,15 +45,15 @@ class InfoEntry(QtGui.QWidget, Ui_Form):
         self.ID=None
 
         self.mediawiki_prefix = settings.value("MediaWiki/prefix",
-                                                'http://134.34.112.156:777/mediawiki/index.php/').toString()
+                                                'http://134.34.112.156:777/mediawiki/index.php/')
         self.browser = settings.value("MediaWiki/browser", 'browser')   # how to open it [browser = defaultbrowser]
-        self.tags_max_col = settings.value("InfoEntry/tags_max_col", 5).toInt()[0]
+        self.tags_max_col = settings.value("InfoEntry/tags_max_col", 5)
 
         # assign kwargs
         for k,v in kwargs.iteritems():
             setattr(self,k,v)
 
-        self.db = self.parent.db if self.parent is not None else settings.value('Database/file').toString()
+        self.db = self.parent.db if self.parent is not None else settings.value('Database/file')
         # Set up the user interface from Designer.
         self.setupUi(self)
 
@@ -87,7 +87,7 @@ class InfoEntry(QtGui.QWidget, Ui_Form):
     def create_tag_symbol(self,text):
         """add a tag symbol"""
 
-        btn = QtGui.QToolButton(self)
+        btn = QtWidgets.QToolButton(self)
         btn.setText(text)
         font = btn.font()
         font.setBold(True)
@@ -142,7 +142,7 @@ class InfoEntry(QtGui.QWidget, Ui_Form):
         layout = self.layout_tags
 
         # plus button
-        btn = QtGui.QToolButton(parent=self)
+        btn = QtWidgets.QToolButton(parent=self)
         btn.setText("+")
         font = btn.font()
         font.setBold(True)
@@ -182,7 +182,7 @@ class InfoEntry(QtGui.QWidget, Ui_Form):
         frame = self.frame_generalInfo
         layout = frame.layout()
         if layout is None:
-             layout = QtGui.QGridLayout(frame)
+             layout = QtWidgets.QGridLayout(frame)
 
         # setup Labels
         dict_generalInfo_labels={}
@@ -192,18 +192,18 @@ class InfoEntry(QtGui.QWidget, Ui_Form):
             key = header[i]  # get the key
             value = entry[i]  # get the value
             if key == 'simid': key='ID'  # change simid to ID
-            label_key = QtGui.QLabel()  # create new Label
+            label_key = QtWidgets.QLabel()  # create new Label
             label_key.setText(key)  # _translate("Form", "General Informations", None)
             layout.addWidget(label_key,i,0)  # add Label to Widget
 
-            spacer = QtGui.QLabel()  # create new Label
+            spacer = QtWidgets.QLabel()  # create new Label
             spacer.setText(" : ")
             layout.addWidget(spacer, i, 1)  # add Label to Widget
 
 
-            #    label_value = QtGui.QPushButton()
+            #    label_value = QtWidgets.QPushButton()
 
-            label_value = QtGui.QLabel()  # create new Label
+            label_value = QtWidgets.QLabel()  # create new Label
             if   key == 'mediawiki':
                 label_value.linkActivated.connect(self.event_open_MEDIAWIKI)
                 label_value.setText('<a href="{}" style="color:#00a9e0;">{}</a>'.format(value,value))
@@ -214,7 +214,7 @@ class InfoEntry(QtGui.QWidget, Ui_Form):
 
         if 'ID' in dict_generalInfo_labels.keys():
             label_key, label_value = dict_generalInfo_labels['ID']
-            myfont = QtGui.QFont()
+            myfont = QtWidgets.QFont()
             myfont.setBold(True)
             label_value.setFont(myfont)
 
@@ -235,13 +235,13 @@ class InfoEntry(QtGui.QWidget, Ui_Form):
             pass
 
         else:
-            QtGui.QDesktopServices.openUrl(QtCore.QUrl(link))
+            QtWidgets.QDesktopServices.openUrl(QtCore.QUrl(link))
             #    webbrowser.open(link)
 
 
-class DialogAddTag(QtGui.QDialog):
+class DialogAddTag(QtWidgets.QDialog):
     def __init__(self,parent=None):
-        QtGui.QDialog.__init__(self,parent)
+        QtWidgets.QDialog.__init__(self,parent)
         self.setupUi(self)
 
     def setupUi(self,Dialog):
@@ -249,15 +249,15 @@ class DialogAddTag(QtGui.QDialog):
         Dialog.resize(400, 60)
 
         # Line Edit to enter tag
-        self.ed_tag = QtGui.QLineEdit(Dialog)
+        self.ed_tag = QtWidgets.QLineEdit(Dialog)
         self.ed_tag.setObjectName("ed_tag")
         self.ed_tag.setGeometry(QtCore.QRect(0, 0, 400, 30))
 
         # Create Yes or No button
-        self.buttonBox = QtGui.QDialogButtonBox(Dialog)
+        self.buttonBox = QtWidgets.QDialogButtonBox(Dialog)
         self.buttonBox.setGeometry(QtCore.QRect(250, 31, 150, 30))
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
-        self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Ok | QtGui.QDialogButtonBox.Cancel)
+        self.buttonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Ok | QtWidgets.QDialogButtonBox.Cancel)
         self.buttonBox.setObjectName("buttonBox")
 
         self.retranslateUi(Dialog)
@@ -268,9 +268,9 @@ class DialogAddTag(QtGui.QDialog):
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
     def retranslateUi(self, Dialog):
-        Dialog.setWindowTitle(QtGui.QApplication.translate("Dialog", "Dialog", None, QtGui.QApplication.UnicodeUTF8))
+        Dialog.setWindowTitle(QtWidgets.QApplication.translate("Dialog", "Dialog", None, QtWidgets.QApplication.UnicodeUTF8))
         # self.label.setText(
-        #     QtGui.QApplication.translate("Dialog", "Set example value:", None, QtGui.QApplication.UnicodeUTF8))
+        #     QtWidgets.QApplication.translate("Dialog", "Set example value:", None, QtWidgets.QApplication.UnicodeUTF8))
     def get_tag(self):
         return str(self.ed_tag.text())
 
@@ -294,13 +294,13 @@ def valid_tag(tag):
 
 
 if __name__ == '__main__':
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
     window = InfoEntry(ID=2,
                        db="/home/micha/SIM-PhD-King/micha.db")
 
     try:
         import qdarkstyle  # style
-        app.setStyleSheet(qdarkstyle.load_stylesheet(pyside=False))
+        app.setStyleSheet(qdarkstyle.load_stylesheet_pyqt5())
     except:
         pass
     window.show()

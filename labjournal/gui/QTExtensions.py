@@ -2,8 +2,8 @@
 QT objects extensions
 """
 
-from PyQt4.QtGui import *
-from PyQt4.QtCore import *
+from PyQt5.QtWidgets import *
+from PyQt5.QtCore import *
 
 
 # check : http://popdevelop.com/2010/05/an-example-on-how-to-make-qlabel-clickable/

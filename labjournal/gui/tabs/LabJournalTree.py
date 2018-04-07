@@ -14,7 +14,7 @@
 """
 
 import sys
-from PyQt4 import QtCore, QtGui
+from PyQt5 import QtCore, QtWidgets
 
 from Ui_LabJournalTree import Ui_Form as Ui_TestWidget
 
@@ -26,7 +26,7 @@ import logging
 logger = logging.getLogger('LabJournal')
 logging.basicConfig(level=logging.DEBUG)
 
-from PyQt4.QtCore import QSettings
+from PyQt5.QtCore import QSettings
 
 # ToDo: find a good organization / application name
 # Todo: if added we can set the file path by ourself : https://stackoverflow.com/questions/4031838/qsettings-where-is-the-location-of-the-ini-file
@@ -51,17 +51,18 @@ int id = child->data(0, Qt::UserRole).toInt();
 double size = child->data(0, Qt::UserRole + 1).toDouble();
 """
 
-class LabJournalTree(QtGui.QWidget, Ui_TestWidget):
+class LabJournalTree(QtWidgets.QWidget, Ui_TestWidget):
     def __init__(self,parent=None):
         super(self.__class__,self).__init__(parent)
         self.parent = parent # get parent, allows communication about self.parent.ATTRIBUTES
         # Set up the user interface from Designer.
+
         self.setupUi(self)
 
         if parent is not None:
             self.db = self.parent.db
         else:
-            self.db = settings.value('Database/file', '/home/micha/SIM-PhD-King/micha.db').toString()
+            self.db = settings.value('Database/file', '/home/micha/SIM-PhD-King/micha.db')
 
         # childmode: True if entries should have children, False if everything should be plain
         self.childmode=True
@@ -77,7 +78,7 @@ class LabJournalTree(QtGui.QWidget, Ui_TestWidget):
 
     def add_item(self,child,sim):
         """
-        :param child = QtGui.QTreeWidgetItem
+        :param child = QtWidgets.QTreeWidgetItem
         :param sim  = Simulation (object)
         :return: child
         """
@@ -110,7 +111,7 @@ class LabJournalTree(QtGui.QWidget, Ui_TestWidget):
         return child
 
     def add_child2parent(self,sim,parent):
-        child = QtGui.QTreeWidgetItem(parent)
+        child = QtWidgets.QTreeWidgetItem(parent)
         child = self.add_item(child, sim)
         return child
 
@@ -150,7 +151,7 @@ class LabJournalTree(QtGui.QWidget, Ui_TestWidget):
             # Fill the table #FIXME: do it with a database handler
             for row_number, sim in enumerate(rv):
                 # Create an item and add it to the table
-                QtGui.QTreeWidgetItem(self.treeWidget)
+                QtWidgets.QTreeWidgetItem(self.treeWidget)
                 child = self.treeWidget.topLevelItem(row_number)
                 child = self.add_item(child,sim)
 
@@ -160,14 +161,14 @@ class LabJournalTree(QtGui.QWidget, Ui_TestWidget):
         # see add https://stackoverflow.com/questions/38507011/implementing-keypressevent-in-qwidget
         # adjust header size
         # Change size policty
-        self.treeWidget.header().setResizeMode(0, QtGui.QHeaderView.ResizeToContents)
-        self.treeWidget.header().setResizeMode(1, QtGui.QHeaderView.Interactive)
-        self.treeWidget.header().setResizeMode(2, QtGui.QHeaderView.Interactive)
-        self.treeWidget.header().setResizeMode(3, QtGui.QHeaderView.Interactive)
-        self.treeWidget.header().setResizeMode(4, QtGui.QHeaderView.Stretch)
-        self.treeWidget.header().setResizeMode(5, QtGui.QHeaderView.ResizeToContents)
-        self.treeWidget.header().setStretchLastSection(False)
 
+        self.treeWidget.header().setSectionResizeMode(0, QtWidgets.QHeaderView.ResizeToContents)
+        self.treeWidget.header().setSectionResizeMode(1, QtWidgets.QHeaderView.Interactive)
+        self.treeWidget.header().setSectionResizeMode(2, QtWidgets.QHeaderView.Interactive)
+        self.treeWidget.header().setSectionResizeMode(3, QtWidgets.QHeaderView.Interactive)
+        self.treeWidget.header().setSectionResizeMode(4, QtWidgets.QHeaderView.Stretch)
+        self.treeWidget.header().setSectionResizeMode(5, QtWidgets.QHeaderView.ResizeToContents)
+        self.treeWidget.header().setStretchLastSection(False)
         self.treeWidget.sortByColumn(0, QtCore.Qt.AscendingOrder)
 
     def event_itemDoubleClicked(self,item, column_no):
@@ -179,7 +180,7 @@ class LabJournalTree(QtGui.QWidget, Ui_TestWidget):
         #       .toInt()  -> tuple(int,bool)
         #       .toDouble -> tuple(float,bool)
         #       .toString -> str(int)
-        id = item.data(0,QtCore.Qt.UserRole).toInt()[0] # returns tuple(int,bool) -> int = id
+        id = item.data(0,QtCore.Qt.UserRole) # returns tuple(int,bool) -> int = id
         if self.parent is not None:
             self.parent.labjournal_createTab(id,
                                              sim_id=item.text(0),
@@ -217,7 +218,7 @@ class LabJournalTree(QtGui.QWidget, Ui_TestWidget):
         item = self.treeWidget.currentItem()
         column = self.treeWidget.currentColumn()
         if column in [2, 3, 4]:
-            menu = QtGui.QMenu()
+            menu = QtWidgets.QMenu()
             # column dependent action
             if column == 2:
                 action = menu.addAction(self.tr("edit tags"))
@@ -242,7 +243,7 @@ class LabJournalTree(QtGui.QWidget, Ui_TestWidget):
         #         index = index.parent()
         #         level += 1
         #
-        # menu = QtGui.QMenu()
+        # menu = QtWidgets.QMenu()
         # if level == 0:
         #     menu.addAction(self.tr("Edit person"))
         # elif level == 1:
@@ -253,7 +254,7 @@ class LabJournalTree(QtGui.QWidget, Ui_TestWidget):
 
     def menu_change_type(self, item, column):
         """pop up menu to change the type"""
-        text, ok = QtGui.QInputDialog.getText(self, 'set SIM type',
+        text, ok = QtWidgets.QInputDialog.getText(self, 'set SIM type',
                                               'enter the sim type:',
                                               text=item.text(column))
         if ok:
@@ -261,17 +262,17 @@ class LabJournalTree(QtGui.QWidget, Ui_TestWidget):
 
     def sideMenu_addContent(self,parent):
         """Creates Content in the sideMenu"""
-        btn = QtGui.QPushButton("Create New Entry")  # create a pushButton for a new database Entry
+        btn = QtWidgets.QPushButton("Create New Entry")  # create a pushButton for a new database Entry
         btn.clicked.connect(parent.database_createNewEntry)  # connect it to the event
         parent.layout_sideMenu.addWidget(btn)  # add the pushButton to the sideMenu
 
 if __name__ == '__main__':
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
     window = LabJournalTree()
 
     try:
         import qdarkstyle  # style
-        app.setStyleSheet(qdarkstyle.load_stylesheet(pyside=False))
+        app.setStyleSheet(qdarkstyle.load_stylesheet_pyqt5())
     except:
         pass
     window.show()

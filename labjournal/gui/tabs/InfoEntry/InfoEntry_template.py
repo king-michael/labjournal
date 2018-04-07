@@ -16,7 +16,7 @@
 from __future__ import print_function
 
 import sys,os
-from PyQt4 import QtCore, QtGui
+from PyQt5 import QtCore, QtWidgets
 
 root = "../../../.."
 sys.path.insert(0,root)
@@ -45,9 +45,9 @@ class InfoEntry_LAMMPS(InfoEntry):
 
 
         # Should be last and not changed / adding space at the bottom
-        spacerItem1 = QtGui.QSpacerItem(10, 10,
-                                   QtGui.QSizePolicy.MinimumExpanding,
-                                   QtGui.QSizePolicy.MinimumExpanding)
+        spacerItem1 = QtWidgets.QSpacerItem(10, 10,
+                                   QtWidgets.QSizePolicy.MinimumExpanding,
+                                   QtWidgets.QSizePolicy.MinimumExpanding)
         self.layout_body.addItem(spacerItem1)
 
     def do_stupid_custom_stuff(self):
@@ -57,12 +57,12 @@ class InfoEntry_LAMMPS(InfoEntry):
 
 
 if __name__ == '__main__':
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
     window = InfoEntry_LAMMPS(ID=2)
 
     try:
         import qdarkstyle  # style
-        app.setStyleSheet(qdarkstyle.load_stylesheet(pyside=False))
+        app.setStyleSheet(qdarkstyle.load_stylesheet_pyqt5())
     except:
         pass
     window.show()

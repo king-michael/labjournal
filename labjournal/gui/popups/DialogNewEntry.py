@@ -8,7 +8,7 @@ Todo:
 import logging
 import re
 import sys
-from PyQt4 import QtCore, QtGui
+from PyQt5 import QtCore, QtWidgets
 
 logger = logging.getLogger('LabJournal')
 
@@ -17,14 +17,14 @@ from labjournal.core.databaseModel import *
 
 from Ui_DialogNewEntry import Ui_Dialog
 
-class DialogNewEntry(QtGui.QDialog,Ui_Dialog):
+class DialogNewEntry(QtWidgets.QDialog,Ui_Dialog):
     def __init__(self, parent = None):
         super(DialogNewEntry, self).__init__(parent)
         self.setupUi(self)
 
         # add a word completer to lineEdit_simtype
-        sim_type_list=QtCore.QStringList(['LAMMPS', 'PYTHON'])
-        sim_type_completer = QtGui.QCompleter(sim_type_list)
+        sim_type_list=['LAMMPS', 'PYTHON']
+        sim_type_completer = QtWidgets.QCompleter(sim_type_list)
         sim_type_completer.setCaseSensitivity(QtCore.Qt.CaseInsensitive)
         self.lineEdit_simtype.setCompleter(sim_type_completer)
 
@@ -98,16 +98,16 @@ class DialogNewEntry(QtGui.QDialog,Ui_Dialog):
         dialog = DialogNewEntry(parent)
         result = dialog.exec_()
         sim = dialog.getDatabaseObjects()
-        return (sim, result == QtGui.QDialog.Accepted)
+        return (sim, result == QtWidgets.QDialog.Accepted)
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.DEBUG)
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
     window = DialogNewEntry()
 
     try:
         import qdarkstyle  # style
-        app.setStyleSheet(qdarkstyle.load_stylesheet(pyside=False))
+        app.setStyleSheet(qdarkstyle.load_stylesheet_pyqt5())
     except:
         pass
     window.show()

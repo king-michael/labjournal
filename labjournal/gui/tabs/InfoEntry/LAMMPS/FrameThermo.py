@@ -2,7 +2,7 @@ from __future__ import print_function
 
 import os
 import sys
-from PyQt4 import QtCore, QtGui
+from PyQt5 import QtCore, QtWidgets
 from functools import partial
 
 root = "../../../.."
@@ -17,7 +17,7 @@ except: # so we can use it as module and right as script...
 from WidgetThermo import WidgetThermo
 from labjournal.utils.regexHandler import reglob
 
-from PyQt4.QtCore import QSettings
+from PyQt5.QtCore import QSettings
 settings = QSettings('foo', 'foo')
 
 try:
@@ -27,21 +27,21 @@ except AttributeError:
         return s
 
 try:
-    _encoding = QtGui.QApplication.UnicodeUTF8
+    _encoding = QtWidgets.QApplication.UnicodeUTF8
     def _translate(context, text, disambig):
-        return QtGui.QApplication.translate(context, text, disambig, _encoding)
+        return QtWidgets.QApplication.translate(context, text, disambig, _encoding)
 except AttributeError:
     def _translate(context, text, disambig):
-        return QtGui.QApplication.translate(context, text, disambig)
+        return QtWidgets.QApplication.translate(context, text, disambig)
 
-class FrameThermo(QtGui.QWidget):
+class FrameThermo(QtWidgets.QWidget):
     def __init__(self, **kwargs):
         super(FrameThermo, self).__init__(**kwargs)
 
         self.list_logfiles = [] # empty list of logfiles
         self.SIZE_widgetthermo = [300, 300]
 
-        self.pattern_logfile = str(settings.value('LAMMPS/pattern/logfile','log..*.lammps').toString())
+        self.pattern_logfile = str(settings.value('LAMMPS/pattern/logfile','log..*.lammps'))
 
         for k,v in kwargs.iteritems():
             setattr(self,k,v)
@@ -65,35 +65,35 @@ class FrameThermo(QtGui.QWidget):
 
 
         # set the layout
-        layout_main = QtGui.QVBoxLayout()
+        layout_main = QtWidgets.QVBoxLayout()
         self.setLayout(layout_main)
         # Heading
-        heading = QtGui.QLabel("Thermo") # create heading
+        heading = QtWidgets.QLabel("Thermo") # create heading
         layout_main.addWidget(heading) # register layout
 
         # layout_frame: horizontal line
-        line_seperate = QtGui.QFrame()
+        line_seperate = QtWidgets.QFrame()
         line_seperate.setMinimumSize(0, 0)
-        line_seperate.setFrameShape(QtGui.QFrame.HLine)
-        line_seperate.setFrameShadow(QtGui.QFrame.Sunken)
+        line_seperate.setFrameShape(QtWidgets.QFrame.HLine)
+        line_seperate.setFrameShadow(QtWidgets.QFrame.Sunken)
         line_seperate.setObjectName(_fromUtf8("line_seperate"))
         layout_main.addWidget(line_seperate)
 
         # frame
-        self.layout_frame = QtGui.QHBoxLayout()
+        self.layout_frame = QtWidgets.QHBoxLayout()
         layout_main.addLayout(self.layout_frame)
 
         # add vertical list
         # create tmp list with list and spacer
-        layout_list_tmp = QtGui.QVBoxLayout()
+        layout_list_tmp = QtWidgets.QVBoxLayout()
         self.layout_frame.addLayout(layout_list_tmp)
         # list
-        self.layout_list = QtGui.QVBoxLayout()
+        self.layout_list = QtWidgets.QVBoxLayout()
         layout_list_tmp.addLayout(self.layout_list)
         # spacer w ,h hPolicy, vPolicy
-        spacerItem1 = QtGui.QSpacerItem(0, 0,
-                                       QtGui.QSizePolicy.Expanding,
-                                       QtGui.QSizePolicy.Maximum)
+        spacerItem1 = QtWidgets.QSpacerItem(0, 0,
+                                       QtWidgets.QSizePolicy.Expanding,
+                                       QtWidgets.QSizePolicy.Maximum)
         layout_list_tmp.addItem(spacerItem1)
 
         self.display_logfiles()
@@ -110,10 +110,10 @@ class FrameThermo(QtGui.QWidget):
                                              SIZE=self.SIZE_widgetthermo,
                                              OPTION_TOOLBAR=False,
                                              OPTION_LEGEND=True)
-            self.widgetthermo.setSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Maximum)
+            self.widgetthermo.setSizePolicy(QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.Maximum)
             self.widgetthermo.canvas.setMinimumSize(*self.SIZE_widgetthermo)
             self.widgetthermo.canvas.setMaximumSize(*self.SIZE_widgetthermo)
-            self.widgetthermo.canvas.setSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Maximum)
+            self.widgetthermo.canvas.setSizePolicy(QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.Maximum)
 
         self.layout_frame.addWidget(self.widgetthermo)
 
@@ -123,7 +123,7 @@ class FrameThermo(QtGui.QWidget):
 
     def create_item(self,text):
         """create a logfile item"""
-        item = QtGui.QToolButton(self)
+        item = QtWidgets.QToolButton(self)
         item.setText(text)
         font = item.font()
         font.setBold(True)
@@ -147,7 +147,7 @@ class FrameThermo(QtGui.QWidget):
             else:
                 return []
         if location is not None and len(logfiles) > 0:
-            label = QtGui.QLabel(location)
+            label = QtWidgets.QLabel(location)
             self.layout_list.addWidget(label)
 
         for logfile in logfiles:
@@ -164,26 +164,26 @@ class FrameThermo(QtGui.QWidget):
         # EM_and_Equilibration
         self.list_logfiles.extend(
             self.display_logfiles_per_location(
-                str(settings.value('LAMMPS/folders/EM_and_Equilibration', 'EM_and_Equilibration').toString())
+                str(settings.value('LAMMPS/folders/EM_and_Equilibration', 'EM_and_Equilibration'))
             )
         )
         # production
         self.list_logfiles.extend(
             self.display_logfiles_per_location(
-                str(settings.value('LAMMPS/folders/production', 'production').toString())
+                str(settings.value('LAMMPS/folders/production', 'production'))
             )
         )
         # add spacer at the end
-        spacerItem1 = QtGui.QSpacerItem(0, 300, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Maximum)
+        spacerItem1 = QtWidgets.QSpacerItem(0, 300, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Maximum)
         self.layout_list.addItem(spacerItem1)
 
 if __name__ == '__main__':
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
     window = FrameThermo(parent=None)
 
     try:
         import qdarkstyle  # style
-        app.setStyleSheet(qdarkstyle.load_stylesheet(pyside=False))
+        app.setStyleSheet(qdarkstyle.load_stylesheet_pyqt5())
     except:
         pass
     window.show()

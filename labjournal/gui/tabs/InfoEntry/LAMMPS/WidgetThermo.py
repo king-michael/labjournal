@@ -22,18 +22,18 @@ from copy import deepcopy
 root = '../../../../'  # path to root dir
 sys.path.insert(0,root)  # append root dir
 
-from PyQt4 import QtGui, QtCore
-from PyQt4.QtCore import QSettings
+from PyQt5 import QtWidgets, QtCore
+from PyQt5.QtCore import QSettings
 settings = QSettings('foo', 'foo')
 
-from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
-from matplotlib.backends.backend_qt4agg import NavigationToolbar2QT as NavigationToolbar
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
 from matplotlib.figure import Figure
 
 
 from labjournal.analysis.LAMMPS.thermo import Thermo
 
-class WidgetThermo(QtGui.QWidget):
+class WidgetThermo(QtWidgets.QWidget):
     def __init__(self, **kwargs):
         """A Widget to plot Thermo Data"""
         self.kwargs = kwargs
@@ -61,29 +61,29 @@ class WidgetThermo(QtGui.QWidget):
         self.list_keywords=deepcopy(self.thermo.possible_keywords)
 
 
-        self.list_active_keywords= [str(i.toString()) for i in settings.value('LAMMPS/thermo/list_keywords',
-                                    ['PotEng', 'Temp', 'Press', 'Volume']).toList()]
+        self.list_active_keywords= [str(i) for i in settings.value('LAMMPS/thermo/list_keywords',
+                                    ['PotEng', 'Temp', 'Press', 'Volume'])]
 
         # ToDo: Add exception handling if keyword is not here
         # ToDo: add handling for time OR Step
 
-        self.xlabel = str(settings.value('LAMMPS/thermo/xlabel', 'Step').toString())
+        self.xlabel = str(settings.value('LAMMPS/thermo/xlabel', 'Step'))
 
         for key in ['Step','Time']:
             if key in self.list_keywords:
                 self.list_keywords.remove(key)
 
-        self.toolbutton = QtGui.QToolButton(self)
+        self.toolbutton = QtWidgets.QToolButton(self)
         self.toolbutton.setText('Select Keywords ')
-        self.toolmenu = QtGui.QMenu(self)
+        self.toolmenu = QtWidgets.QMenu(self)
         for keyword in self.list_keywords:
             action = self.toolmenu.addAction(keyword)
             action.setCheckable(True)
-            action.triggered[()].connect(lambda item=action: self.toolmenu_triggered(item))
+            action.triggered.connect(lambda state, action=action: self.toolmenu_triggered(state,action))
             if keyword in self.list_active_keywords:
                 action.setChecked(QtCore.Qt.Checked)
         self.toolbutton.setMenu(self.toolmenu)
-        self.toolbutton.setPopupMode(QtGui.QToolButton.InstantPopup)
+        self.toolbutton.setPopupMode(QtWidgets.QToolButton.InstantPopup)
         self.layout_checkboxes.addWidget(self.toolbutton)
 
         DPI = self.figure.get_dpi()
@@ -91,10 +91,10 @@ class WidgetThermo(QtGui.QWidget):
                                      self.SIZE[1] / float(DPI))
         self.refresh_plot()
 
-    def toolmenu_triggered(self,item):
+    def toolmenu_triggered(self,state,action):
         """Function call when checkbox state is changed"""
-        keyword=str(item.text())
-        if item.isChecked():
+        keyword=str(action.text())
+        if state:
             if not keyword in self.list_active_keywords:
                 self.list_active_keywords.append(keyword)
         else:
@@ -135,10 +135,10 @@ class WidgetThermo(QtGui.QWidget):
             self.toolbar = NavigationToolbar(self.canvas, self)
 
         # This is the layout for checkboxes (to be filled later)
-        self.layout_checkboxes=QtGui.QGridLayout()
+        self.layout_checkboxes=QtWidgets.QGridLayout()
 
         # set the layout
-        layout = QtGui.QVBoxLayout()
+        layout = QtWidgets.QVBoxLayout()
         if self.OPTION_TOOLBAR:
             layout.addWidget(self.toolbar)
         layout.addWidget(self.canvas)
@@ -166,13 +166,14 @@ class WidgetThermo(QtGui.QWidget):
         self.canvas.draw()
         self.canvas.show()
 
+
 if __name__ == '__main__':
 
+    app = QtWidgets.QApplication(sys.argv)
 
-    app = QtGui.QApplication(sys.argv)
     try:
         import qdarkstyle  # style
-        app.setStyleSheet(qdarkstyle.load_stylesheet(pyside=False))
+        app.setStyleSheet(qdarkstyle.load_stylesheet_pyqt5())
     except:
         pass
 

@@ -7,7 +7,7 @@ authors:
 
 last modified: 09.02.2018
 """
-from PyQt4.QtCore import QSettings
+from PyQt5.QtCore import QSettings
 import os,sys
 sys.path.append("../")
 from glob import glob
@@ -18,7 +18,7 @@ settings = QSettings('foo', 'foo')
 
 
 
-fileHandler = str(settings.value('general/fileHandler', 'user_specific.micha.fileHandler').toString())
+fileHandler = str(settings.value('general/fileHandler', 'user_specific.micha.fileHandler'))
 import importlib
 FileHandler = getattr(importlib.import_module(fileHandler), 'FileHandler')
 fileHandler = FileHandler()
@@ -37,7 +37,7 @@ class FileFinder():
         """
 
         if pattern is None:
-            pattern=str(settings.value("FileFinder/pattern", '_info_').toString())
+            pattern=str(settings.value("FileFinder/pattern", '_info_'))
         self.pattern=pattern
         self.path = path
         self.dir_ignore=dir_ignore

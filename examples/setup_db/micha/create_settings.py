@@ -1,4 +1,4 @@
-from PyQt4.QtCore import QSettings
+from PyQt5.QtCore import QSettings
 
 # ToDo: find a good organization / application name
 # Todo: if added we can set the file path by ourself : https://stackoverflow.com/questions/4031838/qsettings-where-is-the-location-of-the-ini-file
