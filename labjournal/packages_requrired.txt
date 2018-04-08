@@ -1,0 +1,15 @@
+# Python 2.7
+
+package_name    | version   | pip                   | aptitude          | reason
+
+PyQt5           |           | python-qt5            | python-pyqt5      | gui (moved from qt4) note
+                            | PyQt5 (only in py3)   |
+sqlalchemy      |           | sqlalchemy            |                   | database
+sphinx          |           | sphinx                |                   | building documentation
+
+numpy           |           | numpy                 |                   |
+matplotlib      |           | matplotlib            |                   |
+
+
+# defaults? xml, sys, os, glob
+
