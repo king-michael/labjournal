@@ -34,7 +34,7 @@ STR_build_folders=open(
 
 
 class AnalysisHandler:
-    def __init__(self,**kwargs):
+    def __init__(self,**kwargs):  
         """\
         AnalysisHandler for LAMMPS
 
@@ -62,7 +62,12 @@ class AnalysisHandler:
     def write_analysisfile_init(self):
         """
         Initialize the Analysis file
+        
+        Returns
+        -------
+        None, None
         """
+
         if not os.path.exists(self.pathtofile) or self.force:
             with open(self.pathtofile, 'w') as fp:
                 fp.write(STR_build_folders)

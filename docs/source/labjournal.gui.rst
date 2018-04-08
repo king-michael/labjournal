@@ -1,5 +1,5 @@
-labjournal\.gui package
-=======================
+labjournal.gui package
+======================
 
 Subpackages
 -----------
@@ -12,24 +12,24 @@ Subpackages
 Submodules
 ----------
 
-labjournal\.gui\.MainWindow module
-----------------------------------
+labjournal.gui.MainWindow module
+--------------------------------
 
 .. automodule:: labjournal.gui.MainWindow
     :members:
     :undoc-members:
     :show-inheritance:
 
-labjournal\.gui\.QTExtensions module
-------------------------------------
+labjournal.gui.QTExtensions module
+----------------------------------
 
 .. automodule:: labjournal.gui.QTExtensions
     :members:
     :undoc-members:
     :show-inheritance:
 
-labjournal\.gui\.Ui\_MainWindow module
---------------------------------------
+labjournal.gui.Ui\_MainWindow module
+------------------------------------
 
 .. automodule:: labjournal.gui.Ui_MainWindow
     :members:

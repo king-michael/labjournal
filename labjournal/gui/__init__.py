@@ -16,10 +16,3 @@
 
 __author__              = ["Michael King", 'Andrej Berg']
 __date__                = "15.11.2017"
-
-
-import tabs
-
-# __all__ = ['__author__','__date__']
-# __all__.extend(tabs.__all__)
-# __all__.extend(['GUi_MainWindow'])

@@ -1,5 +1,5 @@
-labjournal\.templates package
-=============================
+labjournal.templates package
+============================
 
 Subpackages
 -----------

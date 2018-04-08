@@ -1,27 +1,27 @@
-labjournal\.core package
-========================
+labjournal.core package
+=======================
 
 Submodules
 ----------
 
-labjournal\.core\.databaseModel module
---------------------------------------
+labjournal.core.databaseModel module
+------------------------------------
 
 .. automodule:: labjournal.core.databaseModel
     :members:
     :undoc-members:
     :show-inheritance:
 
-labjournal\.core\.default\_settings module
-------------------------------------------
+labjournal.core.default\_settings module
+----------------------------------------
 
 .. automodule:: labjournal.core.default_settings
     :members:
     :undoc-members:
     :show-inheritance:
 
-labjournal\.core\.utils module
-------------------------------
+labjournal.core.utils module
+----------------------------
 
 .. automodule:: labjournal.core.utils
     :members:

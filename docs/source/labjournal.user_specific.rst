@@ -1,5 +1,12 @@
-labjournal\.user\_specific package
-==================================
+labjournal.user\_specific package
+=================================
+
+Subpackages
+-----------
+
+.. toctree::
+
+    labjournal.user_specific.micha
 
 Module contents
 ---------------

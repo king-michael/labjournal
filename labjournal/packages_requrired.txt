@@ -13,3 +13,6 @@ matplotlib      |           | matplotlib            |                   |
 
 # defaults? xml, sys, os, glob
 
+# qt5 designer in
+# sudo apt-get install qttools5-dev-tools
+# export PATH=/usr/lib/x86_64-linux-gnu/qt5/bin/:$PATH

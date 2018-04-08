@@ -1,19 +1,19 @@
-labjournal\.analysis\.LAMMPS package
-====================================
+labjournal.analysis.LAMMPS package
+==================================
 
 Submodules
 ----------
 
-labjournal\.analysis\.LAMMPS\.analysisHandler module
-----------------------------------------------------
+labjournal.analysis.LAMMPS.analysisHandler module
+-------------------------------------------------
 
 .. automodule:: labjournal.analysis.LAMMPS.analysisHandler
     :members:
     :undoc-members:
     :show-inheritance:
 
-labjournal\.analysis\.LAMMPS\.thermo module
--------------------------------------------
+labjournal.analysis.LAMMPS.thermo module
+----------------------------------------
 
 .. automodule:: labjournal.analysis.LAMMPS.thermo
     :members:

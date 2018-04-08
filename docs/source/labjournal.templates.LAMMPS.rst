@@ -1,11 +1,11 @@
-labjournal\.templates\.LAMMPS package
-=====================================
+labjournal.templates.LAMMPS package
+===================================
 
 Submodules
 ----------
 
-labjournal\.templates\.LAMMPS\.setup\_XML\_file module
-------------------------------------------------------
+labjournal.templates.LAMMPS.setup\_XML\_file module
+---------------------------------------------------
 
 .. automodule:: labjournal.templates.LAMMPS.setup_XML_file
     :members:

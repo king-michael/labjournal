@@ -1,5 +1,5 @@
-labjournal\.workflows\.tasks package
-====================================
+labjournal.workflows.tasks package
+==================================
 
 Subpackages
 -----------
@@ -7,6 +7,7 @@ Subpackages
 .. toctree::
 
     labjournal.workflows.tasks.LAMMPS
+    labjournal.workflows.tasks.VMD
 
 Module contents
 ---------------

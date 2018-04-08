@@ -1,11 +1,11 @@
-labjournal\.user\_specific\.micha package
-=========================================
+labjournal.user\_specific.micha package
+=======================================
 
 Submodules
 ----------
 
-labjournal\.user\_specific\.micha\.fileHandler module
------------------------------------------------------
+labjournal.user\_specific.micha.fileHandler module
+--------------------------------------------------
 
 .. automodule:: labjournal.user_specific.micha.fileHandler
     :members:

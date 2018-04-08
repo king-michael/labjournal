@@ -56,7 +56,6 @@ import popups
 sys.path.append('..')
 from labjournal.core import *
 
-settings = QSettings('foo', 'foo')
 
 
 class Main:
@@ -111,6 +110,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.tabWidget.tabBar().setTabButton(0, QtWidgets.QTabBar.RightSide, None)  # make the first bar uncloseable
         self.tabWidget.tabCloseRequested.connect(self.tabWidget_TabCloseRequested)  # register close action
         self.tabWidget.currentChanged.connect(self.tabWidget_CurrentChanged)
+        self.tabs = []  # set tab list to empty
 
         self.database_connect()  # Connect to a database, if there is one
 
@@ -118,6 +118,16 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """Init function to create the Mainmenu"""
         # get the menuBar
         mainMenu = self.menuBar()
+
+        # create a entry
+        databaseMenu = mainMenu.addMenu('&File')
+        # create an action (set Database)
+        extractAction = QtWidgets.QAction("&Settings", self)  # Create a new Action
+        extractAction.setStatusTip('Change Settings')  # set the StatusTip
+        extractAction.triggered.connect(self.settings_open)  # connect it to an function
+        databaseMenu.addAction(extractAction)  # add the action to fileMenu
+
+
         # create a entry
         databaseMenu = mainMenu.addMenu('&Database')
         # create an action (set Database)
@@ -146,6 +156,13 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.MyWidget_LabJournalIndex = QtWidgets.QPushButton('Select a Database')  # create a pushButton
         self.MyWidget_LabJournalIndex.clicked.connect(self.database_open)  # connect the pushButton to event
         self.add_widget(self.MyWidget_LabJournalIndex, parent=self.MyTabLabJournalIndex)
+
+    def settings_open(self):
+        """
+        Opens the Settings Dialog
+        """
+        dialog = popups.DialogSettings(self)
+        dialog.show()
 
     def database_open(self):
         """
@@ -263,7 +280,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         layout.addWidget(widget)       # add the widget to the layout
 
     def labjournal_createTab(self, ID, sim_id=None, sim_type=None):
-        """Open a new Tab for the LabJournal entry"""
+        """
+        Open a new Tab for the LabJournal entry
+        """
 
         name = sim_id if sim_id is not None else "New Tab"
         tabID = self.tabWidget_createTab(name)
@@ -278,15 +297,34 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def tabWidget_createTab(self, name='newTab'):
         """
         Action to create a new Tab
-        stores the tab object and layout in
-        self.tabs[tabID] = tab, layout
-        :param name: name of the new tab [newTab]
+        Notes
+        -----
+        stores the `tab` object and layout in self.tabs[`tab_ID`] = [`tab`, `layout`]
+        with:
+            tab : QtWidgets.QWidget()
+                QtWidget, representing the `tab`
+            layout : QGridLayout(tab)
+                layout of the `tab`
+
+        Parameters
+        ----------
+        name : str, optional
+            name of the new `tab`. (Default is 'newTab')
+
+        Returns
+        -------
+        tab_ID : int
+            ID of the new created `tab`
+
+        """
+
+
+        """
+        
+        :param name: 
         :param tabWidget : name of the tabWiget Object [self.tabWidget]
         :return tabID
         """
-        if not hasattr(self, "tabs"):  # init self.tabs if not there
-            self.tabs = []
-
         tab = QtWidgets.QWidget()  # create a new tab
         tab.setObjectName(name)  # set the displayed name
         layout = QtWidgets.QGridLayout(tab)  # set the layout

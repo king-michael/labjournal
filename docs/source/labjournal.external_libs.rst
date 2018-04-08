@@ -1,5 +1,5 @@
-labjournal\.external\_libs package
-==================================
+labjournal.external\_libs package
+=================================
 
 Subpackages
 -----------

@@ -1,5 +1,5 @@
-labjournal\.workflows package
-=============================
+labjournal.workflows package
+============================
 
 Subpackages
 -----------

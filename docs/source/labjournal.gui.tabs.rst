@@ -1,5 +1,5 @@
-labjournal\.gui\.tabs package
-=============================
+labjournal.gui.tabs package
+===========================
 
 Subpackages
 -----------
@@ -11,16 +11,16 @@ Subpackages
 Submodules
 ----------
 
-labjournal\.gui\.tabs\.LabJournalTree module
---------------------------------------------
+labjournal.gui.tabs.LabJournalTree module
+-----------------------------------------
 
 .. automodule:: labjournal.gui.tabs.LabJournalTree
     :members:
     :undoc-members:
     :show-inheritance:
 
-labjournal\.gui\.tabs\.Ui\_LabJournalTree module
-------------------------------------------------
+labjournal.gui.tabs.Ui\_LabJournalTree module
+---------------------------------------------
 
 .. automodule:: labjournal.gui.tabs.Ui_LabJournalTree
     :members:

@@ -1,5 +1,5 @@
-labjournal\.gui\.tabs\.InfoEntry package
-========================================
+labjournal.gui.tabs.InfoEntry package
+=====================================
 
 Subpackages
 -----------
@@ -11,24 +11,24 @@ Subpackages
 Submodules
 ----------
 
-labjournal\.gui\.tabs\.InfoEntry\.InfoEntry module
---------------------------------------------------
+labjournal.gui.tabs.InfoEntry.InfoEntry module
+----------------------------------------------
 
 .. automodule:: labjournal.gui.tabs.InfoEntry.InfoEntry
     :members:
     :undoc-members:
     :show-inheritance:
 
-labjournal\.gui\.tabs\.InfoEntry\.InfoEntry\_template module
-------------------------------------------------------------
+labjournal.gui.tabs.InfoEntry.InfoEntry\_template module
+--------------------------------------------------------
 
 .. automodule:: labjournal.gui.tabs.InfoEntry.InfoEntry_template
     :members:
     :undoc-members:
     :show-inheritance:
 
-labjournal\.gui\.tabs\.InfoEntry\.Ui\_InfoEntry module
-------------------------------------------------------
+labjournal.gui.tabs.InfoEntry.Ui\_InfoEntry module
+--------------------------------------------------
 
 .. automodule:: labjournal.gui.tabs.InfoEntry.Ui_InfoEntry
     :members:

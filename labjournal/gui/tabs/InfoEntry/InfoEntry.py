@@ -17,17 +17,21 @@ from __future__ import print_function
 
 import sys
 from PyQt5 import QtCore, QtWidgets
+from PyQt5.QtGui import QDesktopServices
 
 # import Ui_Form
 from Ui_InfoEntry import Ui_Form
 
+
 # import custom libs
 root = "../../.."
-sys.path.insert(0,root)
+sys.path.insert(0, root)
 # from core.Database import *
 from labjournal.core.databaseModel import *
+from labjournal.gui.QtExtensions import FlowLayout
 
 import logging
+
 logger = logging.getLogger('LabJournal')
 logging.basicConfig(level=logging.DEBUG)
 from PyQt5.QtCore import QSettings
@@ -36,22 +40,20 @@ from PyQt5.QtCore import QSettings
 # Todo: if added we can set the file path by ourself : https://stackoverflow.com/questions/4031838/qsettings-where-is-the-location-of-the-ini-file
 settings = QSettings('foo', 'foo')
 
+
 class InfoEntry(QtWidgets.QWidget, Ui_Form):
-    def __init__(self,**kwargs):
-        #super(self.__class__, self).__init__() # Note: self.__class__ will get recursion depth error
+    def __init__(self, **kwargs):
+        # super(self.__class__, self).__init__() # Note: self.__class__ will get recursion depth error
         super(InfoEntry, self).__init__()
         # set defaults
         self.parent = None
-        self.ID=None
+        self.ID = None
 
-        self.mediawiki_prefix = settings.value("MediaWiki/prefix",
-                                                'http://134.34.112.156:777/mediawiki/index.php/')
-        self.browser = settings.value("MediaWiki/browser", 'browser')   # how to open it [browser = defaultbrowser]
-        self.tags_max_col = settings.value("InfoEntry/tags_max_col", 5)
+        self.tags_max_col = settings.value("InfoEntry/tags_max_col", 5)  # how many tags are displayed per row
 
         # assign kwargs
-        for k,v in kwargs.iteritems():
-            setattr(self,k,v)
+        for k, v in kwargs.iteritems():
+            setattr(self, k, v)
 
         self.db = self.parent.db if self.parent is not None else settings.value('Database/file')
         # Set up the user interface from Designer.
@@ -63,9 +65,9 @@ class InfoEntry(QtWidgets.QWidget, Ui_Form):
             self.fill_tags()
 
     def get_generalInfo(self):
-        """get the generalInfo
         """
-
+        get the generalInfo
+        """
 
         session = establish_session('sqlite:///{}'.format(self.db))
 
@@ -77,14 +79,14 @@ class InfoEntry(QtWidgets.QWidget, Ui_Form):
             ['Description', self.sim.description],
         ]
 
-        self.MEDIAWIKI_ID= self.sim.mediawiki # get MediaWiki ID
+        self.MEDIAWIKI_ID = self.sim.mediawiki  # get MediaWiki ID
         self.path = self.sim.path
-        self.sim_tags = self.sim.keywords.filter( Keywords.value.is_(None) ).all()
-        self.sim_keywords = self.sim.keywords.filter( not_( Keywords.value.is_(None) ) ).all()
-        self.tags = [ key.name for key in self.sim_tags ]
+        self.sim_tags = self.sim.keywords.filter(Keywords.value.is_(None)).all()
+        self.sim_keywords = self.sim.keywords.filter(not_(Keywords.value.is_(None))).all()
+        self.tags = [key.name for key in self.sim_tags]
         session.close()
 
-    def create_tag_symbol(self,text):
+    def create_tag_symbol(self, text):
         """add a tag symbol"""
 
         btn = QtWidgets.QToolButton(self)
@@ -111,7 +113,7 @@ class InfoEntry(QtWidgets.QWidget, Ui_Form):
                 self.add_tag(tag)
                 self.fill_tags()
 
-    def add_tag(self,tag,ID=None):
+    def add_tag(self, tag, ID=None):
         """
         Function to add tag
         should be stored somewhere central
@@ -136,13 +138,22 @@ class InfoEntry(QtWidgets.QWidget, Ui_Form):
         session.close()
         if self.parent is not None:
             self.parent.MyWidget_LabJournalIndex.build_tree()
-
     def fill_tags(self):
+        """
+
+        Returns
+        -------
+
+        """
+
+
         """fill tags"""
-        layout = self.layout_tags
+
+        layout =FlowLayout()
+        self.layout_tags.addLayout(layout,0,0)
 
         # plus button
-        btn = QtWidgets.QToolButton(parent=self)
+        btn = QtWidgets.QToolButton(self)
         btn.setText("+")
         font = btn.font()
         font.setBold(True)
@@ -153,11 +164,58 @@ class InfoEntry(QtWidgets.QWidget, Ui_Form):
                     border: 0 px;
                     border-radius: 15;
                     """)
-        self.btn_add_tag=btn # save it
-        self.btn_add_tag.clicked.connect(self.btn_add_tag_clicked) # register action
+        self.btn_add_tag = btn  # save it
+        self.btn_add_tag.clicked.connect(self.btn_add_tag_clicked)  # register action
+
+        layout.addWidget(btn)  # add Label to Widget
+        # Todo: Use a flowlayout here
+        # http://doc.qt.io/qt-5/qtwidgets-layouts-flowlayout-example.html
+        # https://doc.qt.io/archives/4.6/layouts-flowlayout.html
+        # https://stackoverflow.com/questions/9660080/how-does-one-fill-a-qgridlayout-from-top-left-to-right
+        num_tags = len(self.tags)
+
+        # if only one entry, check if entry is empty
+        if num_tags == 1:
+            if len(self.tags[0]) == 0:
+                return
+        # add tag symbols
+        for i in range(num_tags):
+            layout.addWidget(self.create_tag_symbol(self.tags[i]))
+
+
+
+    def OLD_fill_tags(self):
+        """
+
+        Returns
+        -------
+
+        """
+
+
+        """fill tags"""
+        layout = self.layout_tags
+
+        # plus button
+        btn = QtWidgets.QToolButton(self)
+        btn.setText("+")
+        font = btn.font()
+        font.setBold(True)
+        btn.setFont(font)
+        btn.setStyleSheet("""
+                    background-color: #808080;
+                    color: #00a9e0;
+                    border: 0 px;
+                    border-radius: 15;
+                    """)
+        self.btn_add_tag = btn  # save it
+        self.btn_add_tag.clicked.connect(self.btn_add_tag_clicked)  # register action
 
         layout.addWidget(btn, 0, 0)  # add Label to Widget
-
+        # Todo: Use a flowlayout here
+        # http://doc.qt.io/qt-5/qtwidgets-layouts-flowlayout-example.html
+        # https://doc.qt.io/archives/4.6/layouts-flowlayout.html
+        # https://stackoverflow.com/questions/9660080/how-does-one-fill-a-qgridlayout-from-top-left-to-right
         num_tags = len(self.tags)
         # if only one entry, check if entry is empty
         if num_tags == 1:
@@ -166,11 +224,10 @@ class InfoEntry(QtWidgets.QWidget, Ui_Form):
         # add tag symbols
         for i in range(num_tags):
             # i+1 ; because of the added + sign
-            row = (i+1) / self.tags_max_col
-            col = (i+1) % self.tags_max_col
+            row = (i + 1) / self.tags_max_col
+            col = (i + 1) % self.tags_max_col
             tag = self.tags[i]
             layout.addWidget(self.create_tag_symbol(tag), row, col)  # add Label to Widget
-
 
     def setup_generalInfo(self):
         """Fill generalInfo Box"""
@@ -182,35 +239,33 @@ class InfoEntry(QtWidgets.QWidget, Ui_Form):
         frame = self.frame_generalInfo
         layout = frame.layout()
         if layout is None:
-             layout = QtWidgets.QGridLayout(frame)
+            layout = QtWidgets.QGridLayout(frame)
 
         # setup Labels
-        dict_generalInfo_labels={}
-
+        dict_generalInfo_labels = {}
 
         for i in range(len(header)):
             key = header[i]  # get the key
             value = entry[i]  # get the value
-            if key == 'simid': key='ID'  # change simid to ID
+            if key == 'simid': key = 'ID'  # change simid to ID
             label_key = QtWidgets.QLabel()  # create new Label
             label_key.setText(key)  # _translate("Form", "General Informations", None)
-            layout.addWidget(label_key,i,0)  # add Label to Widget
+            layout.addWidget(label_key, i, 0)  # add Label to Widget
 
             spacer = QtWidgets.QLabel()  # create new Label
             spacer.setText(" : ")
             layout.addWidget(spacer, i, 1)  # add Label to Widget
 
-
             #    label_value = QtWidgets.QPushButton()
 
             label_value = QtWidgets.QLabel()  # create new Label
-            if   key == 'mediawiki':
+            if key == 'MediaWiki':
                 label_value.linkActivated.connect(self.event_open_MEDIAWIKI)
-                label_value.setText('<a href="{}" style="color:#00a9e0;">{}</a>'.format(value,value))
+                label_value.setText('<a href="{}" style="color:#00a9e0;">{}</a>'.format(value, value))
             else:
                 label_value.setText(str(value))  # _translate("Form", "General Informations", None)
             layout.addWidget(label_value, i, 2)  # add Label to Widget
-            dict_generalInfo_labels.update({key : [label_key,label_value]})
+            dict_generalInfo_labels.update({key: [label_key, label_value]})
 
         if 'ID' in dict_generalInfo_labels.keys():
             label_key, label_value = dict_generalInfo_labels['ID']
@@ -219,32 +274,39 @@ class InfoEntry(QtWidgets.QWidget, Ui_Form):
             label_value.setFont(myfont)
 
 
-        # modife labels
-        #if 'MEDIAWIKI' in dict_generalInfo_labels.keys():
-            #label_key, label_value = dict_generalInfo_labels['MEDIAWIKI']
-            #label_value.setStyleSheet("QLabel { color : #00a9e0; text-decoration: underline; }");
-            #label_value.mousePressEvent = self.event_open_MEDIAWIKI # only works because its created here
-            #self.connect(label_value,QtCore.SIGNAL('clicked()'),self.event_open_MEDIAWIKI)
+            # modife labels
+            # if 'MEDIAWIKI' in dict_generalInfo_labels.keys():
+            # label_key, label_value = dict_generalInfo_labels['MEDIAWIKI']
+            # label_value.setStyleSheet("QLabel { color : #00a9e0; text-decoration: underline; }");
+            # label_value.mousePressEvent = self.event_open_MEDIAWIKI # only works because its created here
+            # self.connect(label_value,QtCore.SIGNAL('clicked()'),self.event_open_MEDIAWIKI)
 
-    def event_open_MEDIAWIKI(self,linkStr):
-        """Event open MediaWiki
-        Opens the MediaWiki Entry
+    def event_open_MEDIAWIKI(self, linkstr=""):
         """
-        link=self.mediawiki_prefix+str(self.MEDIAWIKI_ID)
-        if self.browser == 'app':
-            pass
+        Event: open MediaWiki Entry when link is clicked.
 
-        else:
-            QtWidgets.QDesktopServices.openUrl(QtCore.QUrl(link))
-            #    webbrowser.open(link)
+        Parameters
+        ----------
+        linkstr : str
+            not used, but needed to connect the method to linkActivated event
+
+        """
+        # Read in settings
+        protocol = settings.value("MediaWiki/protocol", 'http')  # get the protocol
+        host = settings.value('MediaWiki/host', '134.34.112.156:777')  # get the host address
+        path = settings.value('MediaWiki/path', 'mediawiki')  # get the path to the MediaWiki
+        # Create link to the mediawiki page
+        link = '{}://{}/{}/index.php/{}'.format(protocol, host, path, self.MEDIAWIKI_ID)
+        # open the link in the browser
+        QDesktopServices.openUrl(QtCore.QUrl(link))
 
 
 class DialogAddTag(QtWidgets.QDialog):
-    def __init__(self,parent=None):
-        QtWidgets.QDialog.__init__(self,parent)
+    def __init__(self, parent=None):
+        QtWidgets.QDialog.__init__(self, parent)
         self.setupUi(self)
 
-    def setupUi(self,Dialog):
+    def setupUi(self, Dialog):
         Dialog.setObjectName("Add Tag")
         Dialog.resize(400, 60)
 
@@ -267,10 +329,7 @@ class DialogAddTag(QtWidgets.QDialog):
         QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL("rejected()"), Dialog.reject)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
-    def retranslateUi(self, Dialog):
-        Dialog.setWindowTitle(QtWidgets.QApplication.translate("Dialog", "Dialog", None, QtWidgets.QApplication.UnicodeUTF8))
-        # self.label.setText(
-        #     QtWidgets.QApplication.translate("Dialog", "Set example value:", None, QtWidgets.QApplication.UnicodeUTF8))
+
     def get_tag(self):
         return str(self.ed_tag.text())
 
@@ -285,7 +344,7 @@ def valid_tag(tag):
     """
     # ToDO: see doc string, move it to some central place
     try:
-        tag=str(tag)
+        tag = str(tag)
     except:
         return False
     if len(tag) == 0: return False
@@ -300,6 +359,7 @@ if __name__ == '__main__':
 
     try:
         import qdarkstyle  # style
+
         app.setStyleSheet(qdarkstyle.load_stylesheet_pyqt5())
     except:
         pass

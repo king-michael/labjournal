@@ -1,5 +1,12 @@
-labjournal\.analysis package
-============================
+labjournal.analysis package
+===========================
+
+Subpackages
+-----------
+
+.. toctree::
+
+    labjournal.analysis.LAMMPS
 
 Module contents
 ---------------

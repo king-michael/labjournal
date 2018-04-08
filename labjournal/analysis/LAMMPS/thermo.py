@@ -54,11 +54,13 @@ Module to run analysis of logfiles
             setattr(self, k, v)  # set kwargs to object
 
         if not hasattr(self, 'path_to_save'): self.path_to_save = os.path.join(self.CWD, self.save_subfolder)
-        self.possible_keywords = self.get_keywords(self.logfile)  # get the possible keywords in the file
+
         if type(self.logfile) == type(""):
             self.lg = PizzaLog(self.logfile)
         else:
             self.lg = PizzaLog(*self.logfile)
+
+        self.possible_keywords = self.get_keywords(self.logfile)  # get the possible keywords in the file
 
     def get_logfile(self, path):
         """find logfile in folder (only used if not provided before)"""
@@ -72,15 +74,16 @@ Module to run analysis of logfiles
 
     def get_keywords(self, logfile):
         """get all possible keywords from the logfile"""
-        if type(logfile) == type([]):
-            return [self.get_keywords(i) for i in logfile]
+        # if type(logfile) == type([]):
+        #     return [self.get_keywords(i) for i in logfile]
+        #
+        # with open(logfile, 'r') as fp:
+        #     txt = fp.read()
+        # i = txt.find("Step ")
+        # tmp = txt[i:i + self.BUFFER_READ]
+        # list_keywords = tmp.split('\n')[0].strip().split(" ")
 
-        with open(logfile, 'r') as fp:
-            txt = fp.read()
-        i = txt.find("Step ")
-        tmp = txt[i:i + self.BUFFER_READ]
-        list_keywords = tmp.split('\n')[0].strip().split(" ")
-        return list_keywords
+        return self.lg.names
 
     def refine_keywords(self, keywords):
         """refine the keywords so that they can be used with the file (delete not supported ones)"""
