@@ -33,9 +33,9 @@ def write_default_settings():
     settings.setValue('path', 'mediawiki')  # path to MediaWiki
     settings.endGroup()
 
-    settings.beginGroup('InfoEntry')
-    settings.setValue('tags_max_col', 5) # number of tabs per column
-    settings.endGroup()
+    # settings.beginGroup('InfoEntry')
+    # settings.setValue('tags_max_col', 5) # number of tabs per column
+    # settings.endGroup()
 
     settings.beginGroup('FileFinder')
     settings.setValue('pattern', '_info_')
@@ -63,7 +63,7 @@ def write_default_settings():
     settings.beginGroup('thermo')  # LAMMPS/thermo
     settings.setValue('xlabel', 'Step') # xlabel for thermo data (possible also 'Time' but risky not work for everything)
     settings.setValue('list_keywords', ['PotEng', 'Temp', 'Press', 'Volume']) # list of keywords to use for analysis
-    settings.setValue('BUFFER_READ', 200) # readin buffer to check for keywords (number of chars in the Step KEYWORDS line)
+    # settings.setValue('BUFFER_READ', 200) # readin buffer to check for keywords (number of chars in the Step KEYWORDS line)
     settings.setValue('save_subfolder','plot_log') # subfolder to save extracted data in
     settings.endGroup()  #  LAMMPS/thermo
 

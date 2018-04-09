@@ -59,9 +59,7 @@ class DialogSettings(QtWidgets.QDialog,Ui_Dialog):
 
         i = self.listWidget.currentRow()  # get the current index
         self.pageWidget = self.list_pages[i][1](self)  # get the widget and activate it
-        self.layout_frame.addWidget(self.pageWidget)   # set the widget in the layout
-        # Todo: morph frame to scrollalbe area
-        # https://stackoverflow.com/questions/20041385/python-pyqt-setting-scroll-area?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa
+        self.scrollArea.setWidget(self.pageWidget)  # set the widget in the scrollArea
 
     def apply_settings(self):
         """
@@ -254,6 +252,19 @@ class SettingsGeneral(SettingsTemplate):
 
         self.page_title='General'
         self.setupUi()
+
+        self.group = ''
+        self.list_options = [
+            # Normal: label, settings_str, description, options
+            # Group: [label, settings_str],
+            # GROUP folders
+            (['Database', 'Database'],),  # group
+            ('File', 'Database/file', "Database file"),
+            (['FileFinder', 'FileFinder'],),  # group
+            ('Pattern', 'FileFinder/pattern', "Info / Config files per folder"),
+        ]
+
+        self.auto_fill()
 
 
 

@@ -1,0 +1,19 @@
+[[Category:Labjournal]]
+
+__TOC__
+
+= Info =
+{{ID|XXX_ID}}
+{{DATE|XXX_DATE}}
+{{folder|XXX_FOLDER}}
+
+My awesome info BOX
+
+ID: XXX_ID <br>
+
+Description: <br>
+XXX_DESCRIPTION
+
+Details: <br>
+
+XXX_DETAILS

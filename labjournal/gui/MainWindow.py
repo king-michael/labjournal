@@ -21,7 +21,7 @@ Infos:
 
 Todo:
     - implement closeEvent(self, event):
-        with writeSettings()
+        with write_settings()
         http://www.qtcentre.org/threads/20895-PyQt5-Want-to-connect-a-window-s-close-button
         https://doc.qt.io/archives/qt-4.8/qwidget.html#closeEvent
 """
@@ -30,31 +30,26 @@ __author__ = ["Michael King"]
 __date__ = "29.09.2017"
 
 import logging
-# BEGIN Import System Packages
 import os
 import sys
 
 from PyQt5.QtCore import QSettings
 
-logger = logging.getLogger('LabJournal')
-logging.basicConfig(level=logging.DEBUG)
-
 from sqlalchemy.exc import OperationalError
 
-settings = QSettings('foo', 'foo')
-
-# END Import System Packages
-
-# sys.path.append('../..')
-# BEGIN Import GuiApplications
 from Ui_MainWindow import *
 import labjournal.gui.tabs
 import popups
 
-# END Import GuiApplications
-# my modules
 sys.path.append('..')
 from labjournal.core import *
+
+logger = logging.getLogger('LabJournal')
+logging.basicConfig(level=logging.DEBUG)
+
+APPLICATION_NAME='foo'
+COMPANY_NAME='foo'
+settings = QSettings(APPLICATION_NAME, COMPANY_NAME)
 
 
 
@@ -92,7 +87,6 @@ class Main:
         sys.exit(app.exec_())
 
 
-# END TESTS
 
 # =============================================================================#
 # class GuiMainWindow
@@ -104,7 +98,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         QtWidgets.QMainWindow.__init__(self, parent)
         self.setupUi(self)  # where to display
         self._init_menubar()  # create the Menubar
-        self.readSettings()  # Loads the settings
+        self.read_settings()  # Loads the settings
 
         # Tabwidget
         self.tabWidget.tabBar().setTabButton(0, QtWidgets.QTabBar.RightSide, None)  # make the first bar uncloseable
@@ -126,7 +120,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         extractAction.setStatusTip('Change Settings')  # set the StatusTip
         extractAction.triggered.connect(self.settings_open)  # connect it to an function
         databaseMenu.addAction(extractAction)  # add the action to fileMenu
-
 
         # create a entry
         databaseMenu = mainMenu.addMenu('&Database')
@@ -233,13 +226,13 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             session.close()
             self.MyWidget_LabJournalIndex.build_tree()
 
-    def readSettings(self):
+    def read_settings(self):
         """
         Reads the Local Settings
         """
         self.db = str(settings.value('Database/file'))
 
-    def writeSettings(self):
+    def write_settings(self):
         """Tobe Implemented"""
         pass
 
