@@ -19,7 +19,7 @@ import os
 import sys
 from copy import deepcopy
 
-root = '../../../../'  # path to root dir
+root = '../../../../../'  # path to root dir
 sys.path.insert(0,root)  # append root dir
 
 from PyQt5 import QtWidgets, QtCore
@@ -177,7 +177,7 @@ if __name__ == '__main__':
     except:
         pass
 
-    path = "tests/test_folder_structures/dummy_micha/dummy_folders/testcase_normalMD/production/"
+    path = "tests/test_folder_structures/dummy_micha/dummy_folders/testcase_normalMD/production"
     path=os.path.join(root,path)
     print("Use Path: {}".format(path))
     print("Files:")

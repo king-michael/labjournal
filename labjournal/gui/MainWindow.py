@@ -281,6 +281,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         tabID = self.tabWidget_createTab(name)
         if sim_type == 'LAMMPS':
             widget = labjournal.gui.tabs.InfoEntry.LAMMPS(ID=ID, parent=self)
+        elif sim_type == 'GROMACS':
+            widget = labjournal.gui.tabs.InfoEntry.GROMACS(ID=ID, parent=self)
         else:
             widget = labjournal.gui.tabs.InfoEntry.InfoEntry(ID=ID, parent=self)
 

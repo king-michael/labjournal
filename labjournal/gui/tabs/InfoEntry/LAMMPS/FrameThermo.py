@@ -5,9 +5,11 @@ import sys
 from PyQt5 import QtCore, QtWidgets
 from functools import partial
 
-root = "../../../.."
+root = '../../../../../'
+
 sys.path.insert(0,root)
 
+# FIXME do we need InfoEntry here?
 try:
     from ..InfoEntry import InfoEntry
 except: # so we can use it as module and right as script...
@@ -53,9 +55,8 @@ class FrameThermo(QtWidgets.QWidget):
                 self.path=self.parent.path
 
         # BEGIN TEST
-        self.path ="".join(["/home/micha/SIM-PhD-King/labjournal/tests",
-                            "/test_folder_structures/dummy_micha/",
-                            "dummy_folders/testcase_normalMD/"])
+        self.path ="".join([root,
+                            "tests/test_folder_structures/dummy_micha/dummy_folders/testcase_normalMD/"])
         # END TEST
         self.setupUI()
 

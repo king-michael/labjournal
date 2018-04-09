@@ -19,5 +19,6 @@ __date__                = "21.11.2017"
 
 from .InfoEntry import *
 from LAMMPS.InfoEntry_LAMMPS import InfoEntry_LAMMPS as LAMMPS
+from GROMACS.InfoEntry_GROMACS import InfoEntry_GROMACS as GROMACS
 
 

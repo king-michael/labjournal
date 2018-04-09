@@ -300,6 +300,33 @@ class InfoEntry(QtWidgets.QWidget, Ui_Form):
         # open the link in the browser
         QDesktopServices.openUrl(QtCore.QUrl(link))
 
+# FIXME on klick on add tag button:
+# Traceback(most
+# recent
+# call
+# last):
+# File
+# "/home/andrejb/Software/labjournal/labjournal/gui/tabs/InfoEntry/InfoEntry.py", line
+# 108, in btn_add_tag_clicked
+# dlg = DialogAddTag()
+# File
+# "/home/andrejb/Software/labjournal/labjournal/gui/tabs/InfoEntry/InfoEntry.py", line
+# 307, in __init__
+# QtWidgets.QDialog.__init__(self, parent)
+# File
+# "/home/andrejb/Software/labjournal/labjournal/gui/tabs/InfoEntry/InfoEntry.py", line
+# 325, in setupUi
+#
+# AttributeError: 'DialogAddTag'
+# object
+# has
+# no
+# attribute
+# 'retranslateUi'
+#
+# Process
+# finished
+# with exit code 134 (interrupted by signal 6: SIGABRT)
 
 class DialogAddTag(QtWidgets.QDialog):
     def __init__(self, parent=None):

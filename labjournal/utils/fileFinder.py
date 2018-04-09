@@ -17,11 +17,11 @@ logger = logging.getLogger('LabJournal')
 settings = QSettings('foo', 'foo')
 
 
-
-fileHandler = str(settings.value('general/fileHandler', 'user_specific.micha.fileHandler'))
-import importlib
-FileHandler = getattr(importlib.import_module(fileHandler), 'FileHandler')
-fileHandler = FileHandler()
+# FIXME auskommentiert weil gebugt, braucht man das?
+#fileHandler = str(settings.value('general/fileHandler', 'user_specific.micha.fileHandler'))
+#import importlib
+#FileHandler = getattr(importlib.import_module(fileHandler), 'FileHandler')
+#fileHandler = FileHandler()
 
 
 class FileFinder():
