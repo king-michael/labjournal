@@ -239,7 +239,7 @@ class SettingsTemplate(QtWidgets.QWidget):
             value = widget.text()
         if value.strip().startswith("#LIST: "):
             value = [ii.strip() for ii in value.replace("#LIST: ",'').split(',')]
-        _, settings_str, _ = self.list_options[i]  # get settings string
+        settings_str = self.list_options[i][1]  # get settings string
         key="{}/{}".format(self.group,settings_str) if len(self.group) != 0 else settings_str  # create key
 
         self.parent.dict_changed_options[key]=value

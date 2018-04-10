@@ -18,8 +18,7 @@ from __future__ import print_function
 import sys,os
 from PyQt5 import QtCore, QtWidgets
 
-root = "../../../.."
-sys.path.insert(0,root)
+sys.path.insert(0,"../../../..")  # Fixme: get rid of this
 
 try:
     from ..InfoEntry import InfoEntry

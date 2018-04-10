@@ -38,10 +38,14 @@ from PyQt5.QtCore import QSettings
 from sqlalchemy.exc import OperationalError
 
 from Ui_MainWindow import *
+
+sys.path.append('..')
+sys.path.insert(0,'../..')
+
 import labjournal.gui.tabs
 import popups
 
-sys.path.append('..')
+
 from labjournal.core import *
 
 logger = logging.getLogger('LabJournal')
@@ -367,6 +371,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 # =============================================================================#
 
 if __name__ == '__main__':
+
     if not 'GUI' in locals():
         GUI = Main(False)  # fix to use in notebook
         app = GUI.start_app()

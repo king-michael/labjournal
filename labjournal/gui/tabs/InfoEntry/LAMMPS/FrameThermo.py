@@ -2,16 +2,15 @@ from __future__ import print_function
 
 import os
 import sys
+import pkg_resources
 from PyQt5 import QtCore, QtWidgets
 from functools import partial
 
-root = '../../../../../'
-
-sys.path.insert(0,root)
-
+sys.path.insert(0,'../../../../../')  # Fixme: do we need this here?
+ROOT = os.path.realpath(pkg_resources.resource_filename('labjournal',''))
 # FIXME do we need InfoEntry here?
 try:
-    from ..InfoEntry import InfoEntry
+    from ..InfoEntry import InfoEntry  # Fixme: get rid of of relative imports
 except: # so we can use it as module and right as script...
     sys.path.insert(0, "../..")
     from InfoEntry import InfoEntry
@@ -21,20 +20,6 @@ from labjournal.utils.regexHandler import reglob
 
 from PyQt5.QtCore import QSettings
 settings = QSettings('foo', 'foo')
-
-try:
-    _fromUtf8 = QtCore.QString.fromUtf8
-except AttributeError:
-    def _fromUtf8(s):
-        return s
-
-try:
-    _encoding = QtWidgets.QApplication.UnicodeUTF8
-    def _translate(context, text, disambig):
-        return QtWidgets.QApplication.translate(context, text, disambig, _encoding)
-except AttributeError:
-    def _translate(context, text, disambig):
-        return QtWidgets.QApplication.translate(context, text, disambig)
 
 class FrameThermo(QtWidgets.QWidget):
     def __init__(self, **kwargs):
@@ -55,8 +40,7 @@ class FrameThermo(QtWidgets.QWidget):
                 self.path=self.parent.path
 
         # BEGIN TEST
-        self.path ="".join([root,
-                            "tests/test_folder_structures/dummy_micha/dummy_folders/testcase_normalMD/"])
+        self.path =os.path.join(ROOT, "../tests/test_folder_structures/dummy_micha/dummy_folders/testcase_normalMD")
         # END TEST
         self.setupUI()
 
@@ -77,7 +61,6 @@ class FrameThermo(QtWidgets.QWidget):
         line_seperate.setMinimumSize(0, 0)
         line_seperate.setFrameShape(QtWidgets.QFrame.HLine)
         line_seperate.setFrameShadow(QtWidgets.QFrame.Sunken)
-        line_seperate.setObjectName(_fromUtf8("line_seperate"))
         layout_main.addWidget(line_seperate)
 
         # frame
