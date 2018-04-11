@@ -182,7 +182,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """
         Function called to create a new database entry
         """
-        sim, result = popups.DialogNewEntry.getEntry()
+        sim, result = labjournal.gui.popups.DialogNewEntry.getEntry()
         if result:
             session = databaseModel.establish_session('sqlite:///{}'.format(self.db))
             session.add(sim)

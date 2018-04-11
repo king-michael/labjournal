@@ -60,15 +60,17 @@ class InfoEntry(QtWidgets.QWidget, Ui_Form):
         self.db = self.parent.db if self.parent is not None else settings.value('Database/file')
         # Set up the user interface from Designer.
         self.setupUi(self)
-        #
-        self.layout_tags = FlowLayout()
-        self.layout_box_tags.addLayout(self.layout_tags)
 
+        # Add more design options
+        self.layout_tags = FlowLayout()  # Create a FlowLayout for the tags
+        self.layout_tags_keywords.addLayout(self.layout_tags,0,1)  # add it to the GridLayout
+        self.layout_keywords = FlowLayout()  # Create a FlowLayout for the keywords
+        self.layout_tags_keywords.addLayout(self.layout_keywords, 1, 1)  # add it to the GridLayout
 
         if self.ID is not None:
             self.get_generalInfo()
             self.setup_generalInfo()
-            self.fill_tags()
+            self.fill_tags_keywords()
 
     def get_generalInfo(self):
         """
@@ -90,24 +92,9 @@ class InfoEntry(QtWidgets.QWidget, Ui_Form):
         self.sim_tags = self.sim.keywords.filter(Keywords.value.is_(None)).all()
         self.sim_keywords = self.sim.keywords.filter(not_(Keywords.value.is_(None))).all()
         self.tags = [key.name for key in self.sim_tags]
+        self.keywords = dict({(key.name,key.value) for key in self.sim_keywords})
+        print(self.keywords)
         session.close()
-
-    def create_tag_symbol(self, text):
-        """add a tag symbol"""
-
-        btn = QtWidgets.QToolButton(self)
-        btn.setText(text)
-        font = btn.font()
-        font.setBold(True)
-        btn.setFont(font)
-        btn.setStyleSheet("""
-            background-color: #00a9e0;
-            color: rgb(255, 255, 255);
-            border: 0 px;
-            border-radius: 15;
-            """)
-
-        return btn
 
     def btn_add_tag_clicked(self):
         "Event if add_tag button is clicked"
@@ -117,76 +104,99 @@ class InfoEntry(QtWidgets.QWidget, Ui_Form):
             if valid_tag(tag):
                 print("DEBUG: Try to add tag: {}".format(tag))
                 self.add_tag(tag)
-                self.fill_tags()
+                self.fill_tags_keywords()
 
     def add_tag(self, tag, ID=None):
         """
         Function to add tag
         should be stored somewhere central
         """
+
+        tag_split = tag.split("=",1)
+        value = None if len(tag_split) == 1 else tag_split[1].strip()
+        tag = tag_split[0].strip()
+        if tag in self.tags:
+            if value is None:
+                QtWidgets.QMessageBox.warning(self, "Tag exists",
+                    "The selected tag already exists for this simulation.",
+                    QtWidgets.QMessageBox.Ok, QtWidgets.QMessageBox.NoButton)
+                return
+
         # ToDo: Central Function, store somewhere else!
+
         if ID is None: ID = self.ID
         # PUSH
         logger.warn("PUSH change to DB")
         session = establish_session('sqlite:///{}'.format(self.db))
         sim = session.query(Simulation).filter(Simulation.id == self.ID).one()
-        print(sim)
-        sim.keywords.append(
-            Keywords(
-                main_id=sim.sim_id,
-                name=tag,
-                value=None,
+        keyword = sim.keywords.filter(Keywords.main_id == sim.id, Keywords.name == tag).one_or_none()
+        if keyword is not None:
+            keyword.value=value
+        else:
+            sim.keywords.append(
+                Keywords(
+                    main_id=sim.id,
+                    name=tag,
+                    value=value,
+                )
             )
-        )
         session.commit()
+        # reset the variables
         self.sim_tags = sim.keywords.filter(Keywords.value.is_(None)).all()
+        self.sim_keywords = sim.keywords.filter(not_(Keywords.value.is_(None))).all()
         self.tags = [key.name for key in self.sim_tags]
+        self.keywords = dict({(key.name,key.value) for key in self.sim_keywords})
+        # clsoe the session
         session.close()
         if self.parent is not None:
             self.parent.MyWidget_LabJournalIndex.build_tree()
 
-    def fill_tags(self):
+    def sideMenu_addContent(self,parent):
+        """Creates Content in the sideMenu"""
+        label = QtWidgets.QLabel()
+        label.setText("Save a stupid function to test in the button")
+        label.setWordWrap(True)
+        parent.layout_sideMenu.addWidget(label)  # add the pushButton to the sideMenu
+        btn = QtWidgets.QPushButton("Debug Button")  # create a pushButton for a new database Entry
+        btn.clicked.connect(self.fill_tags_keywords)  # connect it to the event
+        parent.layout_sideMenu.addWidget(btn)  # add the pushButton to the sideMenu
+
+    def fill_tags_keywords(self):
+        """
+        Function to fill the keywords and tags
         """
 
-        Returns
-        -------
+        # Clear layout tags
+        for i in range(self.layout_tags.count()):    # do it for all items
+            child = self.layout_tags.takeAt(0)  # get the first child
+            self.layout_tags.removeItem(child)  # remove it from the widget
+            child.widget().deleteLater()  # delete child
 
-        """
+        # Clear layout keywords
+        for i in range(self.layout_keywords.count()):  # do it for all items
+            child = self.layout_keywords.takeAt(0)  # get the first child
+            self.layout_keywords.removeItem(child)  # remove it from the widget
+            child.widget().deleteLater()  # delete child
 
-
-        """fill tags"""
-
-
-
-        # plus button
-        btn = QtWidgets.QToolButton(self)
-        btn.setText("+")
-        font = btn.font()
-        font.setBold(True)
-        btn.setFont(font)
-        btn.setStyleSheet("""
-                    background-color: #808080;
-                    color: #00a9e0;
-                    border: 0 px;
-                    border-radius: 15;
-                    """)
-        self.btn_add_tag = btn  # save it
+        # add PlusButton tags
+        self.btn_add_tag = PlusButton()  # get the PlusButton
         self.btn_add_tag.clicked.connect(self.btn_add_tag_clicked)  # register action
+        self.layout_tags.addWidget(self.btn_add_tag)  # add Label to Widget
 
-        self.layout_tags.addWidget(btn)  # add Label to Widget
-        # Todo: Use a flowlayout here
-        # http://doc.qt.io/qt-5/qtwidgets-layouts-flowlayout-example.html
-        # https://doc.qt.io/archives/4.6/layouts-flowlayout.html
-        # https://stackoverflow.com/questions/9660080/how-does-one-fill-a-qgridlayout-from-top-left-to-right
-        num_tags = len(self.tags)
+        # add PlusButton keywords
+        self.btn_add_tag = PlusButton()  # get the PlusButton
+        self.btn_add_tag.clicked.connect(self.btn_add_tag_clicked)  # register action
+        self.layout_keywords.addWidget(self.btn_add_tag)  # add Label to Widget
 
-        # # if only one entry, check if entry is empty
-        # if num_tags == 1:
-        #     if len(self.tags[0]) == 0:
-        #         return
-        # add tag symbols
-        for i in range(num_tags):
-            self.layout_tags.addWidget(self.create_tag_symbol(self.tags[i]))
+        # add the tags
+        for tag in self.tags:
+            self.layout_tags.addWidget(TagSymbol(tag))  # create a new tagsymbol
+
+        # add the tags
+        for tag,value in self.keywords.iteritems():
+            self.layout_keywords.addWidget(TagSymbol("{} = {}".format(tag,value)))  # create a new tagsymbol
+
+
 
     def setup_generalInfo(self):
         """Fill generalInfo Box"""
@@ -303,11 +313,6 @@ class DialogAddTag(QtWidgets.QDialog):
         self.buttonBox.setObjectName("buttonBox")
 
         # connect button
-        # self.buttonBox.button(QtWidgets.QDialogButtonBox.Ok).clicked.connect(self.accept)
-        # self.buttonBox.button(QtWidgets.QDialogButtonBox.Cancel).clicked.connect(self.reject)
-        # QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL("accepted()"), Dialog.accept)
-        # QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL("rejected()"), Dialog.reject)
-        # QtCore.QMetaObject.connectSlotsByName(Dialog)
         self.buttonBox.accepted.connect(Dialog.accept)
         self.buttonBox.rejected.connect(Dialog.reject)
 
@@ -315,6 +320,40 @@ class DialogAddTag(QtWidgets.QDialog):
     def get_tag(self):
         return str(self.ed_tag.text())
 
+
+class  PlusButton(QtWidgets.QToolButton):
+    def __init__(self):
+        """
+        Plus Button for adding tags or keywords
+        """
+        super(QtWidgets.QToolButton, self).__init__()
+        self.setText("+")
+        font = self.font()
+        font.setBold(True)
+        self.setFont(font)
+        self.setStyleSheet("""
+        background-color: #808080;
+        color: #00a9e0;
+        border: 0 px;
+        border-radius: 15;
+        """)
+
+class TagSymbol(QtWidgets.QToolButton):
+    def __init__(self,text):
+        """
+        Plus Button for adding tags or keywords
+        """
+        super(QtWidgets.QToolButton, self).__init__()
+        self.setText(text)
+        font = self.font()
+        font.setBold(True)
+        self.setFont(font)
+        self.setStyleSheet("""
+        background-color: #00a9e0;
+        color: rgb(255, 255, 255);
+        border: 0 px;
+        border-radius: 15;
+        """)
 
 def valid_tag(tag):
     """
