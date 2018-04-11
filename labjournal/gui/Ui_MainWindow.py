@@ -42,6 +42,7 @@ class Ui_MainWindow(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.MySearch_lineEdit.sizePolicy().hasHeightForWidth())
         self.MySearch_lineEdit.setSizePolicy(sizePolicy)
+        self.MySearch_lineEdit.setText("")
         self.MySearch_lineEdit.setObjectName("MySearch_lineEdit")
         self.horizontalLayout.addWidget(self.MySearch_lineEdit)
         self.MySearch_pushButton = QtWidgets.QPushButton(self.widget)
@@ -90,7 +91,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_2.addWidget(self.frameMain)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1444, 25))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1444, 28))
         self.menubar.setObjectName("menubar")
         MainWindow.setMenuBar(self.menubar)
         self.statusbar = QtWidgets.QStatusBar(MainWindow)
@@ -104,7 +105,7 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
-        self.MySearch_lineEdit.setText(_translate("MainWindow", "Search (goto)"))
+        self.MySearch_lineEdit.setPlaceholderText(_translate("MainWindow", "Search (goto)"))
         self.MySearch_pushButton.setText(_translate("MainWindow", "Search"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.MyTabLabJournalIndex), _translate("MainWindow", "Overview"))
 

@@ -21,16 +21,16 @@ from Ui_LabJournalTree import Ui_Form as Ui_TestWidget
 sys.path.append("..")
 from labjournal.core.databaseModel import *
 from functools import partial
-# BEGIN TESTS
+
 import logging
-logger = logging.getLogger('LabJournal')
-logging.basicConfig(level=logging.DEBUG)
 
 from PyQt5.QtCore import QSettings
 
-# ToDo: find a good organization / application name
-# Todo: if added we can set the file path by ourself : https://stackoverflow.com/questions/4031838/qsettings-where-is-the-location-of-the-ini-file
-settings = QSettings('foo', 'foo')
+logger = logging.getLogger('LabJournal')
+
+APPLICATION_NAME = 'foo'
+COMPANY_NAME = 'foo'
+settings = QSettings(APPLICATION_NAME, COMPANY_NAME)
 
 """ # IDEAS
 
@@ -267,6 +267,7 @@ class LabJournalTree(QtWidgets.QWidget, Ui_TestWidget):
         parent.layout_sideMenu.addWidget(btn)  # add the pushButton to the sideMenu
 
 if __name__ == '__main__':
+    logging.basicConfig(level=logging.DEBUG)
     app = QtWidgets.QApplication(sys.argv)
     window = LabJournalTree()
 

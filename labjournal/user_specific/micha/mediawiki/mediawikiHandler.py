@@ -8,8 +8,8 @@ from datetime import datetime
 logger = logging.getLogger('LabJournal')
 
 
-APPLICATION_NAME='foo'
-COMPANY_NAME='foo'
+APPLICATION_NAME = 'foo'
+COMPANY_NAME = 'foo'
 
 bot_username = 'test'      # username
 bot_password = 'testtest'  # password

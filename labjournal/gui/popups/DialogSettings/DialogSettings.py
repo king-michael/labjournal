@@ -15,8 +15,8 @@ from Ui_DialogSettings import Ui_Dialog
 
 logger = logging.getLogger('LabJournal')
 
-APPLICATION_NAME='foo'
-COMPANY_NAME='foo'
+APPLICATION_NAME = 'foo'
+COMPANY_NAME = 'foo'
 PATH_TO_DEFAULT_CONFIG = os.path.join(pkg_resources.resource_filename('labjournal', ''), "default_conifg.ini")
 
 class DialogSettings(QtWidgets.QDialog,Ui_Dialog):

@@ -32,13 +32,15 @@ from labjournal.gui.QtExtensions import FlowLayout
 
 import logging
 
-logger = logging.getLogger('LabJournal')
-logging.basicConfig(level=logging.DEBUG)
 from PyQt5.QtCore import QSettings
 
 # ToDo: find a good organization / application name
 # Todo: if added we can set the file path by ourself : https://stackoverflow.com/questions/4031838/qsettings-where-is-the-location-of-the-ini-file
-settings = QSettings('foo', 'foo')
+logger = logging.getLogger('LabJournal')
+
+APPLICATION_NAME = 'foo'
+COMPANY_NAME = 'foo'
+settings = QSettings(APPLICATION_NAME, COMPANY_NAME)
 
 
 class InfoEntry(QtWidgets.QWidget, Ui_Form):
@@ -58,6 +60,10 @@ class InfoEntry(QtWidgets.QWidget, Ui_Form):
         self.db = self.parent.db if self.parent is not None else settings.value('Database/file')
         # Set up the user interface from Designer.
         self.setupUi(self)
+        #
+        self.layout_tags = FlowLayout()
+        self.layout_box_tags.addLayout(self.layout_tags)
+
 
         if self.ID is not None:
             self.get_generalInfo()
@@ -138,6 +144,7 @@ class InfoEntry(QtWidgets.QWidget, Ui_Form):
         session.close()
         if self.parent is not None:
             self.parent.MyWidget_LabJournalIndex.build_tree()
+
     def fill_tags(self):
         """
 
@@ -149,8 +156,7 @@ class InfoEntry(QtWidgets.QWidget, Ui_Form):
 
         """fill tags"""
 
-        layout = FlowLayout()
-        self.layout_tags.addLayout(layout,0,0)
+
 
         # plus button
         btn = QtWidgets.QToolButton(self)
@@ -167,67 +173,20 @@ class InfoEntry(QtWidgets.QWidget, Ui_Form):
         self.btn_add_tag = btn  # save it
         self.btn_add_tag.clicked.connect(self.btn_add_tag_clicked)  # register action
 
-        layout.addWidget(btn)  # add Label to Widget
+        self.layout_tags.addWidget(btn)  # add Label to Widget
         # Todo: Use a flowlayout here
         # http://doc.qt.io/qt-5/qtwidgets-layouts-flowlayout-example.html
         # https://doc.qt.io/archives/4.6/layouts-flowlayout.html
         # https://stackoverflow.com/questions/9660080/how-does-one-fill-a-qgridlayout-from-top-left-to-right
         num_tags = len(self.tags)
 
-        # if only one entry, check if entry is empty
-        if num_tags == 1:
-            if len(self.tags[0]) == 0:
-                return
+        # # if only one entry, check if entry is empty
+        # if num_tags == 1:
+        #     if len(self.tags[0]) == 0:
+        #         return
         # add tag symbols
         for i in range(num_tags):
-            layout.addWidget(self.create_tag_symbol(self.tags[i]))
-
-
-
-    def OLD_fill_tags(self):
-        """
-
-        Returns
-        -------
-
-        """
-
-
-        """fill tags"""
-        layout = self.layout_tags
-
-        # plus button
-        btn = QtWidgets.QToolButton(self)
-        btn.setText("+")
-        font = btn.font()
-        font.setBold(True)
-        btn.setFont(font)
-        btn.setStyleSheet("""
-                    background-color: #808080;
-                    color: #00a9e0;
-                    border: 0 px;
-                    border-radius: 15;
-                    """)
-        self.btn_add_tag = btn  # save it
-        self.btn_add_tag.clicked.connect(self.btn_add_tag_clicked)  # register action
-
-        layout.addWidget(btn, 0, 0)  # add Label to Widget
-        # Todo: Use a flowlayout here
-        # http://doc.qt.io/qt-5/qtwidgets-layouts-flowlayout-example.html
-        # https://doc.qt.io/archives/4.6/layouts-flowlayout.html
-        # https://stackoverflow.com/questions/9660080/how-does-one-fill-a-qgridlayout-from-top-left-to-right
-        num_tags = len(self.tags)
-        # if only one entry, check if entry is empty
-        if num_tags == 1:
-            if len(self.tags[0]) == 0:
-                return
-        # add tag symbols
-        for i in range(num_tags):
-            # i+1 ; because of the added + sign
-            row = (i + 1) / self.tags_max_col
-            col = (i + 1) % self.tags_max_col
-            tag = self.tags[i]
-            layout.addWidget(self.create_tag_symbol(tag), row, col)  # add Label to Widget
+            self.layout_tags.addWidget(self.create_tag_symbol(self.tags[i]))
 
     def setup_generalInfo(self):
         """Fill generalInfo Box"""
@@ -249,11 +208,17 @@ class InfoEntry(QtWidgets.QWidget, Ui_Form):
             value = entry[i]  # get the value
             if key == 'simid': key = 'ID'  # change simid to ID
             label_key = QtWidgets.QLabel()  # create new Label
-            label_key.setText(key)  # _translate("Form", "General Informations", None)
+            label_key.setText(key)   # _translate("Form", "General Informations", None)
+            font = label_key.font()  # get the font of the label
+            font.setBold(True)       # set it to Bold
+            label_key.setFont(font)  # set font of the label
             layout.addWidget(label_key, i, 0)  # add Label to Widget
 
             spacer = QtWidgets.QLabel()  # create new Label
             spacer.setText(" : ")
+            font = spacer.font()  # get the font of the label
+            font.setBold(True)  # set it to Bold
+            spacer.setFont(font)  # set font of the label
             layout.addWidget(spacer, i, 1)  # add Label to Widget
 
             #    label_value = QtWidgets.QPushButton()
@@ -300,40 +265,28 @@ class InfoEntry(QtWidgets.QWidget, Ui_Form):
         # open the link in the browser
         QDesktopServices.openUrl(QtCore.QUrl(link))
 
-# FIXME on klick on add tag button:
-# Traceback(most
-# recent
-# call
-# last):
-# File
-# "/home/andrejb/Software/labjournal/labjournal/gui/tabs/InfoEntry/InfoEntry.py", line
-# 108, in btn_add_tag_clicked
-# dlg = DialogAddTag()
-# File
-# "/home/andrejb/Software/labjournal/labjournal/gui/tabs/InfoEntry/InfoEntry.py", line
-# 307, in __init__
-# QtWidgets.QDialog.__init__(self, parent)
-# File
-# "/home/andrejb/Software/labjournal/labjournal/gui/tabs/InfoEntry/InfoEntry.py", line
-# 325, in setupUi
-#
-# AttributeError: 'DialogAddTag'
-# object
-# has
-# no
-# attribute
-# 'retranslateUi'
-#
-# Process
-# finished
-# with exit code 134 (interrupted by signal 6: SIGABRT)
 
 class DialogAddTag(QtWidgets.QDialog):
+    """
+    Dialog that opens to add a Tag
+    """
     def __init__(self, parent=None):
         QtWidgets.QDialog.__init__(self, parent)
         self.setupUi(self)
 
     def setupUi(self, Dialog):
+        # type: (QtWidgets.QDialog) -> None
+        """Function to initialize the Setup of the User Interface
+
+        Parameters
+        ----------
+        Dialog : QtWidgets.QDialog
+            QtWidget to apply the User Interface on
+        Returns
+        -------
+
+        """
+
         Dialog.setObjectName("Add Tag")
         Dialog.resize(400, 60)
 
@@ -382,6 +335,7 @@ def valid_tag(tag):
 
 
 if __name__ == '__main__':
+    logging.basicConfig(level=logging.DEBUG)
     app = QtWidgets.QApplication(sys.argv)
     window = InfoEntry(ID=2,
                        db="/home/micha/SIM-PhD-King/micha.db")

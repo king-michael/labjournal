@@ -37,60 +37,20 @@ from PyQt5.QtCore import QSettings
 
 from sqlalchemy.exc import OperationalError
 
-from Ui_MainWindow import *
-
 sys.path.append('..')
-sys.path.insert(0,'../..')
+sys.path.insert(0, '../..')
 
+from labjournal.gui.Ui_MainWindow import *
 import labjournal.gui.tabs
-import popups
-
-
+import labjournal.gui.popups
 from labjournal.core import *
 
+
 logger = logging.getLogger('LabJournal')
-logging.basicConfig(level=logging.DEBUG)
 
-APPLICATION_NAME='foo'
-COMPANY_NAME='foo'
+APPLICATION_NAME = 'foo'
+COMPANY_NAME = 'foo'
 settings = QSettings(APPLICATION_NAME, COMPANY_NAME)
-
-
-
-class Main:
-    def __init__(self, state=True):
-        """MainClass"""
-        if state:
-            self.start_app()
-            self.start_window()
-            self.show_gui()
-
-    def start_app(self):
-        self.app = QtWidgets.QApplication(sys.argv)
-        return self.app
-
-    def start_window(self):
-        self.window = MainWindow()
-        # setup stylesheet
-        try:
-            import qdarkstyle  # style
-            self.app.setStyleSheet(qdarkstyle.load_stylesheet_pyqt5())
-        except:
-            pass
-        return self.window
-
-    def show_gui(self):
-        self.window.show()
-
-    def restart_gui(self):
-        self.start_window()
-        self.show_gui()
-
-    def __del__(self):
-        '''Destruction of class'''
-        sys.exit(app.exec_())
-
-
 
 # =============================================================================#
 # class GuiMainWindow
@@ -158,7 +118,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """
         Opens the Settings Dialog
         """
-        dialog = popups.DialogSettings(self)
+        dialog = labjournal.gui.popups.DialogSettings(self)
         dialog.show()
 
     def database_open(self):
@@ -371,7 +331,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 # =============================================================================#
 
 if __name__ == '__main__':
-
+    logging.basicConfig(level=logging.DEBUG)
     if not 'GUI' in locals():
         GUI = Main(False)  # fix to use in notebook
         app = GUI.start_app()
