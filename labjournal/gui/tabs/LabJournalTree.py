@@ -14,42 +14,21 @@
 """
 
 import sys
+from functools import partial
+import logging
+
 from PyQt5 import QtCore, QtWidgets
+from PyQt5.QtCore import QSettings
 
 from Ui_LabJournalTree import Ui_Form as Ui_TestWidget
 
-sys.path.append("..")
 from labjournal.core.databaseModel import *
-from functools import partial
-
-import logging
-
-from PyQt5.QtCore import QSettings
 
 logger = logging.getLogger('LabJournal')
 
 APPLICATION_NAME = 'foo'
 COMPANY_NAME = 'foo'
 settings = QSettings(APPLICATION_NAME, COMPANY_NAME)
-
-""" # IDEAS
-
-# Make Items Changable
-child->setFlags(child->flags() | Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled | Qt::ItemIsEditable);
-child->setIcon(0,QIcon(":/Images/folder_pic.png"));
-
-
-# Store Data in Item
-QTreeWidgetItem* child = new QTreeWidgetItem();
-child->setText(0, "New Folder");
-[..]
-int id = 1234;
-double size = 12.34
-child->setData(0, Qt::UserRole, id);
-child->setData(0, Qt::UserRole + 1, size);
-int id = child->data(0, Qt::UserRole).toInt();
-double size = child->data(0, Qt::UserRole + 1).toDouble();
-"""
 
 class LabJournalTree(QtWidgets.QWidget, Ui_TestWidget):
     def __init__(self,parent=None):
@@ -267,6 +246,7 @@ class LabJournalTree(QtWidgets.QWidget, Ui_TestWidget):
         parent.layout_sideMenu.addWidget(btn)  # add the pushButton to the sideMenu
 
 if __name__ == '__main__':
+    sys.path.insert(0, os.path.realpath(os.path.join(os.path.dirname(__file__), '../../..')))  # add module to path
     logging.basicConfig(level=logging.DEBUG)
     app = QtWidgets.QApplication(sys.argv)
     window = LabJournalTree()

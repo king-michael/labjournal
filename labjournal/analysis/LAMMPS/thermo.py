@@ -4,23 +4,19 @@
 from __future__ import print_function
 
 import os
-import sys
-
 import numpy as np
 
-# End import system libs
-
-# Begin import my libs
-sys.path.insert(0,'../..')
 from labjournal.utils.regexHandler import reglob
-
 from labjournal.external_libs.pizza.log import log as PizzaLog
-# End import my libs
+
 from PyQt5.QtCore import QSettings
-settings = QSettings('foo', 'foo')
 import logging
+
 logger = logging.getLogger('Thermo')
-#logging.basicConfig(level=logging.DEBUG)
+APPLICATION_NAME = 'foo'
+COMPANY_NAME = 'foo'
+settings = QSettings(APPLICATION_NAME, COMPANY_NAME)
+
 #Todo: Rewrite: lg.names -> self.list_possible_keywords
 #Todo: Simplify the whole class
 

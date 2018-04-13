@@ -10,12 +10,6 @@ import sys
 from PyQt5.QtWidgets import QApplication
 from PyQt5.QtCore import QSettings
 
-if __name__ == '__main__':
-    sys.path.insert(0, os.path.realpath(
-                        os.path.join(os.path.dirname(__file__), '../..')
-                        )
-                    )
-
 from labjournal.gui.MainWindow import MainWindow
 
 logger = logging.getLogger('LabJournal')
@@ -68,6 +62,7 @@ class Main:
 # =============================================================================#
 
 if __name__ == '__main__':
+    sys.path.insert(0, os.path.realpath(os.path.join(os.path.dirname(__file__),'../..')))  # add module to path
     logging.basicConfig(level=logging.DEBUG)
     if not 'GUI' in locals():
         GUI = Main(False)  # fix to use in notebook

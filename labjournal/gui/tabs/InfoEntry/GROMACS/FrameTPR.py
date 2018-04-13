@@ -16,39 +16,17 @@ from __future__ import print_function
 
 import os
 import sys
-from PyQt5 import QtCore, QtWidgets
-from functools import partial
+from PyQt5 import QtWidgets
+import pkg_resources
 
-root = "../../../../../"
-
-sys.path.insert(0,root)
-
-# FIXME do we need InfoEntry here?
-try:
-    from ..InfoEntry import InfoEntry
-except: # so we can use it as module and right as script...
-    sys.path.insert(0, "../..")
-    from InfoEntry import InfoEntry
-
-#from WidgetThermo import WidgetThermo
 from labjournal.utils.regexHandler import reglob
 
 from PyQt5.QtCore import QSettings
-settings = QSettings('foo', 'foo')
 
-try:
-    _fromUtf8 = QtCore.QString.fromUtf8
-except AttributeError:
-    def _fromUtf8(s):
-        return s
+APPLICATION_NAME = 'foo'
+COMPANY_NAME = 'foo'
+settings = QSettings(APPLICATION_NAME, COMPANY_NAME)
 
-try:
-    _encoding = QtWidgets.QApplication.UnicodeUTF8
-    def _translate(context, text, disambig):
-        return QtWidgets.QApplication.translate(context, text, disambig, _encoding)
-except AttributeError:
-    def _translate(context, text, disambig):
-        return QtWidgets.QApplication.translate(context, text, disambig)
 
 class FrameTPR(QtWidgets.QWidget):
     def __init__(self, **kwargs):
@@ -69,8 +47,9 @@ class FrameTPR(QtWidgets.QWidget):
                 self.path=self.parent.path
 
         # BEGIN TEST
-        self.path ="".join([root,
-                            "tests/test_folder_structures/dummy_andrej/dummy_folders/testcase_normalMD"])
+        self.path=os.path.join(pkg_resources.resource_filename('labjournal', ''),'..',
+                               "tests/test_folder_structures/dummy_andrej/dummy_folders/testcase_normalMD")
+
         # END TEST
         self.setupUI()
 
@@ -91,7 +70,6 @@ class FrameTPR(QtWidgets.QWidget):
         line_seperate.setMinimumSize(0, 0)
         line_seperate.setFrameShape(QtWidgets.QFrame.HLine)
         line_seperate.setFrameShadow(QtWidgets.QFrame.Sunken)
-        line_seperate.setObjectName(_fromUtf8("line_seperate"))
         layout_main.addWidget(line_seperate)
 
         # frame
@@ -141,6 +119,7 @@ class FrameTPR(QtWidgets.QWidget):
         # self.layout_list.addItem(spacerItem1)
 
 if __name__ == '__main__':
+    sys.path.insert(0, os.path.realpath(os.path.join(os.path.dirname(__file__), '../../../../..')))  # add module to path
     app = QtWidgets.QApplication(sys.argv)
     window = FrameTPR(parent=None)
 

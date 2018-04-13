@@ -16,16 +16,9 @@
 from __future__ import print_function
 
 import sys,os
-from PyQt5 import QtCore, QtWidgets
+from PyQt5 import QtWidgets
 
-sys.path.insert(0,"../../../..")  # Fixme: get rid of this
-
-try:
-    from ..InfoEntry import InfoEntry
-except: # so we can use it as module and right as script...
-    sys.path.insert(0, "../..")
-    from InfoEntry import InfoEntry
-
+from labjournal.gui.tabs.InfoEntry import InfoEntry
 from FrameThermo import FrameThermo
 
 class InfoEntry_LAMMPS(InfoEntry):
@@ -54,6 +47,7 @@ class InfoEntry_LAMMPS(InfoEntry):
 
 
 if __name__ == '__main__':
+    sys.path.insert(0, os.path.realpath(os.path.join(os.path.dirname(__file__), '../../../../..')))  # add module to path
     app = QtWidgets.QApplication(sys.argv)
     window = InfoEntry_LAMMPS(ID=2)
 

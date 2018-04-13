@@ -11,24 +11,14 @@ __author__ = 'Michael King'
 
 import os
 import subprocess
-import sys
+import pkg_resources
 
-path_root=os.path.realpath(
-    os.path.join(
-        os.path.dirname(__file__),
-        '../..'
-    )
-)
-"""path to root folder"""
-
-sys.path.append(path_root)
 from labjournal.utils import pushd
 
 STR_build_folders=open(
-    os.path.join(
-        path_root,
-        'templates', 'LAMMPS', 'analysis', 'analysis.sh'
-    ), 'r'
+    os.path.join(pkg_resources.resource_filename('labjournal', ''),
+                 'templates', 'LAMMPS', 'analysis', 'analysis.sh'),
+    'r'
 ).read()
 """The template for analysis.sh"""
 
@@ -101,4 +91,9 @@ class AnalysisHandler:
         return 0
 
 if __name__ == '__main__':
+    import sys
+    sys.path.insert(0, os.path.realpath(
+                        os.path.join(os.path.dirname(__file__), '../../..')
+                        )
+                    )
     ana = AnalysisHandler()

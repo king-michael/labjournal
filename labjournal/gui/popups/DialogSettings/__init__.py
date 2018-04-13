@@ -2,4 +2,4 @@
 Settings Dialog
 """
 
-from DialogSettings import *
+from .DialogSettings import *

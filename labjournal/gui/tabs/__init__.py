@@ -20,6 +20,7 @@ __date__                = "21.11.2017"
 # from subfolders
 from .InfoEntry import *
 import InfoEntry.LAMMPS
+import InfoEntry.LAMMPS
 # from files
 from .LabJournalTree import *
 

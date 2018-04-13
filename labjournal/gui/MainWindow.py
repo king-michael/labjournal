@@ -37,13 +37,9 @@ from PyQt5.QtCore import QSettings
 
 from sqlalchemy.exc import OperationalError
 
-sys.path.append('..')
-sys.path.insert(0, '../..')
-
 from labjournal.gui.Ui_MainWindow import *
 import labjournal.gui.tabs
 import labjournal.gui.popups
-from labjournal.core import *
 
 
 logger = logging.getLogger('LabJournal')
@@ -158,6 +154,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 self.MySearch_lineEdit.returnPressed.connect(self.search_resolve)
                 self.MySearch_pushButton.clicked.connect(self.search_resolve)
                 self.MyWidget_LabJournalIndex.sideMenu_addContent(self)
+                return
             except OperationalError as Err:
                 settings.remove('Database/file')
                 QtWidgets.QMessageBox.warning(self,
@@ -165,7 +162,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                                               'Could not open:\n\n {}\n\nWrong database format.'.format(self.db))
                 del self.db
                 self._setup_LabJournalIndex_empty()  # in case we cant access a database create a start screen
-            finally:
                 return
 
         self._setup_LabJournalIndex_empty()  # in case we cant access a database create a start screen
@@ -331,6 +327,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 # =============================================================================#
 
 if __name__ == '__main__':
+    sys.path.insert(0, os.path.realpath(os.path.join(os.path.dirname(__file__), '../..')))  # add module to path
     logging.basicConfig(level=logging.DEBUG)
     if not 'GUI' in locals():
         GUI = Main(False)  # fix to use in notebook

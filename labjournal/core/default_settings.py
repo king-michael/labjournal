@@ -4,11 +4,8 @@ settings
 
 from PyQt5.QtCore import QSettings
 import pkg_resources
-import os
 
 # ToDo: find a good organization / application name
-# Todo: if added we can set the file path by ourself : https://stackoverflow.com/questions/4031838/qsettings-where-is-the-location-of-the-ini-file
-
 
 def write_default_settings():
     """
@@ -17,7 +14,6 @@ def write_default_settings():
     """
 
     path_to_config = os.path.join(pkg_resources.resource_filename('labjournal', ''), "default_conifg.ini")
-    print path_to_config
     settings = QSettings(path_to_config,QSettings.IniFormat)
     settings.clear()
 

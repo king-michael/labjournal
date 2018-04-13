@@ -3,23 +3,17 @@ from __future__ import print_function
 import os
 import sys
 import pkg_resources
-from PyQt5 import QtCore, QtWidgets
+from PyQt5 import QtWidgets
 from functools import partial
-
-sys.path.insert(0,'../../../../../')  # Fixme: do we need this here?
-ROOT = os.path.realpath(pkg_resources.resource_filename('labjournal',''))
-# FIXME do we need InfoEntry here?
-try:
-    from ..InfoEntry import InfoEntry  # Fixme: get rid of of relative imports
-except: # so we can use it as module and right as script...
-    sys.path.insert(0, "../..")
-    from InfoEntry import InfoEntry
 
 from WidgetThermo import WidgetThermo
 from labjournal.utils.regexHandler import reglob
 
 from PyQt5.QtCore import QSettings
-settings = QSettings('foo', 'foo')
+
+APPLICATION_NAME = 'foo'
+COMPANY_NAME = 'foo'
+settings = QSettings(APPLICATION_NAME, COMPANY_NAME)
 
 class FrameThermo(QtWidgets.QWidget):
     def __init__(self, **kwargs):
@@ -40,7 +34,8 @@ class FrameThermo(QtWidgets.QWidget):
                 self.path=self.parent.path
 
         # BEGIN TEST
-        self.path =os.path.join(ROOT, "../tests/test_folder_structures/dummy_micha/dummy_folders/testcase_normalMD")
+        self.path =os.path.join(os.path.realpath(pkg_resources.resource_filename('labjournal',''))
+                                , "../tests/test_folder_structures/dummy_micha/dummy_folders/testcase_normalMD")
         # END TEST
         self.setupUI()
 
@@ -162,6 +157,7 @@ class FrameThermo(QtWidgets.QWidget):
         self.layout_list.addItem(spacerItem1)
 
 if __name__ == '__main__':
+    sys.path.insert(0, os.path.realpath(os.path.join(os.path.dirname(__file__), '../../../../..')))  # add module to path
     app = QtWidgets.QApplication(sys.argv)
     window = FrameThermo(parent=None)
 

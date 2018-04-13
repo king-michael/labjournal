@@ -7,7 +7,6 @@ import os
 from datetime import datetime
 logger = logging.getLogger('LabJournal')
 
-
 APPLICATION_NAME = 'foo'
 COMPANY_NAME = 'foo'
 

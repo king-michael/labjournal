@@ -1,8 +1,6 @@
-# BEGIN IMPORTS
 from __future__ import print_function
 import xml.etree.ElementTree
 from collections import defaultdict
-# END IMPORTS
 
   
   

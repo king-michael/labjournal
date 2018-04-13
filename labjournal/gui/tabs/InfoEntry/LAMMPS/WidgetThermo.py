@@ -19,12 +19,8 @@ import os
 import sys
 from copy import deepcopy
 
-root = '../../../../../'  # path to root dir
-sys.path.insert(0,root)  # append root dir
-
 from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtCore import QSettings
-settings = QSettings('foo', 'foo')
 
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
@@ -32,6 +28,10 @@ from matplotlib.figure import Figure
 
 
 from labjournal.analysis.LAMMPS.thermo import Thermo
+
+APPLICATION_NAME = 'foo'
+COMPANY_NAME = 'foo'
+settings = QSettings(APPLICATION_NAME, COMPANY_NAME)
 
 class WidgetThermo(QtWidgets.QWidget):
     def __init__(self, **kwargs):
@@ -168,6 +168,7 @@ class WidgetThermo(QtWidgets.QWidget):
 
 
 if __name__ == '__main__':
+    sys.path.insert(0, os.path.realpath(os.path.join(os.path.dirname(__file__), '../../../../..')))  # add module to path
 
     app = QtWidgets.QApplication(sys.argv)
 
@@ -177,8 +178,9 @@ if __name__ == '__main__':
     except:
         pass
 
+    import pkg_resources
     path = "tests/test_folder_structures/dummy_micha/dummy_folders/testcase_normalMD/production"
-    path=os.path.join(root,path)
+    path=os.path.join(pkg_resources.resource_filename('labjournal', ''),'..',path)
     print("Use Path: {}".format(path))
     print("Files:")
     print(os.listdir(path))

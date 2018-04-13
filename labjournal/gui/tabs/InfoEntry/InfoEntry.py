@@ -16,23 +16,16 @@
 from __future__ import print_function
 
 import sys
-from PyQt5 import QtCore, QtWidgets
-from PyQt5.QtGui import QDesktopServices
-
-# import Ui_Form
-from Ui_InfoEntry import Ui_Form
-
-
-# import custom libs
-root = "../../.."
-sys.path.insert(0, root)
-# from core.Database import *
-from labjournal.core.databaseModel import *
-from labjournal.gui.QtExtensions import FlowLayout
-
 import logging
 
+from PyQt5 import QtCore, QtWidgets
+from PyQt5.QtGui import QDesktopServices
 from PyQt5.QtCore import QSettings
+
+from Ui_InfoEntry import Ui_Form
+
+from labjournal.core.databaseModel import *
+from labjournal.gui.QtExtensions import FlowLayout
 
 # ToDo: find a good organization / application name
 # Todo: if added we can set the file path by ourself : https://stackoverflow.com/questions/4031838/qsettings-where-is-the-location-of-the-ini-file
@@ -464,6 +457,8 @@ def valid_tag(tag):
 
 
 if __name__ == '__main__':
+    import os
+    sys.path.insert(0, os.path.realpath(os.path.join(os.path.dirname(__file__), '../../../..')))  # add module to path
     logging.basicConfig(level=logging.DEBUG)
     app = QtWidgets.QApplication(sys.argv)
     window = InfoEntry(ID=2,

@@ -16,16 +16,9 @@
 from __future__ import print_function
 
 import sys,os
-from PyQt5 import QtCore, QtWidgets
+from PyQt5 import QtWidgets
 
-root = "../../../.."
-sys.path.insert(0,root)
-
-try:
-    from ..InfoEntry import InfoEntry
-except: # so we can use it as module and right as script...
-    sys.path.insert(0, "../..")
-    from InfoEntry import InfoEntry
+from labjournal.gui.tabs.InfoEntry import InfoEntry
 
 
 class InfoEntry_GROMACS(InfoEntry):
@@ -57,6 +50,8 @@ class InfoEntry_GROMACS(InfoEntry):
 
 
 if __name__ == '__main__':
+    sys.path.insert(0, os.path.realpath(os.path.join(os.path.dirname(__file__), '../../../../..')))  # add module to path
+
     app = QtWidgets.QApplication(sys.argv)
     window = InfoEntry_GROMACS(ID=2)
 

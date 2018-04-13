@@ -9,16 +9,17 @@ last modified: 09.02.2018
 """
 from PyQt5.QtCore import QSettings
 import os,sys
-sys.path.append("../")
 from glob import glob
 import logging
 logger = logging.getLogger('LabJournal')
 
-settings = QSettings('foo', 'foo')
+APPLICATION_NAME = 'foo'
+COMPANY_NAME = 'foo'
+settings = QSettings(APPLICATION_NAME, COMPANY_NAME)
 
 
 # FIXME auskommentiert weil gebugt, braucht man das?
-#fileHandler = str(settings.value('general/fileHandler', 'user_specific.micha.fileHandler'))
+#fileHandler = str(settings.value('general/fileHandler', 'labjournal.user_specific.micha.fileHandler'))
 #import importlib
 #FileHandler = getattr(importlib.import_module(fileHandler), 'FileHandler')
 #fileHandler = FileHandler()

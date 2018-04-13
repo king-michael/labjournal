@@ -10,12 +10,11 @@ import re
 import sys
 from PyQt5 import QtCore, QtWidgets
 
+from labjournal.core.databaseModel import *
+from Ui_DialogNewEntry import Ui_Dialog
+
 logger = logging.getLogger('LabJournal')
 
-sys.path.append("../..")
-from labjournal.core.databaseModel import *
-
-from Ui_DialogNewEntry import Ui_Dialog
 
 class DialogNewEntry(QtWidgets.QDialog,Ui_Dialog):
     def __init__(self, parent = None):
@@ -101,6 +100,8 @@ class DialogNewEntry(QtWidgets.QDialog,Ui_Dialog):
         return (sim, result == QtWidgets.QDialog.Accepted)
 
 if __name__ == '__main__':
+    import os
+    sys.path.insert(0, os.path.realpath(os.path.join(os.path.dirname(__file__), '../../..')))  # add module to path
     logging.basicConfig(level=logging.DEBUG)
     app = QtWidgets.QApplication(sys.argv)
     window = DialogNewEntry()

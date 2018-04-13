@@ -14,8 +14,7 @@ import sys
 
 import matplotlib.pyplot as plt
 
-sys.path.append("../../..")
-from labjournal.external_libs import log as Pizzalog
+from labjournal.external_libs.pizza import log as Pizzalog
 
 
 def task_thermodata(flist, # type: list or str
@@ -68,6 +67,7 @@ def task_thermodata(flist, # type: list or str
     fig.savefig(os.path.join(out_path,out_fname))
 
 if __name__ == '__main__':
+    sys.path.insert(0, os.path.realpath(os.path.join(os.path.dirname(__file__), '../../..')))  # add module to path
 
     logfile = ['/home/micha/labjournal/tests/test_folder_structures/dummy_micha/dummy_folders/testcase_normalMD/analysis/log.1.lammps',
                '/home/micha/labjournal/tests/test_folder_structures/dummy_micha/dummy_folders/testcase_normalMD/analysis/log.1.lammps']
