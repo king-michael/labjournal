@@ -106,7 +106,7 @@ class InfoEntry(QtWidgets.QWidget, Ui_Form):
                 self.add_tag(tag)
                 self.fill_tags_keywords()
 
-    def add_tag(self, tag, ID=None):
+    def add_tag(self, tag):
         """
         Function to add tag
         should be stored somewhere central
@@ -123,8 +123,6 @@ class InfoEntry(QtWidgets.QWidget, Ui_Form):
                 return
 
         # ToDo: Central Function, store somewhere else!
-
-        if ID is None: ID = self.ID
         # PUSH
         logger.warn("PUSH change to DB")
         session = establish_session('sqlite:///{}'.format(self.db))
@@ -141,6 +139,7 @@ class InfoEntry(QtWidgets.QWidget, Ui_Form):
                 )
             )
         session.commit()
+        # Todo: create a method for the refreshment routine (multiple times in this file)
         # reset the variables
         self.sim_tags = sim.keywords.filter(Keywords.value.is_(None)).all()
         self.sim_keywords = sim.keywords.filter(not_(Keywords.value.is_(None))).all()
@@ -150,6 +149,32 @@ class InfoEntry(QtWidgets.QWidget, Ui_Form):
         session.close()
         if self.parent is not None:
             self.parent.MyWidget_LabJournalIndex.build_tree()
+
+    def remove_tag(self,tag):
+        """
+        Function to remove the tag
+
+        Parameters
+        ----------
+        tag : str
+            tag name
+        """
+        tag_split = tag.split("=", 1)
+        value = None if len(tag_split) == 1 else tag_split[1].strip()
+        tag = tag_split[0].strip()
+
+        logger.warn("PUSH change to DB")
+        session = establish_session('sqlite:///{}'.format(self.db))
+        sim = session.query(Simulation).filter(Simulation.id == self.ID).one()
+        keyword = sim.keywords.filter(Keywords.main_id == sim.id, Keywords.name == tag).one()  # Explode if not one
+        session.delete(keyword)  # delete the keyword
+        session.commit()  # push the change to the database
+        # reset the variables
+        self.sim_tags = sim.keywords.filter(Keywords.value.is_(None)).all()
+        self.sim_keywords = sim.keywords.filter(not_(Keywords.value.is_(None))).all()
+        self.tags = [key.name for key in self.sim_tags]
+        self.keywords = dict({(key.name, key.value) for key in self.sim_keywords})
+        session.close()  # close thte session
 
     def sideMenu_addContent(self,parent):
         """Creates Content in the sideMenu"""
@@ -190,16 +215,16 @@ class InfoEntry(QtWidgets.QWidget, Ui_Form):
 
         # add the tags
         for tag in self.tags:
-            self.layout_tags.addWidget(TagSymbol(tag))  # create a new tagsymbol
+            self.layout_tags.addWidget(TagSymbol(tag,self))  # create a new tagsymbol
 
         # add the tags
         for tag,value in self.keywords.iteritems():
-            self.layout_keywords.addWidget(TagSymbol("{} = {}".format(tag,value)))  # create a new tagsymbol
-
-
+            self.layout_keywords.addWidget(TagSymbol("{} = {}".format(tag,value),self))  # create a new tagsymbol
 
     def setup_generalInfo(self):
-        """Fill generalInfo Box"""
+        """
+        Fill generalInfo Box
+        """
 
         # get general informations
         header, entry = zip(*self.list_generalInfo)
@@ -339,21 +364,86 @@ class  PlusButton(QtWidgets.QToolButton):
         """)
 
 class TagSymbol(QtWidgets.QToolButton):
-    def __init__(self,text):
+    def __init__(self,text,parent):
         """
         Plus Button for adding tags or keywords
+
+        Parameters
+        ----------
+        text : str
+            Text to be displayed
+        parent : QtWidget(InfoEntry)
+            parent of the tag (connect method to it)
         """
+
         super(QtWidgets.QToolButton, self).__init__()
+
+        self.parent = parent  # save parent
+
+        # setup the tag symbol
         self.setText(text)
         font = self.font()
         font.setBold(True)
         self.setFont(font)
-        self.setStyleSheet("""
+        self.setStyleSheet("""QToolButton {
         background-color: #00a9e0;
         color: rgb(255, 255, 255);
         border: 0 px;
         border-radius: 15;
-        """)
+        } """)
+
+        # set the contextMenuPolicy
+        self.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)  # use customContextMenu (because of dropdown)
+        self.customContextMenuRequested.connect(self.on_context_menu)  # contect to signal
+
+        # Define the context menu
+        self.popMenu = QtWidgets.QMenu(self)
+        # define action to delete tag
+        action_delete = QtWidgets.QAction('change', self)
+        action_delete.setToolTip('change tag/keyword')
+        action_delete.triggered.connect(self.event_change_tag)
+        self.popMenu.addAction(action_delete)
+        # self.popMenu.addSeparator()
+        # define action to change the tag
+        action_delete = QtWidgets.QAction('remove', self)
+        action_delete.setToolTip('removes the tag/keyword')
+        action_delete.triggered.connect(self.event_delete_tag)
+        self.popMenu.addAction(action_delete)
+
+    def on_context_menu(self,point):
+        """
+        Function to display the context menu
+        """
+        self.popMenu.exec_(self.mapToGlobal(point))
+
+    def event_delete_tag(self):
+        """
+        Event called to delete the tag
+        connects to method in parent
+        """
+        self.parent.remove_tag(self.text())
+        self.parent.fill_tags_keywords()  # refresh the tag/keyword symbols
+
+    def event_change_tag(self):
+        """
+        Event called to change tag
+        connects to method in parent
+        """
+
+        dlg = DialogAddTag()  # popup dialog
+        dlg.ed_tag.setText(self.text())  # set the defualt text
+        dlg.ed_tag.setPlaceholderText(self.text())  # set PlaceholderText (so we can see what was there before)
+        if dlg.exec_():
+            tag = dlg.get_tag()  # get the tag
+            if len(tag.strip()) == 0:  # incase we changed it to empty
+                self.parent.remove_tag(self.text())  # delete the original tag
+            if valid_tag(tag):
+                print("DEBUG: Try to change tag: {} ==> {}".format(self.text(),tag))
+                # check if the tag is the same, else delete the original
+                if self.text().split("=",1)[0].strip() != tag.split("=", 1)[0].strip():
+                    self.parent.remove_tag(self.text())  # delete the original if its a renaming
+                self.parent.add_tag(tag)  # add/update a new tag
+                self.parent.fill_tags_keywords()  # refresh the tag/keyword symbols
 
 def valid_tag(tag):
     """
