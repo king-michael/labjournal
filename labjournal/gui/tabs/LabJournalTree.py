@@ -116,7 +116,7 @@ class LabJournalTree(QtWidgets.QWidget, Ui_TestWidget):
         logger.info("connect to database: {}".format(self.db))
 
         if self.childmode: # if my simulation can have childs
-            parents  = session.query(Simulation).filter(not_(Simulation.parents.any())).all()
+            parents  = session.query(Main).filter(not_(Main.parents.any())).all()
             #children = session.query(Simulation).filter(Simulation.parents.any()).all()
             # Fill the table #FIXME: do it with a database handler
             for row_number, sim in enumerate(parents):
@@ -126,7 +126,7 @@ class LabJournalTree(QtWidgets.QWidget, Ui_TestWidget):
             self.treeWidget.expandAll() # expand by default
 
         else: # if everything should be plane
-            rv = session.query(Simulation).all()
+            rv = session.query(Main).all()
             # Fill the table #FIXME: do it with a database handler
             for row_number, sim in enumerate(rv):
                 # Create an item and add it to the table

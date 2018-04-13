@@ -81,7 +81,7 @@ class DialogNewEntry(QtWidgets.QDialog,Ui_Dialog):
                     name=split[0],
                     value=split[1]
                 ))
-        sim = Simulation(
+        sim = Main(
             sim_id=str(self.lineEdit_simid.text()),
             mediawiki=str(self.lineEdit_mediawiki.text()),
             path=str(self.lineEdit_path.text()),

@@ -21,7 +21,7 @@ copy2(db_raw,db)
 
 session = establish_session('sqlite:///{}'.format(db))
 
-rv = session.query(Simulation.sim_id).all()
+rv = session.query(Main.sim_id).all()
 
 SIM_IDS = [sim_id[0] for sim_id in rv]
 SIM_ID_MAIN = sorted(list(set([sim_id[0][:6] for sim_id in rv])))
@@ -36,29 +36,29 @@ for sim_id in SIM_IDS:
         pass
     elif len(sim_id) == 8: # child
         parent = sim_id[:6]
-        sim_child = session.query(Simulation).filter(Simulation.sim_id == sim_id).one()
-        sim_parent = session.query(Simulation).filter(Simulation.sim_id == parent).one()
+        sim_child = session.query(Main).filter(Main.sim_id == sim_id).one()
+        sim_parent = session.query(Main).filter(Main.sim_id == parent).one()
         ret = session.query(  # check if parent has grandparent
             exists().where(
                 and_(
-                    Association.parent == sim_parent,
-                    Association.child == sim_child
+                    AssociationMainKeywords.parent == sim_parent,
+                    AssociationMainKeywords.child == sim_child
                 )
             )).scalar()
         if not ret: # if the releationship is not there yet
-            sim_parent.children.append(Association(parent=sim_parent,
-                                               child=sim_child,
-                                               extra_data='SUB'))
+            sim_parent.children.append(AssociationMainKeywords(parent=sim_parent,
+                                                               child=sim_child,
+                                                               extra_data='SUB'))
             logger.info('create_database:find parents: ADDED: parent: %s child: %s',
                         sim_parent.sim_id,
                         sim_child.sim_id)
     elif len(sim_id) == 10: # grandchild
         parent = sim_id[:8]
         grandparent = sim_id[:6]
-        sim_child = session.query(Simulation).filter(Simulation.sim_id == sim_id).one()
-        sim_parent = session.query(Simulation).filter(Simulation.sim_id == parent).first()
+        sim_child = session.query(Main).filter(Main.sim_id == sim_id).one()
+        sim_parent = session.query(Main).filter(Main.sim_id == parent).first()
         if sim_parent is None: # handle if the entry dont exist
-            sim_parent = Simulation(
+            sim_parent = Main(
                 sim_id=parent,
                 mediawiki=grandparent,
                 path='',
@@ -68,29 +68,29 @@ for sim_id in SIM_IDS:
         ret = session.query(  # check if parent has grandparent
             exists().where(
                 and_(
-                    Association.parent == sim_parent,
-                    Association.child == sim_child
+                    AssociationMainKeywords.parent == sim_parent,
+                    AssociationMainKeywords.child == sim_child
                 )
             )).scalar()
         if not ret:  # if the releationship is not there yet
-            sim_parent.children.append(Association(parent=sim_parent,
-                                                   child=sim_child,
-                                                   extra_data='SUBSUB'))
+            sim_parent.children.append(AssociationMainKeywords(parent=sim_parent,
+                                                               child=sim_child,
+                                                               extra_data='SUBSUB'))
             logger.info('create_database:find parents: ADDED: parent: %s child: %s',
                         sim_parent.sim_id,
                         sim_child.sim_id)
-        sim_grandparent = session.query(Simulation).filter(Simulation.sim_id == grandparent).one()
+        sim_grandparent = session.query(Main).filter(Main.sim_id == grandparent).one()
         ret = session.query( # check if parent has grandparent
             exists().where(
                 and_(
-                    Association.parent == sim_grandparent,
-                    Association.child==sim_parent
+                    AssociationMainKeywords.parent == sim_grandparent,
+                    AssociationMainKeywords.child == sim_parent
                 )
             )).scalar()
         if not ret: # if grandchild relation is not here
-            sim_grandparent.children.append(Association(parent=sim_grandparent,
-                                                        child=sim_parent,
-                                                        extra_data='SUB'))
+            sim_grandparent.children.append(AssociationMainKeywords(parent=sim_grandparent,
+                                                                    child=sim_parent,
+                                                                    extra_data='SUB'))
             logger.info('create_database:find parents: ADDED: parent: %s child: %s',
                         sim_grandparent.sim_id,
                         sim_parent.sim_id)

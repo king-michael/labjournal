@@ -40,7 +40,7 @@ class GUi_MainWindow(QtWidgets.QMainWindow,Ui_MainWindow):
 
         session = db.establish_session('sqlite:///{}'.format(self.db))
         print "connect to database: {}".format(self.db)
-        rv = session.query(db.Simulation).all()
+        rv = session.query(db.Main).all()
 
         # update table
         self.tableWidget.setRowCount(0) # set rowCount back to zero

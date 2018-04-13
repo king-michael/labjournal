@@ -77,7 +77,7 @@ Session = sessionmaker(bind=engine)
 session = Session()
 setup_database(engine)
 for data in DATAS:
-    sim = Simulation(
+    sim = Main(
        sim_id=data['ID'],
        mediawiki=data['MEDIAWIKI'],
        path=data['path'],

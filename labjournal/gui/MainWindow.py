@@ -41,6 +41,8 @@ from labjournal.gui.Ui_MainWindow import *
 import labjournal.gui.tabs
 import labjournal.gui.popups
 
+import labjournal.core.databaseModel as databaseModel
+
 
 logger = logging.getLogger('LabJournal')
 

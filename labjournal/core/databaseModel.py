@@ -29,9 +29,9 @@ Base = declarative_base()
 #    lazy = 'joined'   # joins them at the query of the entry (one query in total)
 #    lazy = 'subquery' #  same as joined, otherway, different performance
 
-# TODO Add mapping Association-->Simulation; e.g. Simulation.parents shold return list of Simulation obj
+# TODO Add mapping Association-->Main; e.g. Main.parents shold return list of Main obj
 
-class Simulation(Base):
+class Main(Base):
     __tablename__ = 'main'
 
     id = Column(Integer(), primary_key=True, index=True)
@@ -41,16 +41,16 @@ class Simulation(Base):
     sim_type = Column(String(20), nullable=True)
     description = Column(String(1023), nullable=True) # maybe longer in the future
     updated_on = Column(DateTime(), default=datetime.now, onupdate=datetime.now)
-    children = relationship('Association',
+    children = relationship('AssociationMainKeywords',
                             back_populates="parent",
-                            foreign_keys='Association.parent_id',
+                            foreign_keys='AssociationMainKeywords.parent_id',
                             cascade="all, delete-orphan",  # apply delete also for entries in assosiation
                             passive_deletes=True,  # apply delete also for entries in assosiation
                             lazy='dynamic'
                             )
-    parents = relationship('Association',
+    parents = relationship('AssociationMainKeywords',
                            back_populates="child",
-                           foreign_keys='Association.child_id',
+                           foreign_keys='AssociationMainKeywords.child_id',
                            cascade="all, delete-orphan",  # apply delete also for entries in assosiation
                            passive_deletes=True,  # apply delete also for entries in assosiation
                            lazy='dynamic'
@@ -71,17 +71,17 @@ class Simulation(Base):
             self.mediawiki,
             self.path)
 
-class Association(Base):
+class AssociationMainKeywords(Base):
    __tablename__ = 'association'
    parent_id = Column(Integer, ForeignKey('main.id'), primary_key=True)
    child_id = Column(Integer, ForeignKey('main.id'), primary_key=True)
    extra_data = Column(String(50))
-   parent = relationship("Simulation",
-                         foreign_keys='Association.parent_id',
+   parent = relationship("Main",
+                         foreign_keys='AssociationMainKeywords.parent_id',
                          back_populates="children"
                          )
-   child = relationship("Simulation",
-                        foreign_keys='Association.child_id',
+   child = relationship("Main",
+                        foreign_keys='AssociationMainKeywords.child_id',
                         back_populates="parents"
                         )
 
@@ -98,8 +98,6 @@ class Keywords(Base):
     main_id =  Column(Integer(), ForeignKey('main.id') , index=True)
     name  =  Column(String(255), index=True)
     value =  Column(String(255), nullable=True)
-
-    #sim = relationship("Simulation", backref('keywords'))
 
     def __repr__(self):
         return "{}(main_id='{}', name='{}', value='{}')".format(
