@@ -19,7 +19,7 @@ copy2(db_raw,db)
 
 session = establish_session('sqlite:///{}'.format(db))
 
-rv = session.query(Main.sim_id).all()
+rv = session.query(Main.entry_id).all()
 
 SIM_ID_MAIN = sorted(list(set([sim_id[0][:6] for sim_id in rv])))
 SIM_ID_PARENTS = [sim_id[0] for sim_id in rv if len(sim_id[0]) ==6]

@@ -35,7 +35,7 @@ class Main(Base):
     __tablename__ = 'main'
 
     id = Column(Integer(), primary_key=True, index=True)
-    sim_id =  Column(String(50), unique=True, index=True) # should be discussed
+    entry_id =  Column(String(50), unique=True, index=True) # should be discussed
     mediawiki = Column(String(255), nullable=True)
     path = Column(String(255))
     sim_type = Column(String(20), nullable=True)
@@ -67,7 +67,7 @@ class Main(Base):
     def __repr__(self):
         return """{}(sim_id='{}', mediawiki='{}', path='{}')""".format(
             self.__class__.__name__,
-            self.sim_id,
+            self.entry_id,
             self.mediawiki,
             self.path)
 

@@ -66,7 +66,7 @@ class LabJournalTree(QtWidgets.QWidget, Ui_TestWidget):
                                                                        sim.path,
                                                                        sim.description)
         # SIM ID
-        child.setText(0, str(sim.sim_id))
+        child.setText(0, str(sim.entry_id))
         child.setToolTip(0, str(info))
         # mediawiki
         child.setText(1, str(sim.mediawiki))
@@ -162,7 +162,7 @@ class LabJournalTree(QtWidgets.QWidget, Ui_TestWidget):
         id = item.data(0,QtCore.Qt.UserRole) # returns tuple(int,bool) -> int = id
         if self.parent is not None:
             self.parent.labjournal_createTab(id,
-                                             sim_id=item.text(0),
+                                             entry_id=item.text(0),
                                              sim_type=item.text(5))
 
     def hide_tree_items(self):

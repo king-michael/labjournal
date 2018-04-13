@@ -74,7 +74,7 @@ class InfoEntry(QtWidgets.QWidget, Ui_Form):
 
         self.sim = session.query(Main).filter(Main.id == self.ID).one()
         self.list_generalInfo = [
-            ['SimID', self.sim.sim_id],
+            ['SimID', self.sim.entry_id],
             ['MediaWiki', self.sim.mediawiki],
             ['Path', self.sim.path],
             ['Description', self.sim.description],
