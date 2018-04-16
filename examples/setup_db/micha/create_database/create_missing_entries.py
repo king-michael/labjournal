@@ -34,7 +34,7 @@ for sim_id in SIM_ID_MAIN_ALL:
     if sim_id not in SIM_ID_PARENTS:
         logger.info('create_database:create_missing_entries: add sim_id : %s', sim_id)
         sim = Main(
-           sim_id=sim_id,
+           entry_id=sim_id,
            mediawiki=sim_id,
            path='',
            description='',

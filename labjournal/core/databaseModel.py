@@ -41,26 +41,32 @@ class Main(Base):
     sim_type = Column(String(20), nullable=True)
     description = Column(String(1023), nullable=True) # maybe longer in the future
     updated_on = Column(DateTime(), default=datetime.now, onupdate=datetime.now)
-    children = relationship('AssociationMainKeywords',
+    children = relationship('AssociationMainMain',
                             back_populates="parent",
-                            foreign_keys='AssociationMainKeywords.parent_id',
+                            foreign_keys='AssociationMainMain.parent_id',
                             cascade="all, delete-orphan",  # apply delete also for entries in assosiation
                             passive_deletes=True,  # apply delete also for entries in assosiation
                             lazy='dynamic'
                             )
-    parents = relationship('AssociationMainKeywords',
+    parents = relationship('AssociationMainMain',
                            back_populates="child",
-                           foreign_keys='AssociationMainKeywords.child_id',
+                           foreign_keys='AssociationMainMain.child_id',
                            cascade="all, delete-orphan",  # apply delete also for entries in assosiation
                            passive_deletes=True,  # apply delete also for entries in assosiation
                            lazy='dynamic'
                            )
     keywords = relationship('Keywords',
-                            backref='simid' , # check cascade_backrefs
+                            backref='entry_id' , # check cascade_backrefs
                             lazy='dynamic', # lazy='dynamic' -> returns query so we can filter
                             cascade="all, delete-orphan", # apply delete also for childs
                             passive_deletes=True, # apply delete also for childs
                             )  # lazy='dynamic' -> returns query so we can filter
+    groups = relationship('Groups',
+                          backref='entry_id',  # check cascade_backrefs
+                          lazy='dynamic',  # lazy='dynamic' -> returns query so we can filter
+                          cascade="all, delete-orphan",  # apply delete also for childs
+                          passive_deletes=True,  # apply delete also for childs
+                          )  # lazy='dynamic' -> returns query so we can filter
 
 
 
@@ -71,17 +77,17 @@ class Main(Base):
             self.mediawiki,
             self.path)
 
-class AssociationMainKeywords(Base):
-   __tablename__ = 'association'
+class AssociationMainMain(Base):
+   __tablename__ = 'association_main_keywords'
    parent_id = Column(Integer, ForeignKey('main.id'), primary_key=True)
    child_id = Column(Integer, ForeignKey('main.id'), primary_key=True)
    extra_data = Column(String(50))
    parent = relationship("Main",
-                         foreign_keys='AssociationMainKeywords.parent_id',
+                         foreign_keys='AssociationMainMain.parent_id',
                          back_populates="children"
                          )
    child = relationship("Main",
-                        foreign_keys='AssociationMainKeywords.child_id',
+                        foreign_keys='AssociationMainMain.child_id',
                         back_populates="parents"
                         )
 
@@ -106,6 +112,18 @@ class Keywords(Base):
             self.name,
             self.value)
 
+class Groups(Base):
+    __tablename__ = 'groups'
+
+    id = Column(Integer(), primary_key=True, index=True)
+    main_id =  Column(Integer(), ForeignKey('main.id') , index=True)
+    name  =  Column(String(255), index=True)
+
+    def __repr__(self):
+        return "{}(main_id='{}', name='{}')".format(
+            self.__class__.__name__,
+            self.main_id,
+            self.name)
 
 def establish_session(db_address='sqlite:///:memory:'):
     '''

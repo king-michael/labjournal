@@ -47,7 +47,7 @@ class DialogNewEntry(QtWidgets.QDialog,Ui_Dialog):
                 split = STR.split('=', 1)
                 keywords[split[0]]=split[1]
         adict = dict(
-            sim_id = self.lineEdit_simid.text(),
+            entry_id = self.lineEdit_simid.text(),
             mediawiki = self.lineEdit_mediawiki.text(),
             path = self.lineEdit_path.text(),
             sim_type = self.lineEdit_simtype.text(),
@@ -82,7 +82,7 @@ class DialogNewEntry(QtWidgets.QDialog,Ui_Dialog):
                     value=split[1]
                 ))
         sim = Main(
-            sim_id=str(self.lineEdit_simid.text()),
+            entry_id=str(self.lineEdit_simid.text()),
             mediawiki=str(self.lineEdit_mediawiki.text()),
             path=str(self.lineEdit_path.text()),
             sim_type=str(self.lineEdit_simtype.text()),
