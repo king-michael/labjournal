@@ -40,8 +40,7 @@ from sqlalchemy.exc import OperationalError
 from labjournal.gui.Ui_MainWindow import *
 import labjournal.gui.tabs
 import labjournal.gui.popups
-
-# import labjournal.core.databaseModel as databaseModel
+import labjournal.core.databaseModel as databaseModel
 
 
 logger = logging.getLogger('LabJournal')
@@ -152,10 +151,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                     self.tabWidget_closeAllTabs()              # close them
                 self.MyWidget_LabJournalIndex = labjournal.gui.tabs.LabJournalTree(parent=self)
                 self.add_widget(self.MyWidget_LabJournalIndex, parent=self.MyTabLabJournalIndex)
+                self.tabWidget_CurrentChanged(0)
                 # Connect my Search
                 self.MySearch_lineEdit.returnPressed.connect(self.search_resolve)
                 self.MySearch_pushButton.clicked.connect(self.search_resolve)
-                self.MyWidget_LabJournalIndex.sideMenu_addContent(self)
                 return
             except OperationalError as Err:
                 settings.remove('Database/file')

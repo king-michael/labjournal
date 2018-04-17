@@ -52,6 +52,8 @@ class LabJournalTree(QtWidgets.QWidget, Ui_TestWidget):
         self.treeWidget.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)  # set policity
         self.treeWidget.customContextMenuRequested.connect(self.openMenu)  # connect the ContextMenuRequest
 
+        # make the items clickable
+        self.treeWidget.itemDoubleClicked.connect(self.event_itemDoubleClicked)
         # connect signal of lineEdit
         self.lineEditFilter.textChanged.connect(self.filter_tree)
 
@@ -132,10 +134,9 @@ class LabJournalTree(QtWidgets.QWidget, Ui_TestWidget):
                 # Create an item and add it to the table
                 QtWidgets.QTreeWidgetItem(self.treeWidget)
                 child = self.treeWidget.topLevelItem(row_number)
-                child = self.add_item(child,sim)
+                self.add_item(child,sim)
 
-        # make the items clickable
-        self.treeWidget.itemDoubleClicked.connect(self.event_itemDoubleClicked)
+
         # ToDo: add keyPressEvent
         # see add https://stackoverflow.com/questions/38507011/implementing-keypressevent-in-qwidget
         # adjust header size
@@ -243,6 +244,15 @@ class LabJournalTree(QtWidgets.QWidget, Ui_TestWidget):
         """Creates Content in the sideMenu"""
         btn = QtWidgets.QPushButton("Create New Entry")  # create a pushButton for a new database Entry
         btn.clicked.connect(parent.database_createNewEntry)  # connect it to the event
+        parent.layout_sideMenu.addWidget(btn)  # add the pushButton to the sideMenu
+
+        line = QtWidgets.QFrame()
+        line.setFrameShape(QtWidgets.QFrame.HLine)
+        line.setFrameShadow(QtWidgets.QFrame.Sunken)
+        parent.layout_sideMenu.addWidget(line)
+
+        btn = QtWidgets.QPushButton("DEBUG")  # create a pushButton for a new database Entry
+        btn.clicked.connect(lambda : 1+1)  # connect it to the event
         parent.layout_sideMenu.addWidget(btn)  # add the pushButton to the sideMenu
 
 if __name__ == '__main__':

@@ -86,7 +86,7 @@ class InfoEntry(QtWidgets.QWidget, Ui_Form):
         self.sim_keywords = self.sim.keywords.filter(not_(Keywords.value.is_(None))).all()
         self.tags = [key.name for key in self.sim_tags]
         self.keywords = dict({(key.name,key.value) for key in self.sim_keywords})
-        print(self.keywords)
+        # print(self.keywords)
         session.close()
 
     def btn_add_tag_clicked(self):
