@@ -52,6 +52,8 @@ class LabJournalTree(QtWidgets.QWidget, Ui_TestWidget):
         self.treeWidget.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)  # set policity
         self.treeWidget.customContextMenuRequested.connect(self.openMenu)  # connect the ContextMenuRequest
 
+        # make the items clickable
+        self.treeWidget.itemDoubleClicked.connect(self.event_itemDoubleClicked)
         # connect signal of lineEdit
         self.lineEditFilter.textChanged.connect(self.filter_tree)
 
@@ -66,7 +68,7 @@ class LabJournalTree(QtWidgets.QWidget, Ui_TestWidget):
                                                                        sim.path,
                                                                        sim.description)
         # SIM ID
-        child.setText(0, str(sim.sim_id))
+        child.setText(0, str(sim.entry_id))
         child.setToolTip(0, str(info))
         # mediawiki
         child.setText(1, str(sim.mediawiki))
@@ -116,7 +118,7 @@ class LabJournalTree(QtWidgets.QWidget, Ui_TestWidget):
         logger.info("connect to database: {}".format(self.db))
 
         if self.childmode: # if my simulation can have childs
-            parents  = session.query(Simulation).filter(not_(Simulation.parents.any())).all()
+            parents  = session.query(Main).filter(not_(Main.parents.any())).all()
             #children = session.query(Simulation).filter(Simulation.parents.any()).all()
             # Fill the table #FIXME: do it with a database handler
             for row_number, sim in enumerate(parents):
@@ -126,16 +128,15 @@ class LabJournalTree(QtWidgets.QWidget, Ui_TestWidget):
             self.treeWidget.expandAll() # expand by default
 
         else: # if everything should be plane
-            rv = session.query(Simulation).all()
+            rv = session.query(Main).all()
             # Fill the table #FIXME: do it with a database handler
             for row_number, sim in enumerate(rv):
                 # Create an item and add it to the table
                 QtWidgets.QTreeWidgetItem(self.treeWidget)
                 child = self.treeWidget.topLevelItem(row_number)
-                child = self.add_item(child,sim)
+                self.add_item(child,sim)
 
-        # make the items clickable
-        self.treeWidget.itemDoubleClicked.connect(self.event_itemDoubleClicked)
+
         # ToDo: add keyPressEvent
         # see add https://stackoverflow.com/questions/38507011/implementing-keypressevent-in-qwidget
         # adjust header size
@@ -162,7 +163,7 @@ class LabJournalTree(QtWidgets.QWidget, Ui_TestWidget):
         id = item.data(0,QtCore.Qt.UserRole) # returns tuple(int,bool) -> int = id
         if self.parent is not None:
             self.parent.labjournal_createTab(id,
-                                             sim_id=item.text(0),
+                                             entry_id=item.text(0),
                                              sim_type=item.text(5))
 
     def hide_tree_items(self):
@@ -243,6 +244,15 @@ class LabJournalTree(QtWidgets.QWidget, Ui_TestWidget):
         """Creates Content in the sideMenu"""
         btn = QtWidgets.QPushButton("Create New Entry")  # create a pushButton for a new database Entry
         btn.clicked.connect(parent.database_createNewEntry)  # connect it to the event
+        parent.layout_sideMenu.addWidget(btn)  # add the pushButton to the sideMenu
+
+        line = QtWidgets.QFrame()
+        line.setFrameShape(QtWidgets.QFrame.HLine)
+        line.setFrameShadow(QtWidgets.QFrame.Sunken)
+        parent.layout_sideMenu.addWidget(line)
+
+        btn = QtWidgets.QPushButton("DEBUG")  # create a pushButton for a new database Entry
+        btn.clicked.connect(lambda : 1+1)  # connect it to the event
         parent.layout_sideMenu.addWidget(btn)  # add the pushButton to the sideMenu
 
 if __name__ == '__main__':

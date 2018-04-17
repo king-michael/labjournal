@@ -3,7 +3,7 @@
 from labjournal.core.databaseModel import *
 
 session = establish_session('sqlite:///examples/test_WORKS.db')
-for sim in session.query(Simulation).all():
+for sim in session.query(Main).all():
     list_keywords = [keyword for keyword in sim.keywords.all()]
     keys = [k.name for k in list_keywords]
     for k in list(set(keys)):

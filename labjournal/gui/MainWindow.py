@@ -40,6 +40,7 @@ from sqlalchemy.exc import OperationalError
 from labjournal.gui.Ui_MainWindow import *
 import labjournal.gui.tabs
 import labjournal.gui.popups
+import labjournal.core.databaseModel as databaseModel
 
 
 logger = logging.getLogger('LabJournal')
@@ -150,10 +151,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                     self.tabWidget_closeAllTabs()              # close them
                 self.MyWidget_LabJournalIndex = labjournal.gui.tabs.LabJournalTree(parent=self)
                 self.add_widget(self.MyWidget_LabJournalIndex, parent=self.MyTabLabJournalIndex)
+                self.tabWidget_CurrentChanged(0)
                 # Connect my Search
                 self.MySearch_lineEdit.returnPressed.connect(self.search_resolve)
                 self.MySearch_pushButton.clicked.connect(self.search_resolve)
-                self.MyWidget_LabJournalIndex.sideMenu_addContent(self)
                 return
             except OperationalError as Err:
                 settings.remove('Database/file')
@@ -232,12 +233,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             layout = uselayout(parent)
         layout.addWidget(widget)       # add the widget to the layout
 
-    def labjournal_createTab(self, ID, sim_id=None, sim_type=None):
+    def labjournal_createTab(self, ID, entry_id=None, sim_type=None):
         """
         Open a new Tab for the LabJournal entry
         """
 
-        name = sim_id if sim_id is not None else "New Tab"
+        name = entry_id if entry_id is not None else "New Tab"
         tabID = self.tabWidget_createTab(name)
         if sim_type == 'LAMMPS':
             widget = labjournal.gui.tabs.InfoEntry.LAMMPS(ID=ID, parent=self)

@@ -72,9 +72,9 @@ class InfoEntry(QtWidgets.QWidget, Ui_Form):
 
         session = establish_session('sqlite:///{}'.format(self.db))
 
-        self.sim = session.query(Simulation).filter(Simulation.id == self.ID).one()
+        self.sim = session.query(Main).filter(Main.id == self.ID).one()
         self.list_generalInfo = [
-            ['SimID', self.sim.sim_id],
+            ['SimID', self.sim.entry_id],
             ['MediaWiki', self.sim.mediawiki],
             ['Path', self.sim.path],
             ['Description', self.sim.description],
@@ -86,7 +86,7 @@ class InfoEntry(QtWidgets.QWidget, Ui_Form):
         self.sim_keywords = self.sim.keywords.filter(not_(Keywords.value.is_(None))).all()
         self.tags = [key.name for key in self.sim_tags]
         self.keywords = dict({(key.name,key.value) for key in self.sim_keywords})
-        print(self.keywords)
+        # print(self.keywords)
         session.close()
 
     def btn_add_tag_clicked(self):
@@ -119,7 +119,7 @@ class InfoEntry(QtWidgets.QWidget, Ui_Form):
         # PUSH
         logger.warn("PUSH change to DB")
         session = establish_session('sqlite:///{}'.format(self.db))
-        sim = session.query(Simulation).filter(Simulation.id == self.ID).one()
+        sim = session.query(Main).filter(Main.id == self.ID).one()
         keyword = sim.keywords.filter(Keywords.main_id == sim.id, Keywords.name == tag).one_or_none()
         if keyword is not None:
             keyword.value=value
@@ -158,7 +158,7 @@ class InfoEntry(QtWidgets.QWidget, Ui_Form):
 
         logger.warn("PUSH change to DB")
         session = establish_session('sqlite:///{}'.format(self.db))
-        sim = session.query(Simulation).filter(Simulation.id == self.ID).one()
+        sim = session.query(Main).filter(Main.id == self.ID).one()
         keyword = sim.keywords.filter(Keywords.main_id == sim.id, Keywords.name == tag).one()  # Explode if not one
         session.delete(keyword)  # delete the keyword
         session.commit()  # push the change to the database

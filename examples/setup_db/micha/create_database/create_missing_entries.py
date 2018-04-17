@@ -19,7 +19,7 @@ copy2(db_raw,db)
 
 session = establish_session('sqlite:///{}'.format(db))
 
-rv = session.query(Simulation.sim_id).all()
+rv = session.query(Main.entry_id).all()
 
 SIM_ID_MAIN = sorted(list(set([sim_id[0][:6] for sim_id in rv])))
 SIM_ID_PARENTS = [sim_id[0] for sim_id in rv if len(sim_id[0]) ==6]
@@ -33,8 +33,8 @@ logger.info('create_database:create_missing_entries: add missing entries')
 for sim_id in SIM_ID_MAIN_ALL:
     if sim_id not in SIM_ID_PARENTS:
         logger.info('create_database:create_missing_entries: add sim_id : %s', sim_id)
-        sim = Simulation(
-           sim_id=sim_id,
+        sim = Main(
+           entry_id=sim_id,
            mediawiki=sim_id,
            path='',
            description='',
