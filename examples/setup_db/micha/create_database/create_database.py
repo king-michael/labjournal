@@ -7,17 +7,20 @@ logger = logging.getLogger('LabJournal')
 logging.basicConfig(level=logging.DEBUG)
 
 import sys
+import os
 sys.path.append("../../..")
 
-from labjournal.utils import *
+# from labjournal.utils import *
 from labjournal.core.databaseModel import *
-
+from labjournal.utils.fileFinder import FileFinder
+from labjournal.user_specific.micha.fileHandler import FileHandler
 
 fileFinder = FileFinder(
     pattern='_info_',
     path='/home/micha/SIM-PhD-King',
     dir_ignore=['OLD', 'old', 'Old', 'TMP', 'tmp', 'rm', 'templates', 'testcase'])
 
+fileHandler = FileHandler()
 SIM_IDS=[]
 PATHS=[]
 DATAS=[]
@@ -78,7 +81,7 @@ session = Session()
 setup_database(engine)
 for data in DATAS:
     sim = Main(
-       sim_id=data['ID'],
+       entry_id=data['ID'],
        mediawiki=data['MEDIAWIKI'],
        path=data['path'],
        description=data['INFO'] if 'INFO' in data.keys() else ""

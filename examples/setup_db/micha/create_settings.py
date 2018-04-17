@@ -2,7 +2,9 @@ from PyQt5.QtCore import QSettings
 
 # ToDo: find a good organization / application name
 # Todo: if added we can set the file path by ourself : https://stackoverflow.com/questions/4031838/qsettings-where-is-the-location-of-the-ini-file
-settings = QSettings('foo', 'foo')
+APPLICATION_NAME = 'foo'
+COMPANY_NAME = 'foo'
+settings = QSettings(APPLICATION_NAME, COMPANY_NAME)
 
 settings.beginGroup('Database')
 settings.setValue('file', '/home/micha/SIM-PhD-King/micha.db')

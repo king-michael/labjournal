@@ -50,8 +50,8 @@ for sim_id in SIM_IDS:
                                                            child=sim_child,
                                                            extra_data='SUB'))
             logger.info('create_database:find parents: ADDED: parent: %s child: %s',
-                        sim_parent.sim_id,
-                        sim_child.sim_id)
+                        sim_parent.entry_id,
+                        sim_child.entry_id)
     elif len(sim_id) == 10: # grandchild
         parent = sim_id[:8]
         grandparent = sim_id[:6]
@@ -78,7 +78,7 @@ for sim_id in SIM_IDS:
                                                            extra_data='SUBSUB'))
             logger.info('create_database:find parents: ADDED: parent: %s child: %s',
                         sim_parent.entry_id,
-                        sim_child.sim_id)
+                        sim_child.entry_id)
         sim_grandparent = session.query(Main).filter(Main.entry_id == grandparent).one()
         ret = session.query( # check if parent has grandparent
             exists().where(
@@ -92,7 +92,7 @@ for sim_id in SIM_IDS:
                                                                 child=sim_parent,
                                                                 extra_data='SUB'))
             logger.info('create_database:find parents: ADDED: parent: %s child: %s',
-                        sim_grandparent.sim_id,
+                        sim_grandparent.entry_id,
                         sim_parent.entry_id)
 session.commit()
 session.close()
