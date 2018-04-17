@@ -252,6 +252,10 @@ class InfoEntry(QtWidgets.QWidget, Ui_Form):
             #    label_value = QtWidgets.QPushButton()
 
             label_value = QtWidgets.QLabel()  # create new Label
+            label_value.setWordWrap(True)     # enables WordWrap
+            label_value.setTextInteractionFlags(
+                QtCore.Qt.TextSelectableByMouse |\
+                QtCore.Qt.TextSelectableByKeyboard)
             if key == 'MediaWiki':
                 label_value.linkActivated.connect(self.event_open_MEDIAWIKI)
                 label_value.setText('<a href="{}" style="color:#00a9e0;">{}</a>'.format(value, value))
