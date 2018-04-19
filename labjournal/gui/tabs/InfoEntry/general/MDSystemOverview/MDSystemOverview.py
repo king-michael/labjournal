@@ -6,7 +6,7 @@ import os
 import pkg_resources
 import logging
 
-from PyQt5.QtWidgets import QWidget, QApplication
+from PyQt5.QtWidgets import QWidget, QApplication, QPushButton
 from PyQt5.QtCore import Qt
 from Ui_MDSystemOverview import Ui_Form
 from pymolwidget import PyMolWidget
@@ -25,8 +25,9 @@ class MDSystemOverview(QWidget,Ui_Form):
 
         self.setup_variables()  # setup some variables
 
-
         self.setup_display()
+
+        self.setup_details()
 
     def setup_variables(self):
         list_pdbfiles = glob(os.path.join(self.path, '*.pdb'))
@@ -45,14 +46,24 @@ class MDSystemOverview(QWidget,Ui_Form):
         if self.pdb_file is not None:
             # setup pymolWidget
             self.pymolWidget = PyMolWidget(self)  # start pymolwidget
+            self.pymolWidget.initializedGL.connect(
+                lambda: self.pymolWidget.loadMolFile(os.path.join(self.path, self.pdb_file)))
             self.pymolWidget.setFixedWidth(400)  # set width
             self.pymolWidget.setFixedHeight(self.pymolWidget.width())  # make it squarewise
             self.layout_display.addWidget(self.pymolWidget)  #
             self.layout_displayside.addStretch(1)  # add a strech area below (so it will be at the top always)
 
-            self.pymolWidget.loadMolFile(os.path.join(self.path,self.pdb_file))
+            #
         else: # Todo: Implement several pdb files if found
             return
+
+    def setup_details(self):
+        """
+        Setup the details
+        """
+
+        pass
+
 
 if __name__ == '__main__':
     import sys

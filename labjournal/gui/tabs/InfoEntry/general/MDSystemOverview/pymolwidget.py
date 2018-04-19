@@ -1,7 +1,7 @@
 from PyQt5.QtOpenGL import *
-from PyQt5 import QtCore
-from PyQt5.Qt import Qt
+from PyQt5.Qt import Qt, QObject, pyqtSignal
 from OpenGL.GL import *
+
 import pymol2
 
 buttonMap = {
@@ -12,6 +12,10 @@ buttonMap = {
 
 
 class PyMolWidget(QGLWidget):
+
+    # Defines a signal
+    initializedGL = pyqtSignal()
+
     def __init__(self, parent=None):
         self._enableUi = False # Show sidebars
         f = QGLFormat()
@@ -19,17 +23,15 @@ class PyMolWidget(QGLWidget):
         f.setRgba(True)
         f.setDepth(True)
         f.setDoubleBuffer(True)
-
         super(PyMolWidget, self).__init__(f, parent)
-        self.init_GL()
 
-    def init_GL(self):
+    def initializeGL(self):
         """
-                Reimplemented from QGLWidget
+        Reimplemented from QGLWidget
 
-                Instance PyMOL _only_ when we're sure there's an OGL context up and running
-                (i.e. in this method :-)
-                """
+        Instance PyMOL _only_ when we're sure there's an OGL context up and running
+        (i.e. in this method :-)
+        """
         self._pymol = pymol2.PyMOL()
         self._pymol.start()
 
@@ -41,26 +43,8 @@ class PyMolWidget(QGLWidget):
         self._pymol.reshape(self.width(), self.height())
         self.resizeGL(self.width(), self.height())
         self._pymolProcess()
+        self.initializedGL.emit()
 
-    # def initializeGL(self):
-    #     """
-    #     Reimplemented from QGLWidget
-    #
-    #     Instance PyMOL _only_ when we're sure there's an OGL context up and running
-    #     (i.e. in this method :-)
-    #     """
-    #
-    #     self._pymol = pymol2.PyMOL()
-    #     self._pymol.start()
-    #
-    #     if not self._enableUi:
-    #         self._pymol.cmd.set("internal_gui", 0)
-    #         self._pymol.cmd.set("internal_feedback", 0)
-    #         self._pymol.cmd.button("double_left", "None", "None")
-    #         self._pymol.cmd.button("single_right", "None", "None")
-    #     self._pymol.reshape(self.width(), self.height())
-    #     self.resizeGL(self.width(), self.height())
-    #     self._pymolProcess()
 
     def paintGL(self):
         glViewport(0, 0, self.width(), self.height())
@@ -94,6 +78,6 @@ class PyMolWidget(QGLWidget):
         self._pymolProcess()
 
     def wheelEvent(self, ev):
-        button = 3 if ev.delta() > 0 else 4
+        button = 3 if ev.angleDelta() > 0 else 4
         self._pymol.button(button, 0, ev.x(), ev.y(), 0)
         self._pymolProcess()
