@@ -71,7 +71,7 @@ class Main(Base):
 
 
     def __repr__(self):
-        return """{}(sim_id='{}', mediawiki='{}', path='{}')""".format(
+        return """{}(entry_id='{}', mediawiki='{}', path='{}')""".format(
             self.__class__.__name__,
             self.entry_id,
             self.mediawiki,
