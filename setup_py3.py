@@ -23,6 +23,7 @@ setup(
         'numpy',
         'matplotlib',
         'sqlalchemy',
+        'PyQt5',
         'qdarkstyle',
       ]
 )
