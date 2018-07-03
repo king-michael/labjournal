@@ -1,0 +1,15 @@
+
+# Create a backup
+sudo iptables-save > bck.iptables
+
+
+# AG PETER
+sudo iptables -A INPUT -p tcp --dport 8081 -s 134.34.112.128/27 -j ACCEPT
+# DOCKER
+sudo iptables -A INPUT -p tcp --dport 8081 -s 172.26.0.1/16 -j ACCEPT
+# pccp11
+sudo iptables -A INPUT -p tcp --dport 8081 -s 127.0.1.1 -j ACCEPT
+# localhost
+sudo iptables -A INPUT -p tcp --dport 8081 -s 127.0.0.1 -j ACCEPT
+# drop rest
+sudo iptables -A INPUT -p tcp --dport 8081 -j DROP

@@ -19,7 +19,7 @@ import sys,os
 from PyQt5 import QtWidgets
 
 from labjournal.gui.tabs.InfoEntry import InfoEntry
-
+from labjournal.gui.tabs.InfoEntry.general.MDSystemOverview import MDSystemOverview
 
 class InfoEntry_GROMACS(InfoEntry):
     def __init__(self,**kwargs):
@@ -30,11 +30,15 @@ class InfoEntry_GROMACS(InfoEntry):
     def disguise(self):
         """apply disguise"""
 
+        self.FrameMDSystemOverview = MDSystemOverview(path=self.path)
+        self.layout_body.addWidget(self.FrameMDSystemOverview)
+
         # <<<<<< CHANGE HERE
         # adding Example Widget in layout body
         #self.ExampleWidget = SomeExampleWidget(parent=self)
         #self.layout_body.addWidget(self.ExampleWidget)
         # <<<<<< CHANGE HERE
+
 
 
         # Should be last and not changed / adding space at the bottom
