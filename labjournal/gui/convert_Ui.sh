@@ -25,6 +25,10 @@ pushd tabs
         # convert Ui_InfoEntry
         pyuic5 Ui_InfoEntry.ui -o Ui_InfoEntry.py
 
+        # convert SystemOverview
+        pushd general/MDSystemOverview
+            pyuic5 Ui_MDSystemOverview.ui  -o Ui_MDSystemOverview.py
+        popd # general/MDSystemOverview
     popd # InfoEntry
 
 popd # tabs

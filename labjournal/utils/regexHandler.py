@@ -5,11 +5,23 @@ import os,re
 
 
 def reglob(path, exp, invert=False):
-    """glob.glob() style searching which uses regex
-
-    :param exp: Regex expression for filename
-    :param invert: Invert match to non matching files
     """
+    glob.glob() style searching which uses regex
+
+    Parameters
+    ----------
+    path : str
+        path to search in
+    exp : str
+        Regex expression for filename
+    invert: bool
+        Invert match to non matching files (Default is `True`)
+
+    Returns
+    -------
+
+    """
+
     m = re.compile(exp)
 
     if invert is False:

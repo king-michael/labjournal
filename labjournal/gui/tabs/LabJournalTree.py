@@ -48,6 +48,7 @@ class LabJournalTree(QtWidgets.QWidget, Ui_TestWidget):
 
         # Build the tree
         self.build_tree()
+
         # create ContextMenu
         self.treeWidget.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)  # set policity
         self.treeWidget.customContextMenuRequested.connect(self.openMenu)  # connect the ContextMenuRequest
@@ -76,6 +77,7 @@ class LabJournalTree(QtWidgets.QWidget, Ui_TestWidget):
         # Details
         child.setText(2, str(sim.description))
         child.setToolTip(2, str(info))
+
         # tags
         tags = [key.name for key in sim.keywords.filter(Keywords.value.is_(None)).all()]
         child.setText(3, str("; ".join(tags)))

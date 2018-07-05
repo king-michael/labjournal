@@ -26,5 +26,6 @@ class FileHandler():
                 if len(line_strip) == 0: continue  # empty lines
                 if line_strip[0] in self.list_comments: continue  # comments
                 line_split = line_strip.split(":", 1)  # max split 1
-                data[line_split[0].strip()] = line_split[1].strip()
+                if len(line_split) == 2:
+                    data[line_split[0].strip()] = line_split[1].strip()
         return data

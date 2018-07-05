@@ -19,6 +19,7 @@ import sys,os
 from PyQt5 import QtWidgets
 
 from labjournal.gui.tabs.InfoEntry import InfoEntry
+from labjournal.gui.tabs.InfoEntry.general.MDSystemOverview import MDSystemOverview
 from FrameThermo import FrameThermo
 
 class InfoEntry_LAMMPS(InfoEntry):
@@ -26,11 +27,14 @@ class InfoEntry_LAMMPS(InfoEntry):
         super(InfoEntry_LAMMPS,self).__init__(**kwargs)
 
         # TEST
-        self.path=os.path.join("/home/micha/SIM-PhD-King/labjournal/tests/test_folder_structures/dummy_micha/dummy_folders/testcase_normalMD/production")
+        self.path=os.path.join("/home/micha/SIM-PhD-King/labjournal/tests/test_folder_structures/dummy_micha/dummy_folders/testcase_normalMD")
         self.disguise()
 
     def disguise(self):
         """apply LAMMPS disguise"""
+
+        self.FrameMDSystemOverview = MDSystemOverview(path = self.path)
+        self.layout_body.addWidget(self.FrameMDSystemOverview)
 
         #btn = QtWidgets.QPushButton("Open Thermo Data")
         #btn.clicked.connect(self.PopUp_WidgetThermo)

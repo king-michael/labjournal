@@ -53,6 +53,7 @@ class Ui_Form(object):
         font.setBold(True)
         font.setWeight(75)
         self.label_keywords.setFont(font)
+        self.label_keywords.setWordWrap(False)
         self.label_keywords.setObjectName("label_keywords")
         self.layout_tags_keywords.addWidget(self.label_keywords, 1, 0, 1, 1)
         self.label_tags = QtWidgets.QLabel(Form)
