@@ -24,6 +24,7 @@ setup(
         'matplotlib',
         'sqlalchemy',
         'PyQt5',
+        'PyOpenGL',
         'qdarkstyle',
       ]
 )

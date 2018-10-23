@@ -1,5 +1,8 @@
 from distutils.core import setup
 
+
+# sudo aptitude install python-pyqt5.qtopengl
+
 setup(
     name='labjournal',
     version='0.1beta',
@@ -24,5 +27,6 @@ setup(
         'matplotlib',
         'sqlalchemy',
         'qdarkstyle',
+        'PyOpenGL',
       ]
 )
