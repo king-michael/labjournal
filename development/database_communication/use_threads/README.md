@@ -12,3 +12,5 @@ Database API as a `QObject`
 
 ### PandasModel.py
 A Model for the Qt.Widgets.QTableView
+
+- https://stackoverflow.com/questions/6783194/background-thread-with-qthread-in-pyqt
