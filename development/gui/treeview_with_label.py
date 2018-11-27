@@ -67,13 +67,39 @@ class SimpleTreeView(QWidget):
             parent.appendRow([child1, child2])
             self.tree.model().appendRow(parent)
 
+        # child of child
+        i += 1
+        parent = QStandardItem(str(i))
+        parent.setFlags(Qt.NoItemFlags)  # not editable
+
+        child1 = QStandardItem("->")
+        child1.setFlags(Qt.NoItemFlags)  # not editable
+        child2 = QStandardItem(str(i * i))
+
+        child1_sub = QStandardItem("+++")
+        child1_sub.setFlags(Qt.NoItemFlags)  # not editable
+        child2_sub = QStandardItem('')
+        child1.appendRow([child1_sub, child2_sub])
+        parent.appendRow([child1, child2])
+        self.tree.model().appendRow(parent)
+
         label = QLabel("A test")
         label.setStyleSheet('background : red;')
-        self.tree.setIndexWidget( self.tree.model().index(0,1), label)
+        self.tree.setIndexWidget( self.tree.model().index(0,1, parent=QModelIndex()), label)
+
+        label = QLabel("other test")
+        label.setStyleSheet('background : yellow;')
+        self.tree.setIndexWidget(self.tree.model().index(2, 1, parent=QModelIndex()), label)
 
         label = QLabel("A new test")
         label.setStyleSheet('background : green;')
         self.tree.setIndexWidget(self.tree.model().index(0, 1, parent=self.tree.model().index(1, 0)), label)
+
+
+        label = QLabel("A")
+        label.setStyleSheet('background:lightblue')
+        self.tree.setIndexWidget(self.tree.model().index(0,1, parent=self.tree.model().index(0,0, parent=self.tree.model().index(4, 0))),
+                                 label)
 
         frame = QFrame()
         frame.setLayout(QHBoxLayout())
@@ -85,6 +111,8 @@ class SimpleTreeView(QWidget):
             self.tree.model().index(0, 1,
                                     parent=self.tree.model().index(3, 0)),
             frame)
+
+
         self.tree.expandAll()
 
 if __name__ == '__main__':
