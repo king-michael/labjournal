@@ -23,6 +23,7 @@ import os
 import sys
 
 from labjournal.gui.Ui_MainWindow import *
+from labjournal.gui.TabSimdbMainTable import TabSimdbMainTable
 
 logger = logging.getLogger('LabJournal')
 
@@ -40,8 +41,21 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         mainMenu = self.menuBar()
 
+        # Tabwidget
+        self.tabWidget.tabBar().setTabButton(0, QtWidgets.QTabBar.RightSide, None)  # make the first bar uncloseable
+        #self.tabWidget.tabCloseRequested.connect(self.tabWidget_TabCloseRequested)  # register close action
+        #self.tabWidget.currentChanged.connect(self.tabWidget_CurrentChanged)
+        self.tabs = []  # set tab list to empty
 
+        self.setup_tabMainTable()
 
+    def setup_tabMainTable(self):
+        """
+        Function to fill the tab `MainTable`
+        """
+        self.tabSimdbMainTable = TabSimdbMainTable(self)
+        layout = self.tab_MainTable.layout()
+        layout.addWidget(self.tabSimdbMainTable)
 
 
 
