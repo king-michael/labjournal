@@ -1,17 +1,30 @@
+#!/usr/bin/env python
+"""
+TabSimdbMainTable
+ - tab to display the Main table
+
+SimdbTreeWidget
+ - View how to display it
+"""
+
+from __future__ import print_function, absolute_import, generators
+
+
+import logging
+
 from PyQt5.QtWidgets import (QApplication,
                              QWidget,
                              QSizePolicy,
-                             QVBoxLayout, QHBoxLayout,
-                             QLineEdit, QCommandLinkButton,
+                             QVBoxLayout,
                              QTreeWidget, QTreeWidgetItem)
-from PyQt5.QtCore import Qt, QSize
+from PyQt5.QtCore import Qt
 
-from PyQt5 import QtCore, QtWidgets
-QtCore.Qt
-
-import sys
-from simdb.databaseModel import Keywords, Main, create_engine, sessionmaker
+from simdb.databaseModel import Main, create_engine, sessionmaker
 from labjournal.gui.forms.Ui_LabJournalTree import Ui_Form
+
+
+logger = logging.getLogger('LabJournal.TabSimdbMainTable')
+"""Logger object `LabJournal.TabSimdbMainTable` for the tab."""
 
 class SimdbTreeWidget(QWidget):
     def __init__(self, parent=None):
@@ -19,7 +32,7 @@ class SimdbTreeWidget(QWidget):
         self._header = ['entry_id', 'path', 'keywords', 'description', 'type']
 
         # define default parameters
-        self.nested_mode = False  # Entries are nested.
+        self.nested_mode = True  # Entries are nested.
 
 
         # Creating the required widgets
@@ -37,6 +50,7 @@ class SimdbTreeWidget(QWidget):
 
         self.childItems = []
 
+        logger.debug('created SimdbTreeWidget')
         self.header = self._header
         self.build_tree()
 
@@ -70,6 +84,7 @@ class SimdbTreeWidget(QWidget):
         # sanity check
         assert all([h in Main.__dict__ for h in header]),  'invalid header\n:{}'.format(header)
 
+        logger.debug('set header = {}'.format(header))
         self._header = header
         for i, header in enumerate(header):
             self.treeWidget.headerItem().setText(i, header)
@@ -157,7 +172,7 @@ class SimdbTreeWidget(QWidget):
         """
         Function to build the tree of the treewidget
         """
-
+        logger.debug('build tree with nested_mode = {}'.format(self.nested_mode))
         # EXPERIMENTAL
         db_path = 'micha_raw.db'
 
@@ -209,6 +224,7 @@ class SimdbTreeWidget(QWidget):
         """
         n_cols = len(self.header)
         if len(filtertext) != 0:
+            logger.debug('filter for '.format(filtertext))
             # hide all items
             for item in self.childItems:
                 item.setHidden(True)
@@ -242,6 +258,10 @@ class TabSimdbMainTable(QWidget, Ui_Form):
         self.optionParentView.toggled.connect(self.toogle_optionParentView)
         self.layout().addWidget(self.treeWidget)
 
+        self.searchLineEdit.textChanged.connect(self.treeWidget.filter_tree)
+        self.searchLineEdit.returnPressed.connect(lambda : self.treeWidget.filter_tree(self.searchLineEdit.text()))
+
+
     def toggled_optionShowOptions(self, checked):
         """
         Function to show/hide the `frameOptions`.
@@ -270,7 +290,21 @@ class TabSimdbMainTable(QWidget, Ui_Form):
 
 
 if __name__ == '__main__':
+    import sys
+
+    # enable debuging
+    logging.basicConfig(level=logging.DEBUG)
+
     app = QApplication(sys.argv)
+
+    # try to apply coloring
+    try:
+        import qdarkstyle  # style
+
+        app.setStyleSheet(qdarkstyle.load_stylesheet_pyqt5())
+    except ImportError:
+        pass
+
     treeWidgetDialog = TabSimdbMainTable()
     treeWidgetDialog.show()
     #treeWidgetDialog.filter_tree("polymorphism")
