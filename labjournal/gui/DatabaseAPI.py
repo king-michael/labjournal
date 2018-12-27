@@ -7,11 +7,11 @@ from simdb import databaseModel as dbModel
 
 db_lock = QtCore.QReadWriteLock()
 """lock for the database access"""
-
+thread_lock = QtCore.QMutex()
 
 class Database(QObject):
 
-    def __init__(self, db_path, parent=None):
+    def __init__(self, db_path, new_database=False, parent=None):
         """
         Database object (to live on another thread) to access the database.
 
@@ -24,7 +24,11 @@ class Database(QObject):
         """
         super(QObject, self).__init__(parent)
         self.db_path = db_path
-        self.session = dbapi.connect_database(self.db_path)
+
+        if new_database:
+            self.session = dbapi.create_new_database(db_path)
+        else:
+            self.session = dbapi.connect_database(self.db_path)
 
     def get_entry_details(self, entry_id):
         """
@@ -135,16 +139,21 @@ class Database(QObject):
 class DatabaseThread(QThread):
     connected = pyqtSignal()
 
-    def __init__(self, db_path, parent=None):
+    def __init__(self, db_path, new_database=False, parent=None):
         super(QThread, self).__init__(parent)
         self.db_path = db_path
-
+        self.new_database = new_database
     def run(self):
-        self.database = Database(db_path=self.db_path)
-        self.running = True
+        self.database = Database(new_database=self.new_database, db_path=self.db_path)
+        with QtCore.QMutexLocker(thread_lock):
+            self.running = True
         self.connected.emit()
         while self.running:
             sleep(0.25)
+
+    def stopRequest(self):
+        with QtCore.QReadWriteLock(thread_lock):
+            self.running = False
 
     def __del__(self):
         self.exiting = True

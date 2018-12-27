@@ -198,13 +198,19 @@ class SimdbTreeWidget(QWidget):
         2. set header
         3. build tree
         """
+        self.clear_tree()
+        self.header = self._header
+        self.build_tree()
+
+    def clear_tree(self):
+        """
+        Function to clear the tree.
+        """
         root = self.treeWidget.invisibleRootItem()
         for i in range(self.treeWidget.topLevelItemCount()):
             item = self.treeWidget.topLevelItem(0)
             (item.parent() or root).removeChild(item)
             del item
-        self.header = self._header
-        self.build_tree()
 
     def filter_tree(self, filtertext):
         """
@@ -217,7 +223,7 @@ class SimdbTreeWidget(QWidget):
         """
         n_cols = len(self.header)
         if len(filtertext) != 0:
-            logger.debug('filter for '.format(filtertext))
+            logger.debug("filter for '{}'".format(filtertext))
             # hide all items
             for item in self.childItems:
                 item.setHidden(True)
@@ -256,7 +262,14 @@ class TabSimdbMainTable(QWidget, Ui_Form):
         self.searchLineEdit.returnPressed.connect(lambda : self.treeWidget.filter_tree(self.searchLineEdit.text()))
 
     def connect_database_SimdbTreeWdiget(self, db_thread):
+        """
+        Function to set the database to the treeWidget and rebuild the tree.
 
+        Parameters
+        ----------
+        db_thread : Database
+            QObject -> Database
+        """
         self.treeWidget.db = db_thread.database
         self.treeWidget.rebuild_tree()
 
