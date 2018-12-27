@@ -27,14 +27,14 @@ logger = logging.getLogger('LabJournal.TabSimdbMainTable')
 """Logger object `LabJournal.TabSimdbMainTable` for the tab."""
 
 class SimdbTreeWidget(QWidget):
-    def __init__(self, parent=None):
+    def __init__(self, db=None, parent=None):
         super(SimdbTreeWidget, self).__init__(parent)
         self._header = ['entry_id', 'path', 'keywords', 'description', 'type']
 
         # define default parameters
         self.nested_mode = True  # Entries are nested.
 
-
+        self.db = db
         # Creating the required widgets
         self.vboxLayout = QVBoxLayout()
         self.setLayout(self.vboxLayout)
@@ -52,7 +52,9 @@ class SimdbTreeWidget(QWidget):
 
         logger.debug('created SimdbTreeWidget')
         self.header = self._header
-        self.build_tree()
+        if db is not None:
+            self.build_tree()
+
 
     @property
     def header(self):
@@ -173,17 +175,8 @@ class SimdbTreeWidget(QWidget):
         Function to build the tree of the treewidget
         """
         logger.debug('build tree with nested_mode = {}'.format(self.nested_mode))
-        # EXPERIMENTAL
-        db_path = 'micha_raw.db'
 
-        engine = create_engine('sqlite:///{}'.format(db_path))
-        Session = sessionmaker(bind=engine)
-        session = Session()
-
-        if self.nested_mode:
-            sims = session.query(Main).filter(~Main.parents.any()).order_by(Main.entry_id).all()
-        else:
-            sims = session.query(Main).order_by(Main.entry_id).all()
+        sims = self.db.get_simulations(self.nested_mode)
 
         # Adding the child to the top level item
         for i, sim in enumerate(sims):
@@ -239,7 +232,7 @@ class SimdbTreeWidget(QWidget):
 
 
 class TabSimdbMainTable(QWidget, Ui_Form):
-    def __init__(self, parent=None):
+    def __init__(self, db=None, parent=None):
         super(TabSimdbMainTable, self).__init__(parent)
 
         self.setupUi(self)
@@ -249,18 +242,23 @@ class TabSimdbMainTable(QWidget, Ui_Form):
         self.optionShowOptions.toggled.connect(self.toggled_optionShowOptions)
 
         # treewidget
-        self.treeWidget = SimdbTreeWidget(self)
+        self.treeWidget = SimdbTreeWidget(db=db, parent=self)
         sizePolicy = QSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(10)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.treeWidget.sizePolicy().hasHeightForWidth())
         self.treeWidget.setSizePolicy(sizePolicy)
+        self.optionParentView.setChecked(self.treeWidget.nested_mode)
         self.optionParentView.toggled.connect(self.toogle_optionParentView)
         self.layout().addWidget(self.treeWidget)
 
         self.searchLineEdit.textChanged.connect(self.treeWidget.filter_tree)
         self.searchLineEdit.returnPressed.connect(lambda : self.treeWidget.filter_tree(self.searchLineEdit.text()))
 
+    def connect_database_SimdbTreeWdiget(self, db_thread):
+
+        self.treeWidget.db = db_thread.database
+        self.treeWidget.rebuild_tree()
 
     def toggled_optionShowOptions(self, checked):
         """

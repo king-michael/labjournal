@@ -1,8 +1,9 @@
 from time import sleep
 
 from PyQt5 import QtCore
-from PyQt5.QtCore import QObject, QThread
+from PyQt5.QtCore import QObject, QThread, pyqtSignal
 from simdb import databaseAPI as dbapi
+from simdb import databaseModel as dbModel
 
 db_lock = QtCore.QReadWriteLock()
 """lock for the database access"""
@@ -22,9 +23,8 @@ class Database(QObject):
             Parent
         """
         super(QObject, self).__init__(parent)
-        print(db_path)
         self.db_path = db_path
-        self.sesssion = dbapi.connect_database(self.db_path)
+        self.session = dbapi.connect_database(self.db_path)
 
     def get_entry_details(self, entry_id):
         """
@@ -42,7 +42,7 @@ class Database(QObject):
         """
 
         db_lock.lockForRead()
-        details = dbapi.get_entry_details(session=self.sesssion, entry_id=entry_id)
+        details = dbapi.get_entry_details(session=self.session, entry_id=entry_id)
         db_lock.unlock()
 
         return details
@@ -63,7 +63,7 @@ class Database(QObject):
         """
 
         db_lock.lockForRead()
-        keywords = dbapi.get_keywords(session=self.sesssion,
+        keywords = dbapi.get_keywords(session=self.session,
                                       entry_id=entry_id)
         db_lock.unlock()
 
@@ -91,28 +91,58 @@ class Database(QObject):
         """
         print(db_lock)
         db_lock.lockForRead()
-        df = dbapi.get_entry_table(session=self.sesssion,
+        df = dbapi.get_entry_table(session=self.session,
                                    columns=columns)
         print(db_lock)
         db_lock.unlock()
         print(db_lock)
         return df
 
+    def get_simulations(self,nested_mode):
+        """
+        Function to get the simulations.
+        Parameters
+        ----------
+        nested_mode : bool
+            Switch to get the entries in nested mode or not.
+
+        Returns
+        -------
+        sims : List[dbmodel.Main]
+            List of simulation objects.
+        """
+
+        # build the query
+        query = self.session.query(dbModel.Main).order_by(dbModel.Main.entry_id)
+
+        # filter out the ones with parents
+        if nested_mode:
+            query = query.filter(~dbModel.Main.parents.any())
+
+        # get the simulations
+        sims = query.all()
+
+        return sims
+
     def deleteLater(self):
         """
         deconstructor
         """
 
-        self.sesssion.close()
+        self.session.close()
 
 
 class DatabaseThread(QThread):
+    connected = pyqtSignal()
+
     def __init__(self, db_path, parent=None):
         super(QThread, self).__init__(parent)
         self.db_path = db_path
+
     def run(self):
         self.database = Database(db_path=self.db_path)
         self.running = True
+        self.connected.emit()
         while self.running:
             sleep(0.25)
 
@@ -121,12 +151,15 @@ class DatabaseThread(QThread):
         self.wait()
 
 if __name__ == '__main__':
-    db_path = 'example_simulations.db'
-    ID = 'MK0085'
+
 
     import sys
     from PyQt5.QtWidgets import QWidget, QPushButton
     from PyQt5 import QtCore, QtWidgets
+
+    import os
+    db_path = os.path.join('..','..','examples','example_simulations','example_simulations.db')
+    ID = 'MK0085'
 
     class test_main_thread(QWidget):
         def __init__(self):
