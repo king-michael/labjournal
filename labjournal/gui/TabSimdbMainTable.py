@@ -26,6 +26,7 @@ from labjournal.gui.forms.Ui_LabJournalTree import Ui_Form
 logger = logging.getLogger('LabJournal.TabSimdbMainTable')
 """Logger object `LabJournal.TabSimdbMainTable` for the tab."""
 
+
 class SimdbTreeWidget(QWidget):
     def __init__(self, db=None, parent=None):
         super(SimdbTreeWidget, self).__init__(parent)
@@ -34,7 +35,10 @@ class SimdbTreeWidget(QWidget):
         # define default parameters
         self.nested_mode = True  # Entries are nested.
 
+<<<<<<< Updated upstream
         self.db = db
+=======
+>>>>>>> Stashed changes
         # Creating the required widgets
         self.vboxLayout = QVBoxLayout()
         self.setLayout(self.vboxLayout)
@@ -81,8 +85,15 @@ class SimdbTreeWidget(QWidget):
         Raises
         -------
         AssertionError
+            If header is not the original header, limited due to hard coded index in
+            `Mainwindow.treeWidget_itemDoubleClicked`
+        AssertionError
             If one of the items is not in the Maintable.
         """
+
+        # CHECK FOR HARD CODED INDEX
+        assert(all([h1 == h2 for h1, h2 in zip(self.header, header)]) and len(header) == len(self.header),
+               "Header can not be set at the moment due to hard coded index in Mainwindow.treeWidget_itemDoubleClicked")
         # sanity check
         assert all([h in Main.__dict__ for h in header]),  'invalid header\n:{}'.format(header)
 
