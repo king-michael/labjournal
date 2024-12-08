@@ -4,19 +4,19 @@ from distutils.core import setup
 # sudo aptitude install python-pyqt5.qtopengl
 
 setup(
-    name='labjournal',
+    name='old_labjournal',
     version='0.1beta',
     packages=['docs.source.templates_themes.sphinx_rtd_theme.docs.demo.test_py_module',
               'docs.source.templates_themes.sphinx_rtd_theme.tests',
               'docs.source.templates_themes.sphinx_rtd_theme.sphinx_rtd_theme', 'examples.setup_db.micha',
-              'examples.setup_db.micha.create_database', 'labjournal', 'labjournal.gui', 'labjournal.gui.tabs',
-              'labjournal.gui.tabs.InfoEntry', 'labjournal.gui.tabs.InfoEntry.LAMMPS',
-              'labjournal.gui.tabs.InfoEntry.GROMACS', 'labjournal.gui.popups', 'labjournal.gui.popups.DialogSettings',
-              'labjournal.gui.QtExtensions', 'labjournal.core', 'labjournal.utils', 'labjournal.analysis',
-              'labjournal.analysis.LAMMPS', 'labjournal.templates', 'labjournal.templates.LAMMPS',
-              'labjournal.workflows', 'labjournal.workflows.tasks', 'labjournal.workflows.tasks.VMD',
-              'labjournal.workflows.tasks.LAMMPS', 'labjournal.external_libs', 'labjournal.external_libs.pizza',
-              'labjournal.user_specific', 'labjournal.user_specific.micha', 'labjournal.user_specific.micha.mediawiki'],
+              'examples.setup_db.micha.create_database', 'old_labjournal', 'old_labjournal.gui', 'old_labjournal.gui.tabs',
+              'old_labjournal.gui.tabs.InfoEntry', 'old_labjournal.gui.tabs.InfoEntry.LAMMPS',
+              'old_labjournal.gui.tabs.InfoEntry.GROMACS', 'old_labjournal.gui.popups', 'old_labjournal.gui.popups.DialogSettings',
+              'old_labjournal.gui.QtExtensions', 'old_labjournal.core', 'old_labjournal.utils', 'old_labjournal.analysis',
+              'old_labjournal.analysis.LAMMPS', 'old_labjournal.templates', 'old_labjournal.templates.LAMMPS',
+              'old_labjournal.workflows', 'old_labjournal.workflows.tasks', 'old_labjournal.workflows.tasks.VMD',
+              'old_labjournal.workflows.tasks.LAMMPS', 'old_labjournal.external_libs', 'old_labjournal.external_libs.pizza',
+              'old_labjournal.user_specific', 'old_labjournal.user_specific.micha', 'old_labjournal.user_specific.micha.mediawiki'],
     # url='',
     # license='',
     author='Michael King, Andrej Berg',  # FixMe: geht hier ne liste?
